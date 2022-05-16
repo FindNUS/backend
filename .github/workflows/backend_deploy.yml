@@ -3,7 +3,7 @@ name: Deploy Backend uService to Heroku
 on:
   pull:
     branches: [main]
-    paths: "internal/backend/**"
+      paths: "internal/backend/**"
 
 jobs:
   build:
