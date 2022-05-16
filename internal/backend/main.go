@@ -26,7 +26,6 @@ func main() {
 		port = "8080"
 	}
 
-	// Entrypoint
 	// For now, we will create a dummy application to test docker integration
 	router := gin.Default()
 	router.GET("/ping", pingHandler)
