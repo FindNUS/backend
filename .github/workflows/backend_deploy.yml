@@ -36,15 +36,16 @@ jobs:
           # (Optional, default: "./")
           # Dockerfile directory.
           # For example, if you have a Dockerfile in the root of your project, leave it as follows:
-          dockerfile_directory: ./build
+          # Due to the nested nature of the dockerfile, leave it as the project root directory
+          dockerfile_directory: "./""
 
           # (Optional, default: "Dockerfile")
           # Dockerfile name.
-          dockerfile_name: backend.Dockerfile
+          dockerfile_name: "./build/backend.Dockerfile"
 
           # (Optional, default: "")
           # Additional options of docker build command.
-          docker_options: "--no-cache"
+          docker_options: "--no-cache "
 
           # (Optional, default: "web")
           # Select the process type for which you want the docker container to be uploaded.
