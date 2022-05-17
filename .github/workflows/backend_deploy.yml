@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
   
 
-      - name: CICD Heroku - Build, Push, Release Docker Container to Heroku. # Your custom step name
+      - name: CICD Heroku Build Push Release Docker Container to Heroku. # Your custom step name
         uses: gonuit/heroku-docker-deploy@v1.3.3 # GitHub action name (leave it as it is).
         with:
           # Below you must provide variables for your Heroku app.
@@ -37,7 +37,7 @@ jobs:
           # Dockerfile directory.
           # For example, if you have a Dockerfile in the root of your project, leave it as follows:
           # Due to the nested nature of the dockerfile, leave it as the project root directory
-          dockerfile_directory: "./""
+          dockerfile_directory: "./"
 
           # (Optional, default: "Dockerfile")
           # Dockerfile name.
