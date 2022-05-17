@@ -13,6 +13,7 @@ func pingHandler(c *gin.Context) {
 		c.JSON(http.StatusForbidden, "")
 		return
 	}
+	// Format response
 	c.JSON(200, gin.H{
 		"message": "Hello! You have reached FindNUS.",
 	})
