@@ -20,7 +20,7 @@ func pingHandler(c *gin.Context) {
 }
 
 func main() {
-	// Env Variables for Heroku
+	// Get Heroku's PORT env variable to listen for HTTP requests on
 	port := os.Getenv("PORT")
 	if port == "" {
 		// App running locally
