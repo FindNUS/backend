@@ -1,18 +1,13 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
-func pingHandler(c *gin.Context) {
-	// Safety check to prevent overzealous ping-ers
-	if c.GetHeader("Cookie") != "do-not-ddos" {
-		c.JSON(http.StatusForbidden, "")
-		return
-	}
+// Pings back the requester. Used to show that backend container is alive.
+func debugPingHandler(c *gin.Context) {
 	// Format response
 	c.JSON(200, gin.H{
 		"message": "Hello! You have reached FindNUS.",
@@ -29,6 +24,12 @@ func main() {
 
 	// For now, we will create a dummy application to test docker integration
 	router := gin.Default()
-	router.GET("/ping", pingHandler)
+
+	// DEBUG ENDPOINTS
+	grpDebug := router.Group("/debug")
+	{
+		grpDebug.GET("/ping", debugPingHandler)
+	}
+
 	router.Run(":" + port)
 }
