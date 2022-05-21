@@ -1,0 +1,209 @@
+openapi: "3.0.0"
+info:
+  title: findnusapi
+  description: API documentation for FindNUS backend services. Handles the retrieval, processing and management of Lost Items found in NUS.
+  version: "0.1-210522"
+servers:
+  - url: https://findnus.herokuapp.com
+    description: Heroku domain that hosts the backend services for FindNUS
+paths:
+  /debug/ping:
+    get:
+      description: |
+        Returns a 'Hello World' equivalent message. Shows that the backend connection works.
+      responses:
+        '200':
+          description: A hello world message.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hi there, you have reached FindNUS!
+  /debug/checkAuth:
+    get:
+      description: |
+        Check with backend if the Firebase token is valid.
+      responses:
+        '200':
+          description: AUTH OK
+        '401':
+          description: AUTH NOT OK
+  /item/new:
+    post:
+      description: |
+        Submit a new item to be stored into the database.
+      security:
+       - firebaseAuth: []
+      requestBody:
+        description: Callback item payload
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/NewItem"
+      responses:
+        '201':
+          description: Item registered into database
+        '400':
+          description: Rejected new item
+  /item/get/{itemId}:
+    get:
+      description: |
+        Get a particular item's full details
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          description: Item Id reference
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: A Lost Item's details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item not found
+  /item/peek:
+    get:
+      description: |
+        Get a list of lost items that can be sorted.
+        Peek at the database's latest finds.
+        (Sorting and filtering to be implemented in the future)
+      responses:
+        '200':
+          description: Returns an array of lost items that may be filtered
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchItem'
+  /item/request:
+    post:
+      description: |
+        Add a lost item request to the server. 
+      security:
+      - firebaseAuth: []
+      requestBody:
+        description: Request payload
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/NewItem"
+      responses:
+        '201':
+          description: Item lookout request added to server.
+  
+  /search:
+    get:
+      description: |
+        Elastisearch for an item.
+      responses:
+        '501':
+          description: Function not added yet.
+                    
+components:
+  schemas:
+    Item:
+      type: object
+      description: A Lost Item's full details
+      required:
+      - id
+      - name
+      - date
+      - location
+      - category
+      - contact_method
+      - contact_details
+      - item_details
+      - image_url
+      properties:
+        id: 
+          type: integer
+          format: int32
+        name:
+          type: string
+          example: Water Bottle
+        date:
+          type: string
+          format: date-time
+        location:
+          type: string
+          example: E4A DSA Lab
+        category:
+          type: integer
+        contact_method:
+          type: integer
+        contact_details:
+          type: string
+          example: foobar
+        item_details:
+          type: string
+          example: Blue, with a sticker and broken handle
+        image_url:
+          type: string
+          format: byte
+          example: https://imgur.com/gallery/RaHyECD
+    NewItem:
+      type: object
+      description: A New Lost Item with accompanying Image
+      required:
+        - name
+        - date
+        - location
+        - category
+        - contact_method
+        - contact_details
+        - item_details
+      properties:
+        name:
+          type: string
+        date:
+          type: string
+          format: date-time
+        location:
+          type: string
+        category:
+          type: integer
+        contact_method:
+          type: integer
+        contact_details:
+          type: string
+        item_details:
+          type: string
+        image_base64:
+          type: string
+          format: byte
+    SearchItem:
+      type: object
+      description: Truncated details for a Lost Item
+      required:
+      - id
+      - name
+      - date
+      - location
+      - category
+      properties:
+        id: 
+          type: integer
+          format: int32
+        name:
+          type: string
+        date:
+          type: string
+          format: date-time
+        location:
+          type: string
+        category:
+          type: integer
+  # Define security scheme (Firebase Token)
+  securitySchemes:
+    firebaseAuth:
+      type: http
+      scheme: bearer
