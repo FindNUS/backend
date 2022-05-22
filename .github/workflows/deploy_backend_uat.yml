@@ -1,6 +1,12 @@
 name: Deploy Backend uService to Heroku UAT Env 
 
 on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
   push:
     branches:
       - 'uat'
@@ -21,7 +27,7 @@ jobs:
       - name: Build and push
         env:
             HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME_UAT }} --arg FIREBASE_KEY=${{ secrets.FIREBASE_DEV_PRIVATE_KEY }},PRODUCTION=false web 
+        run: heroku container:push --context-path . -a ${{ secrets.HEROKU_APP_NAME_UAT }} --arg FIREBASE_KEY=${{ secrets.FIREBASE_DEV_PRIVATE_KEY }},PRODUCTION=false web 
       - name: Release
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
