@@ -33,7 +33,8 @@ func InitFirebase() firebase.App {
 	return *app
 }
 
-// Check if the client-side requester can use the protected API handler
+// AuthGuard Middleware that checks if the client-side requester can use a priviledged API handler.
+// Aborts executing the priviledged handler if user is not authorised.
 func CheckAuthMiddleware(app *firebase.App) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		appCtx := context.Background()
