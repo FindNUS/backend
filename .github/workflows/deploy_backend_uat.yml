@@ -45,7 +45,7 @@ jobs:
 
           # (Optional, default: "")
           # Additional options of docker build command.
-          docker_options: "--build-arg FIREBASE_KEY='${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}' --build-arg PRODUCTION=false --no-cache=1"
+          docker_options: --build-arg FIREBASE_KEY="${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}" --build-arg PRODUCTION=false --no-cache=1
 
 
           # (Optional, default: "web")
