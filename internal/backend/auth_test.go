@@ -21,7 +21,7 @@ func getUserIdToken() string {
 	// firebase-dev endpoint
 	endpt := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyATt8zAsltdjrjO2Na_IFV58cIYCL646Hs"
 	loginBody, _ := json.Marshal(map[string]string{
-		"email":             "test@gmail.com",
+		"email":             "automated_testuser@foobar.com",
 		"password":          "test1234",
 		"returnSecureToken": "true",
 	})
@@ -35,7 +35,7 @@ func getUserIdToken() string {
 	response, _ := ioutil.ReadAll(resp.Body)
 	var responseMap map[string]string
 	json.Unmarshal(response, &responseMap)
-	// println(responseMap["idToken"])
+	// log.Println(responseMap["idToken"])
 	return responseMap["idToken"]
 }
 

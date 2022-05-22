@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strings"
 
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,15 @@ import (
 func GetGoogleCredJson(isProd bool) map[string]string {
 	var projectId string
 	var private_key_id string
-	private_key, _ := os.LookupEnv("FIREBASE_KEY")
+	// private_key := "-----BEGIN PRIVATE KEY-----\n"
+	tmp, _ := os.LookupEnv("FIREBASE_KEY")
+	tmp = strings.ReplaceAll(tmp, "\\n", "\n")
+	// log.Println(tmp[0:100])
+	// log.Println(tmp[100:])
+	// private_key += tmp + "\n-----END PRIVATE KEY-----\n"
+	private_key := tmp
+	log.Println("Key details: ", len(private_key), ", ", string(private_key[0:100]), string(private_key[100:]))
+	strings.Trim(private_key, " ")
 	var client_email string
 	var client_id string
 	var client_x509_cert_url string
@@ -67,11 +76,10 @@ func InitFirebase() firebase.App {
 	if prodVar == "true" {
 		credbyte, _ = json.Marshal(GetGoogleCredJson(true))
 	} else {
+		println("hi")
 		credbyte, _ = json.Marshal(GetGoogleCredJson(false))
 	}
-
 	opt := option.WithCredentialsJSON(credbyte)
-	log.Println("Hello, ", len(credbyte))
 	app, err = firebase.NewApp(context.Background(), config, opt)
 	// }
 	if err != nil {
