@@ -1,9 +1,9 @@
-name: Deploy Backend uService to Heroku
+name: Deploy Backend uService to Heroku UAT Env 
 
 on:
   push:
     branches:
-      - 'main'
+      - 'uat'
     paths:
       - "internal/backend/**"
 
@@ -31,7 +31,7 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           
           # Name of the heroku application to which the build is to be sent.
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME_UAT }}
 
           # (Optional, default: "./")
           # Dockerfile directory.
@@ -45,7 +45,10 @@ jobs:
 
           # (Optional, default: "")
           # Additional options of docker build command.
-          docker_options: "--no-cache "
+          docker_options: |
+            --no-cache 
+            --build-arg GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCT_DEV }}
+          
 
           # (Optional, default: "web")
           # Select the process type for which you want the docker container to be uploaded.
