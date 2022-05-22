@@ -20,12 +20,13 @@ import (
 func GetGoogleCredJson(isProd bool) map[string]string {
 	var projectId string
 	var private_key_id string
-	private_key := "-----BEGIN PRIVATE KEY-----\n"
+	// private_key := "-----BEGIN PRIVATE KEY-----\n"
 	tmp, _ := os.LookupEnv("FIREBASE_KEY")
-	tmp = strings.ReplaceAll(tmp, "\\n", "")
+	// tmp = strings.ReplaceAll(tmp, "\\n", "\n")
 	// log.Println(tmp[0:100])
 	// log.Println(tmp[100:])
-	private_key += tmp + "\n-----END PRIVATE KEY-----\n"
+	// private_key += tmp + "\n-----END PRIVATE KEY-----\n"
+	private_key := tmp
 	log.Println("Key details: ", len(private_key), ", ", string(private_key[0:100]), string(private_key[100:]))
 	strings.Trim(private_key, " ")
 	var client_email string
