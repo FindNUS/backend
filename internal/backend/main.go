@@ -6,14 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Pings back the requester. Used to show that backend container is alive.
-func debugPingHandler(c *gin.Context) {
-	// Format response
-	c.JSON(200, gin.H{
-		"message": "Hello! You have reached FindNUS.",
-	})
-}
-
+// Factored out the main Routing functions to allow for better testing
 func main() {
 	// Get Heroku's PORT env variable to listen for HTTP requests on
 	port := os.Getenv("PORT")
@@ -25,10 +18,14 @@ func main() {
 	// For now, we will create a dummy application to test docker integration
 	router := gin.Default()
 
+	// Auth Handler
+	firebaseApp := InitFirebase()
+
 	// DEBUG ENDPOINTS
 	grpDebug := router.Group("/debug")
 	{
 		grpDebug.GET("/ping", debugPingHandler)
+		grpDebug.GET("/checkAuth", CheckAuthMiddleware(&firebaseApp), debugCheckAuth)
 	}
 
 	router.Run(":" + port)
