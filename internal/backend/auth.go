@@ -11,7 +11,6 @@ import (
 
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 )
 
@@ -63,10 +62,14 @@ func InitFirebase() firebase.App {
 	} else {
 		// We are in a staged environment (Github || Heroku)
 		// Get our credentials and load up firebase
-		var creds *google.Credentials
-		_, isProd := os.LookupEnv("PRODUCTION")
-		creds.JSON, _ = json.Marshal(GetGoogleCredJson(isProd))
-		opt := option.WithCredentials(creds)
+		prodVar, _ := os.LookupEnv("PRODUCTION")
+		var credbyte []byte
+		if prodVar == "true" {
+			credbyte, _ = json.Marshal(GetGoogleCredJson(true))
+		} else {
+			credbyte, _ = json.Marshal(GetGoogleCredJson(false))
+		}
+		opt := option.WithCredentialsJSON(credbyte)
 		app, err = firebase.NewApp(context.Background(), config, opt)
 	}
 	if err != nil {
