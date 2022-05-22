@@ -10,6 +10,8 @@ on:
 
 jobs:
   build:
+    env:
+      PRODUCTION: false
     runs-on: ubuntu-latest
     steps:
       #Checkout repo
@@ -29,5 +31,4 @@ jobs:
         working-directory: ./internal/backend
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
-          PRODUCTION: false
         run: go test .
