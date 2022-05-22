@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Returns a userId token for a 'test' user
+// Returns a userId token for a 'test' user on staging environment for debugging & testing
 func getUserIdToken() string {
 	// firebase-dev endpoint
 	endpt := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyATt8zAsltdjrjO2Na_IFV58cIYCL646Hs"

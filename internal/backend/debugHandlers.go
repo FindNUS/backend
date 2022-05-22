@@ -12,7 +12,7 @@ func debugPingHandler(c *gin.Context) {
 	})
 }
 
-// Completes the authcheck process
+// User passed the AuthGuard. User is logged in, hence authenticated to do priviledged operations.
 func debugCheckAuth(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Your id is ok!",

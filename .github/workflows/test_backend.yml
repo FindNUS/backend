@@ -1,4 +1,4 @@
-name: Deploy Backend uService to Heroku UAT Env 
+name: Unit-test backend microservice
 
 on:
   pull_request:
@@ -27,4 +27,6 @@ jobs:
 
       - name: Run Tests
         working-directory: ./internal/backend
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCT_DEV }}
         run: go test .
