@@ -35,7 +35,6 @@ func getUserIdToken() string {
 	response, _ := ioutil.ReadAll(resp.Body)
 	var responseMap map[string]string
 	json.Unmarshal(response, &responseMap)
-	// println(responseMap["idToken"])
 	return responseMap["idToken"]
 }
 
