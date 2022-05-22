@@ -44,7 +44,11 @@ jobs:
 
           # (Optional, default: "")
           # Additional options of docker build command.
-          docker_options: "--no-cache --build-arg GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCT_DEV }}"
+          docker_options: |
+            --no-cache
+            --build-arg FIREBASE_KEY=${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+            --build-arg PRODUCTION=false
+
 
           # (Optional, default: "web")
           # Select the process type for which you want the docker container to be uploaded.

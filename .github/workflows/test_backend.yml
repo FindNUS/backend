@@ -28,5 +28,6 @@ jobs:
       - name: Run Tests
         working-directory: ./internal/backend
         env:
-          GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCT_DEV }}
+          - FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+          - PRODUCTION: false
         run: go test .
