@@ -1,0 +1,28 @@
+name: Deploy Backend uService to Heroku UAT Env 
+
+on:
+  pull_request:
+    branches:
+      - 'uat'
+      - 'prod'
+    paths:
+      - "internal/backend/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      #Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build backend uService
+        uses: actions/setup-go@v2
+        with: 
+          go-version: 1.18
+        working-directory: ./internal/backend
+        run: go build .
+
+      - name: Run Tests
+        working-directory: ./internal/backend
+        run: go test .
