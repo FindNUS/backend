@@ -22,7 +22,7 @@ func GetGoogleCredJson(isProd bool) map[string]string {
 	var private_key_id string
 	// private_key := "-----BEGIN PRIVATE KEY-----\n"
 	tmp, _ := os.LookupEnv("FIREBASE_KEY")
-	// tmp = strings.ReplaceAll(tmp, "\\n", "\n")
+	tmp = strings.ReplaceAll(tmp, "\\n", "\n")
 	// log.Println(tmp[0:100])
 	// log.Println(tmp[100:])
 	// private_key += tmp + "\n-----END PRIVATE KEY-----\n"
