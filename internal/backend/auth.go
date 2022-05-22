@@ -22,8 +22,11 @@ func GetGoogleCredJson(isProd bool) map[string]string {
 	var private_key_id string
 	private_key := "-----BEGIN PRIVATE KEY-----\n"
 	tmp, _ := os.LookupEnv("FIREBASE_KEY")
-	log.Println(tmp[0:100])
-	log.Println(tmp[100:])
+	if tmp == "" {
+		tmp = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDSGWJKPA0sIKeh\n8FrmFGeOtmL+XLsSIibIQZio+NoKHBAcU2cls46UHSIxCTJq0ZDXzF4ei6gm0Uqz\nMrUPMsMZv2em6754g3+42tVx9ykkbh3+8fIxzBS6v+nxA7P43X4Noh0FJ1/7uqIz\ni62ULdnblhpphHhpJ8LjqVVGsoloPakwfKNUh0SDz+XsyyxI0ufpcF1aNUZu5CHn\nqXikubSBvdmnTD+pQKc0FxaEqRaHL7h6Xzu2g6RERPpaWr4+HUkDJAaW9u4Vlwhb\nXGmzUyp0HVRXhfkhRbiG40jykyZ+oKD/td4SwCOFCzf4k0G/Jt3oEN6s4kVJ10LC\ntaH+3N0zAgMBAAECggEAHfaNzH18+W6cyZ0QMaD2VeWP/6u06DSjqEqmnW6EFg4D\nhC6m1rshWeE/x5OCs7Y4fHZCdAPB0utlRmI0bTr1lR31h9o2G1TRqcjXyP2RSgdE\nUuAphM2QpUOKdxtqltLrz8Dvd5UyfKGU0VoZwri5SbZCBQtl6sVHZ5V2OnNq4kkq\nmhhegQECZUzIAyRX3WbKf8Yu8eAM9tWsvNkO+W2wF+dIq106Hw15XjuJE6Z/kgam\nGYk1b1y6gEjgD+ZoPonLIRv+jWgOiQCCscSTXHnduQJAENtCNyEmBH6lF4qFufZu\n2ss1xH/5BrtdnZ4V3a0s+EUYQAtSHDCi2nmGYFdKUQKBgQD6BMrnDx/OOSaCZUMc\n9/kDxL/wxhnbmEiF2V2T2tl0EaO4kYQxynlZhZVeWPiXRVhjRVdzUs9yBZOb0vy/\nbu9WdyS8hDeOQRY1BuAmpWIUF9cSfQaMRFIbq7/P0zyw5XqaQT3lxQEA7rXIQ+d3\n+drhziRatqELIl+b+hX/1Sb6EQKBgQDXIBvv6xXiSBwMVe6pjjbJb7SG0QW+G1pP\nXQjOk2EX5fbc2ksaCZKbfaVN3YC5FyJdNrFXR+KLNQANEEbOSh4/mO+CISNSYUlF\n+gXTBzmYxHBohnFfS2C67R2YepIJ8Uj0GVU84eDkeZdJMiqMmg+H+68CxgTpCeEo\nBSGaTkH/AwKBgFNfEcInGvYLvLmyxsR8ND97dn31sV221Eg+CaRqUCUSVMQRUkHA\nQOMHVp3VkV/wMd84mkbMkHx3O5e0ra+wcIMmy8tJU7VOIvefyVNZxvDoWkHCC1Lu\n3Wp4xUeqKwzaGR4jL17VaNZEw716V098s+6kbR8K030BA1zh8kATdiHhAoGARXYH\nr0L/8O2JqO4CPts9k3MvHizVptmcIm4OzuzFd/r3573QbBrVLMG4I1k3HAx9Ow3S\n2zTJ0FsPpigwRKGn/K77/s+GYS4qg57ETKxTi6E6DnYCm1tyY0j2umoxR2aSQMcB\nP8RLYlpkX+0D0hxYkXbRvpqDsV9QRSTLAdDs/FMCgYEA6YI7Y4KwtbkOokwwMIkU\nAO8aJ0i9SLqm0nOIXHbIcKh3egCZXbnnoBI/NoSIlUWOp41M/dQqF3KQQBVAjalm\n4SfWhBnJ+t15aYu/Rgu9M6XxSCjgrThOFH4VHIC7Z8G2GFWXnTmUNYzKo700sGqA\nxBM3dmursyu6psdMc2oQk2U="
+	}
+	// log.Println(tmp[0:100])
+	// log.Println(tmp[100:])
 	private_key += tmp + "\n-----END PRIVATE KEY-----\n"
 	strings.Trim(private_key, " ")
 	var client_email string
@@ -73,11 +76,11 @@ func InitFirebase() firebase.App {
 	if prodVar == "true" {
 		credbyte, _ = json.Marshal(GetGoogleCredJson(true))
 	} else {
+		println("hi")
 		credbyte, _ = json.Marshal(GetGoogleCredJson(false))
 	}
-
 	opt := option.WithCredentialsJSON(credbyte)
-	log.Println("Hello, ", len(credbyte))
+	log.Println("Hello, ", string(credbyte))
 	app, err = firebase.NewApp(context.Background(), config, opt)
 	// }
 	if err != nil {
