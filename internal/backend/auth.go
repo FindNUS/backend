@@ -20,15 +20,9 @@ import (
 func GetGoogleCredJson(isProd bool) map[string]string {
 	var projectId string
 	var private_key_id string
-	// private_key := "-----BEGIN PRIVATE KEY-----\n"
-	tmp, _ := os.LookupEnv("FIREBASE_KEY")
-	tmp = strings.ReplaceAll(tmp, "\\n", "\n")
-	// log.Println(tmp[0:100])
-	// log.Println(tmp[100:])
-	// private_key += tmp + "\n-----END PRIVATE KEY-----\n"
-	private_key := tmp
-	log.Println("Key details: ", len(private_key), ", ", string(private_key[0:100]), string(private_key[100:]))
-	strings.Trim(private_key, " ")
+	// Get private key from environment and replace unescaped newlines
+	private_key, _ := os.LookupEnv("FIREBASE_KEY")
+	private_key = strings.ReplaceAll(private_key, "\\n", "\n")
 	var client_email string
 	var client_id string
 	var client_x509_cert_url string
@@ -65,23 +59,23 @@ func InitFirebase() firebase.App {
 	var err error
 	config := &firebase.Config{}
 	// Check if we are running locally with the existence of secrets folder
-	// if _, err := os.Stat("../../secrets"); err == nil {
-	// 	opt := option.WithCredentialsFile("../../secrets/findnus-dev-firebase-adminsdk-9zxcr-0cdf90c387.json")
-	// 	app, err = firebase.NewApp(context.Background(), config, opt)
-	// } else {
-	// We are in a staged environment (Github || Heroku)
-	// Get our credentials and load up firebase
-	prodVar, _ := os.LookupEnv("PRODUCTION")
-	var credbyte []byte
-	if prodVar == "true" {
-		credbyte, _ = json.Marshal(GetGoogleCredJson(true))
+	if _, err := os.Stat("../../secrets"); err == nil {
+		opt := option.WithCredentialsFile("../../secrets/findnus-dev-firebase-adminsdk-9zxcr-0cdf90c387.json")
+		app, err = firebase.NewApp(context.Background(), config, opt)
 	} else {
-		println("hi")
-		credbyte, _ = json.Marshal(GetGoogleCredJson(false))
+		// We are in a staged environment (Github || Heroku)
+		// Get our credentials and load up firebase
+		prodVar, _ := os.LookupEnv("PRODUCTION")
+		var credbyte []byte
+		if prodVar == "true" {
+			credbyte, _ = json.Marshal(GetGoogleCredJson(true))
+		} else {
+			println("hi")
+			credbyte, _ = json.Marshal(GetGoogleCredJson(false))
+		}
+		opt := option.WithCredentialsJSON(credbyte)
+		app, err = firebase.NewApp(context.Background(), config, opt)
 	}
-	opt := option.WithCredentialsJSON(credbyte)
-	app, err = firebase.NewApp(context.Background(), config, opt)
-	// }
 	if err != nil {
 		log.Fatalf("Error init-ing firebase, %v\n", err)
 	}
