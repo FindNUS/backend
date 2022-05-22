@@ -28,6 +28,6 @@ jobs:
       - name: Run Tests
         working-directory: ./internal/backend
         env:
-          - FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
-          - PRODUCTION: false
+          FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+          PRODUCTION: false
         run: go test .
