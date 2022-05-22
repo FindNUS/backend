@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strings"
 
 	firebase "firebase.google.com/go"
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,7 @@ func GetGoogleCredJson(isProd bool) map[string]string {
 	var projectId string
 	var private_key_id string
 	private_key, _ := os.LookupEnv("FIREBASE_KEY")
+	strings.Trim(private_key, " ")
 	var client_email string
 	var client_id string
 	var client_x509_cert_url string
