@@ -1,12 +1,6 @@
 name: Deploy Backend uService to Heroku UAT Env 
 
 on:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning'
   push:
     branches:
       - 'uat'
@@ -20,15 +14,19 @@ jobs:
       #Checkout repo
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Login to Heroku Container registry
+      - name: Setup Dockerfile
+        run: bash build/setup_backend.sh
+      - name: Build & Deploy Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrests.HEROKU_APP_NAME_UAT }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          docker_heroku_process_type: web
+          docker_build_args: |
+            PRODUCTION
+            FIREBASE_KEY
         env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login 
-      - name: Build and push
-        env:
-            HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push --context-path ./build -a ${{ secrets.HEROKU_APP_NAME_UAT }} --arg FIREBASE_KEY="${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}",PRODUCTION=false web 
-      - name: Release
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME_UAT }} web
+          PRODUCTION: true
+          FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }} 
