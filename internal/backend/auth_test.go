@@ -20,7 +20,7 @@ import (
 func getUserIdToken() string {
 	// firebase-dev endpoint
 	endpt := "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyATt8zAsltdjrjO2Na_IFV58cIYCL646Hs"
-	// If unknown errors come up, check if the following user exists on Firebase console.
+	// If unknown errors come up, check if the following user exists on Firebase console
 	loginBody, _ := json.Marshal(map[string]string{
 		"email":             "automated_testuser@foobar.com",
 		"password":          "test1234",
