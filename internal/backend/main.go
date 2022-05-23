@@ -10,7 +10,7 @@ func main() {
 	// Get Heroku's PORT env variable to listen for HTTP requests on
 	port := os.Getenv("PORT")
 	if port == "" {
-		// App is running locally.
+		// App is running locally
 		port = "8080"
 	}
 
