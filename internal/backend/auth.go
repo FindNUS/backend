@@ -70,7 +70,6 @@ func InitFirebase() firebase.App {
 		if prodVar == "true" {
 			credbyte, _ = json.Marshal(GetGoogleCredJson(true))
 		} else {
-			println("hi")
 			credbyte, _ = json.Marshal(GetGoogleCredJson(false))
 		}
 		opt := option.WithCredentialsJSON(credbyte)

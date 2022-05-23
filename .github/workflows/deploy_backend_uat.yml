@@ -28,5 +28,5 @@ jobs:
             PRODUCTION
             FIREBASE_KEY
         env:
-          PRODUCTION: true
+          PRODUCTION: false
           FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }} 
