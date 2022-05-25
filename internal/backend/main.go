@@ -16,7 +16,14 @@ func main() {
 	}
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	router.Use(
+		cors.New(cors.Config{
+			AllowAllOrigins:  true,
+			AllowHeaders:     []string{"Origin", "Authorization"},
+			AllowMethods:     []string{"GET", "POST", "PATCH", "PUT"},
+			AllowCredentials: true,
+		}),
+	)
 
 	// Auth Handler
 	firebaseApp := InitFirebase()
