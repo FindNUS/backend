@@ -33,7 +33,7 @@ func main() {
 	{
 		grpDebug.GET("/ping", debugPingHandler)
 		grpDebug.GET("/checkAuth", CheckAuthMiddleware(&firebaseApp), debugCheckAuth)
-		grpDebug.GET("/getDemoItem", CheckAuthMiddleware(&firebaseApp), debugGetDemoItem)
+		grpDebug.GET("/getDemoItem", debugGetDemoItem)
 	}
 
 	// TODO: Group handlers for /item and /search endpoints in future versions

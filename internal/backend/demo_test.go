@@ -22,11 +22,9 @@ func TestDebugGetDemoItem(t *testing.T) {
 
 	ginContext, _ := gin.CreateTestContext(httpWriter)
 	ginContext.Request, _ = http.NewRequest("GET", "/debug/getDemoItem", nil)
-	idToken := getUserIdToken()
 	jsonbody := `{ "name":"Laptop" }`
 	req := ioutil.NopCloser(bytes.NewReader([]byte(jsonbody)))
 	// Test if we get intended outcomes
-	ginContext.Request.Header.Set("Authorization", idToken)
 	ginContext.Request.Body = req
 	debugGetDemoItem(ginContext)
 
@@ -40,7 +38,6 @@ func TestDebugGetDemoItem(t *testing.T) {
 	jsonbody = `{ "name":"Foobar" }`
 	req = ioutil.NopCloser(bytes.NewReader([]byte(jsonbody)))
 	// Test if we get intended outcomes
-	ginContext.Request.Header.Set("Authorization", idToken)
 	ginContext.Request.Body = req
 	debugGetDemoItem(ginContext)
 
