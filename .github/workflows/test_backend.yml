@@ -31,4 +31,5 @@ jobs:
         working-directory: ./internal/backend
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+          MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
         run: go test .
