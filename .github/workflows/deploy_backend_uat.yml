@@ -27,6 +27,8 @@ jobs:
           docker_build_args: |
             PRODUCTION
             FIREBASE_KEY
+            MONGO_URI
         env:
           PRODUCTION: false
           FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }} 
+          MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
