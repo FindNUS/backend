@@ -4,6 +4,8 @@ ARG PRODUCTION
 ENV PRODUCTION=${PRODUCTION}
 ARG FIREBASE_KEY
 ENV FIREBASE_KEY=${FIREBASE_KEY}
+ARG MONGO_URI
+ENV MONGO_URI=${MONGO_URI}
 # Copy mod and sum to workdir
 COPY ./internal/backend/go.mod ./
 COPY ./internal/backend/go.sum ./
