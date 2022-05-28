@@ -1,7 +1,6 @@
 #!/bin/bash
-echo "Autogenerating API documentation..."
-if openapi-markdown -i ../api/findnus.yaml -o ../api/README.md; then
-    echo "Docs generated!"
+if og ../api/findnus.yaml -o ../api/ markdown; then
+    mv ../api/openapi.md ../api/README.md
 else
-    echo "Error! Did you npm install -g openapi-markdown?"
+    echo "Error occured."
 fi

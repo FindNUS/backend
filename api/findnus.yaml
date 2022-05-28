@@ -1,16 +1,19 @@
 openapi: "3.0.0"
 info:
-  title: findnusapi
+  title: FindNUS_api
   description: API documentation for FindNUS backend services. Handles the retrieval, processing and management of Lost Items found in NUS.
-  version: "0.1-210522"
+  version: "0.1-280522"
 servers:
   - url: https://findnus.herokuapp.com
     description: Heroku domain that hosts the backend services for FindNUS
+  - url: https://uat-findnus.herokuapp.com
+    description: Integration environment for User acceptance testing.
+
 paths:
   /debug/ping:
     get:
       description: |
-        Returns a 'Hello World' equivalent message. Shows that the backend connection works.
+        Returns a Hello World equivalent message. Shows that the backend connection works.
       responses:
         '200':
           description: A hello world message.
@@ -18,22 +21,58 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: Hi there, you have reached FindNUS!
+                example: | 
+                  message: Hi there, you have reached FindNUS!
   /debug/checkAuth:
     get:
       description: |
         Check with backend if the Firebase token is valid.
+      parameters:
+      - in: header
+        name: Authorization
+        description: Firebase ID token of user 
+        required: true
+        schema:
+          type: string
+          example: |
+            Authorization: my-token
       responses:
         '200':
-          description: AUTH OK
+          description: Id token is valid
         '401':
-          description: AUTH NOT OK
+          description: Id token is invalid
+  /debug/getDemoItem:
+    get:
+      description: |
+        Get a demo item for Milestone 1. 
+      parameters:
+      - in: query
+        name: name
+        description: Name of the demoset item to be retrieved 
+        required: true
+        schema:
+          type: string
+        allowReserved: true
+      responses:
+        '200':
+          description: Get request is valid, item is found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Get request is valid, item not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: | 
+                  Nothing Found!
+        
   /item/new:
     post:
       description: |
         Submit a new item to be stored into the database.
-      security:
-       - firebaseAuth: []
       requestBody:
         description: Callback item payload
         content:
@@ -44,13 +83,11 @@ paths:
         '201':
           description: Item registered into database
         '400':
-          description: Rejected new item
+          description: Rejected new item into database
   /item/get/{itemId}:
     get:
       description: |
         Get a particular item's full details
-      security:
-        - firebaseAuth: []
       parameters:
         - name: itemId
           in: path
@@ -98,8 +135,7 @@ paths:
               $ref: "#/components/schemas/NewItem"
       responses:
         '201':
-          description: Item lookout request added to server.
-  
+          description: Item lookout request added to server. 
   /search:
     get:
       description: |
@@ -119,36 +155,43 @@ components:
       - date
       - location
       - category
-      - contact_method
-      - contact_details
-      - item_details
-      - image_url
       properties:
         id: 
-          type: integer
-          format: int32
+          type: string
+          format: string
+          description: The MongoDB ObjectID associated to this Item
+          example: 98721yrr0u14oure
         name:
           type: string
+          description: Name of lost item
           example: Water Bottle
         date:
           type: string
+          description: Date-time where item is lost/found
           format: date-time
         location:
           type: string
+          description: Where the item was found
           example: E4A DSA Lab
         category:
-          type: integer
+          type: string
+          description: Type of item
+          example: Etc
         contact_method:
-          type: integer
+          type: string
+          description: Founder/Lostee Contact Method
+          example: Telegram
         contact_details:
           type: string
-          example: foobar
+          description: Contact details of Founder/Lostee
+          example: FindNUS
         item_details:
           type: string
           example: Blue, with a sticker and broken handle
         image_url:
           type: string
-          format: byte
+          format: string
+          description: Item's accompanying image link
           example: https://imgur.com/gallery/RaHyECD
     NewItem:
       type: object
@@ -158,27 +201,37 @@ components:
         - date
         - location
         - category
-        - contact_method
-        - contact_details
-        - item_details
       properties:
         name:
           type: string
+          description: Name of new lost/found item
+          example: Water Bottle
         date:
           type: string
+          description: Date-time where item is lost/found
           format: date-time
         location:
           type: string
+          description: Where the item was found
+          example: E4A DSA Lab
         category:
-          type: integer
+          type: string
+          description: Type of item
+          example: Etc
         contact_method:
-          type: integer
+          type: string
+          description: Founder/Lostee Contact Method
+          example: Telegram
         contact_details:
           type: string
+          description: Contact details of Founder/Lostee
+          example: FindNUS
         item_details:
           type: string
+          example: Blue, with a sticker and broken handle
         image_base64:
           type: string
+          description: Accompanying image of new Lost/Found item
           format: byte
     SearchItem:
       type: object
@@ -192,7 +245,7 @@ components:
       properties:
         id: 
           type: integer
-          format: int32
+          format: string
         name:
           type: string
         date:
@@ -201,7 +254,7 @@ components:
         location:
           type: string
         category:
-          type: integer
+          type: string
   # Define security scheme (Firebase Token)
   securitySchemes:
     firebaseAuth:
