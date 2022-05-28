@@ -10,7 +10,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -87,21 +86,16 @@ type DemoForm struct {
 
 func debugGetDemoItem(c *gin.Context) {
 	coll := mongoDb.Collection(string(COLL_DEBUG))
-	// jsonData, err := ioutil.ReadAll(c.Request.Body)
-	var qry DemoForm
-	println(c.ContentType())
-	err := c.ShouldBindWith(&qry, binding.JSON)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Something went wrong!",
-		})
-		return
-	}
-	name := qry.Name
+	name := c.Query("name")
 	res, err := coll.Find(
 		context.TODO(),
 		bson.D{{"name", name}},
 	)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Server Side Error",
+		})
+	}
 	var items []Item
 	for res.Next(context.TODO()) {
 		var item Item
