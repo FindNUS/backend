@@ -2,6 +2,8 @@ package main
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // ---- COLLECTIONS EXPLANATIONS ----
@@ -12,7 +14,7 @@ import (
 
 // Type definitions for the marshalling of data
 type Item struct {
-	Id              int
+	Id              primitive.ObjectID `bson:"_id"`
 	Name            string
 	Date            time.Time
 	Location        string
