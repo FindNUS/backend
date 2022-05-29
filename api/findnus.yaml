@@ -150,45 +150,45 @@ components:
       type: object
       description: A Lost Item's full details
       required:
-      - id
-      - name
-      - date
-      - location
-      - category
+      - Id
+      - Name
+      - Date
+      - Location
+      - Category
       properties:
-        id: 
+        Id: 
           type: string
           format: string
           description: The MongoDB ObjectID associated to this Item
           example: 98721yrr0u14oure
-        name:
+        Name:
           type: string
           description: Name of lost item
           example: Water Bottle
-        date:
+        Date:
           type: string
           description: Date-time where item is lost/found
           format: date-time
-        location:
+        Location:
           type: string
           description: Where the item was found
           example: E4A DSA Lab
-        category:
+        Category:
           type: string
           description: Type of item
           example: Etc
-        contact_method:
+        Contact_method:
           type: string
           description: Founder/Lostee Contact Method
           example: Telegram
-        contact_details:
+        Contact_details:
           type: string
           description: Contact details of Founder/Lostee
           example: FindNUS
-        item_details:
+        Item_details:
           type: string
           example: Blue, with a sticker and broken handle
-        image_url:
+        Image_url:
           type: string
           format: string
           description: Item's accompanying image link
@@ -202,34 +202,34 @@ components:
         - location
         - category
       properties:
-        name:
+        Name:
           type: string
           description: Name of new lost/found item
           example: Water Bottle
-        date:
+        Date:
           type: string
           description: Date-time where item is lost/found
           format: date-time
-        location:
+        Location:
           type: string
           description: Where the item was found
           example: E4A DSA Lab
-        category:
+        Category:
           type: string
           description: Type of item
           example: Etc
-        contact_method:
+        Contact_method:
           type: string
           description: Founder/Lostee Contact Method
           example: Telegram
-        contact_details:
+        Contact_details:
           type: string
           description: Contact details of Founder/Lostee
           example: FindNUS
-        item_details:
+        Item_details:
           type: string
           example: Blue, with a sticker and broken handle
-        image_base64:
+        Image_base64:
           type: string
           description: Accompanying image of new Lost/Found item
           format: byte
@@ -237,23 +237,23 @@ components:
       type: object
       description: Truncated details for a Lost Item
       required:
-      - id
-      - name
-      - date
-      - location
-      - category
+      - Id
+      - Name
+      - Date
+      - Location
+      - Category
       properties:
-        id: 
+        Id: 
           type: integer
           format: string
-        name:
+        Name:
           type: string
-        date:
+        Date:
           type: string
           format: date-time
-        location:
+        Location:
           type: string
-        category:
+        Category:
           type: string
   # Define security scheme (Firebase Token)
   securitySchemes:

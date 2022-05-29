@@ -259,7 +259,7 @@ _No headers specified_
   </thead>
   <tbody>
       <tr>
-        <td>id <strong>(required)</strong></td>
+        <td>Id <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -267,7 +267,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>name <strong>(required)</strong></td>
+        <td>Name <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -275,7 +275,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>date <strong>(required)</strong></td>
+        <td>Date <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -283,7 +283,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>location <strong>(required)</strong></td>
+        <td>Location <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -291,7 +291,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>category <strong>(required)</strong></td>
+        <td>Category <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -299,7 +299,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_method</td>
+        <td>Contact_method</td>
         <td>
           string
         </td>
@@ -307,7 +307,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_details</td>
+        <td>Contact_details</td>
         <td>
           string
         </td>
@@ -315,7 +315,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>item_details</td>
+        <td>Item_details</td>
         <td>
           string
         </td>
@@ -323,11 +323,11 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>image_url</td>
+        <td>Image_url</td>
         <td>
           string
         </td>
-        <td>Item's accompanying image</td>
+        <td>Item's accompanying image link</td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
@@ -338,15 +338,15 @@ _No headers specified_
 
 ```json
 {
-  "id": "98721yrr0u14oure",
-  "name": "Water Bottle",
-  "date": "2019-08-24T14:15:22Z",
-  "location": "E4A DSA Lab",
-  "category": "Etc",
-  "contact_method": "Telegram",
-  "contact_details": "FindNUS",
-  "item_details": "Blue, with a sticker and broken handle",
-  "image_url": "https://imgur.com/gallery/RaHyECD"
+  "Id": "98721yrr0u14oure",
+  "Name": "Water Bottle",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "E4A DSA Lab",
+  "Category": "Etc",
+  "Contact_method": "Telegram",
+  "Contact_details": "FindNUS",
+  "Item_details": "Blue, with a sticker and broken handle",
+  "Image_url": "https://imgur.com/gallery/RaHyECD"
 }
 ```
 ##### ▶ 404 - Get request is valid, item not found
@@ -415,7 +415,7 @@ Submit a new item to be stored into the database.
   </thead>
   <tbody>
       <tr>
-        <td>name <strong>(required)</strong></td>
+        <td>Name</td>
         <td>
           string
         </td>
@@ -423,7 +423,7 @@ Submit a new item to be stored into the database.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>date <strong>(required)</strong></td>
+        <td>Date</td>
         <td>
           string
         </td>
@@ -431,7 +431,7 @@ Submit a new item to be stored into the database.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>location <strong>(required)</strong></td>
+        <td>Location</td>
         <td>
           string
         </td>
@@ -439,7 +439,7 @@ Submit a new item to be stored into the database.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>category <strong>(required)</strong></td>
+        <td>Category</td>
         <td>
           string
         </td>
@@ -447,7 +447,7 @@ Submit a new item to be stored into the database.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_method</td>
+        <td>Contact_method</td>
         <td>
           string
         </td>
@@ -455,7 +455,7 @@ Submit a new item to be stored into the database.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_details</td>
+        <td>Contact_details</td>
         <td>
           string
         </td>
@@ -463,7 +463,7 @@ Submit a new item to be stored into the database.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>item_details</td>
+        <td>Item_details</td>
         <td>
           string
         </td>
@@ -471,7 +471,7 @@ Submit a new item to be stored into the database.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>image_base64</td>
+        <td>Image_base64</td>
         <td>
           string
         </td>
@@ -486,14 +486,14 @@ Submit a new item to be stored into the database.
 
 ```json
 {
-  "name": "Water Bottle",
-  "date": "2019-08-24T14:15:22Z",
-  "location": "E4A DSA Lab",
-  "category": "Etc",
-  "contact_method": "Telegram",
-  "contact_details": "FindNUS",
-  "item_details": "Blue, with a sticker and broken handle",
-  "image_base64": "string"
+  "Name": "Water Bottle",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "E4A DSA Lab",
+  "Category": "Etc",
+  "Contact_method": "Telegram",
+  "Contact_details": "FindNUS",
+  "Item_details": "Blue, with a sticker and broken handle",
+  "Image_base64": "string"
 }
 ```
 
@@ -583,7 +583,7 @@ _No headers specified_
   </thead>
   <tbody>
       <tr>
-        <td>id <strong>(required)</strong></td>
+        <td>Id <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -591,7 +591,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>name <strong>(required)</strong></td>
+        <td>Name <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -599,7 +599,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>date <strong>(required)</strong></td>
+        <td>Date <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -607,7 +607,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>location <strong>(required)</strong></td>
+        <td>Location <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -615,7 +615,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>category <strong>(required)</strong></td>
+        <td>Category <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -623,7 +623,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_method</td>
+        <td>Contact_method</td>
         <td>
           string
         </td>
@@ -631,7 +631,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_details</td>
+        <td>Contact_details</td>
         <td>
           string
         </td>
@@ -639,7 +639,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>item_details</td>
+        <td>Item_details</td>
         <td>
           string
         </td>
@@ -647,11 +647,11 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>image_url</td>
+        <td>Image_url</td>
         <td>
           string
         </td>
-        <td>Item's accompanying image</td>
+        <td>Item's accompanying image link</td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
@@ -662,15 +662,15 @@ _No headers specified_
 
 ```json
 {
-  "id": "98721yrr0u14oure",
-  "name": "Water Bottle",
-  "date": "2019-08-24T14:15:22Z",
-  "location": "E4A DSA Lab",
-  "category": "Etc",
-  "contact_method": "Telegram",
-  "contact_details": "FindNUS",
-  "item_details": "Blue, with a sticker and broken handle",
-  "image_url": "https://imgur.com/gallery/RaHyECD"
+  "Id": "98721yrr0u14oure",
+  "Name": "Water Bottle",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "E4A DSA Lab",
+  "Category": "Etc",
+  "Contact_method": "Telegram",
+  "Contact_details": "FindNUS",
+  "Item_details": "Blue, with a sticker and broken handle",
+  "Image_url": "https://imgur.com/gallery/RaHyECD"
 }
 ```
 ##### ▶ 404 - Item not found
@@ -727,7 +727,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.id <strong>(required)</strong></td>
+        <td>Response.Id <strong>(required)</strong></td>
         <td>
           integer
         </td>
@@ -735,7 +735,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.name <strong>(required)</strong></td>
+        <td>Response.Name <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -743,7 +743,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.date <strong>(required)</strong></td>
+        <td>Response.Date <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -751,7 +751,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.location <strong>(required)</strong></td>
+        <td>Response.Location <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -759,7 +759,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.category <strong>(required)</strong></td>
+        <td>Response.Category <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -775,11 +775,11 @@ _No headers specified_
 ```json
 [
   {
-    "id": 0,
-    "name": "string",
-    "date": "2019-08-24T14:15:22Z",
-    "location": "string",
-    "category": "string"
+    "Id": 0,
+    "Name": "string",
+    "Date": "2019-08-24T14:15:22Z",
+    "Location": "string",
+    "Category": "string"
   }
 ]
 ```
@@ -813,7 +813,7 @@ Add a lost item request to the server.
   </thead>
   <tbody>
       <tr>
-        <td>name <strong>(required)</strong></td>
+        <td>Name</td>
         <td>
           string
         </td>
@@ -821,7 +821,7 @@ Add a lost item request to the server.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>date <strong>(required)</strong></td>
+        <td>Date</td>
         <td>
           string
         </td>
@@ -829,7 +829,7 @@ Add a lost item request to the server.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>location <strong>(required)</strong></td>
+        <td>Location</td>
         <td>
           string
         </td>
@@ -837,7 +837,7 @@ Add a lost item request to the server.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>category <strong>(required)</strong></td>
+        <td>Category</td>
         <td>
           string
         </td>
@@ -845,7 +845,7 @@ Add a lost item request to the server.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_method</td>
+        <td>Contact_method</td>
         <td>
           string
         </td>
@@ -853,7 +853,7 @@ Add a lost item request to the server.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_details</td>
+        <td>Contact_details</td>
         <td>
           string
         </td>
@@ -861,7 +861,7 @@ Add a lost item request to the server.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>item_details</td>
+        <td>Item_details</td>
         <td>
           string
         </td>
@@ -869,7 +869,7 @@ Add a lost item request to the server.
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>image_base64</td>
+        <td>Image_base64</td>
         <td>
           string
         </td>
@@ -884,14 +884,14 @@ Add a lost item request to the server.
 
 ```json
 {
-  "name": "Water Bottle",
-  "date": "2019-08-24T14:15:22Z",
-  "location": "E4A DSA Lab",
-  "category": "Etc",
-  "contact_method": "Telegram",
-  "contact_details": "FindNUS",
-  "item_details": "Blue, with a sticker and broken handle",
-  "image_base64": "string"
+  "Name": "Water Bottle",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "E4A DSA Lab",
+  "Category": "Etc",
+  "Contact_method": "Telegram",
+  "Contact_details": "FindNUS",
+  "Item_details": "Blue, with a sticker and broken handle",
+  "Image_base64": "string"
 }
 ```
 
@@ -950,7 +950,7 @@ _No headers specified_
   </thead>
   <tbody>
       <tr>
-        <td>id <strong>(required)</strong></td>
+        <td>Id <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -958,7 +958,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>name <strong>(required)</strong></td>
+        <td>Name <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -966,7 +966,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>date <strong>(required)</strong></td>
+        <td>Date <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -974,7 +974,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>location <strong>(required)</strong></td>
+        <td>Location <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -982,7 +982,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>category <strong>(required)</strong></td>
+        <td>Category <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -990,7 +990,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_method</td>
+        <td>Contact_method</td>
         <td>
           string
         </td>
@@ -998,7 +998,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_details</td>
+        <td>Contact_details</td>
         <td>
           string
         </td>
@@ -1006,7 +1006,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>item_details</td>
+        <td>Item_details</td>
         <td>
           string
         </td>
@@ -1014,11 +1014,11 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>image_url</td>
+        <td>Image_url</td>
         <td>
           string
         </td>
-        <td>Item's accompanying image</td>
+        <td>Item's accompanying image link</td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
@@ -1028,15 +1028,15 @@ _No headers specified_
 
 ```json
 {
-  "id": "98721yrr0u14oure",
-  "name": "Water Bottle",
-  "date": "2019-08-24T14:15:22Z",
-  "location": "E4A DSA Lab",
-  "category": "Etc",
-  "contact_method": "Telegram",
-  "contact_details": "FindNUS",
-  "item_details": "Blue, with a sticker and broken handle",
-  "image_url": "https://imgur.com/gallery/RaHyECD"
+  "Id": "98721yrr0u14oure",
+  "Name": "Water Bottle",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "E4A DSA Lab",
+  "Category": "Etc",
+  "Contact_method": "Telegram",
+  "Contact_details": "FindNUS",
+  "Item_details": "Blue, with a sticker and broken handle",
+  "Image_url": "https://imgur.com/gallery/RaHyECD"
 }
 ```
 <a id="" />
@@ -1054,7 +1054,7 @@ _No headers specified_
   </thead>
   <tbody>
       <tr>
-        <td>name <strong>(required)</strong></td>
+        <td>Name</td>
         <td>
           string
         </td>
@@ -1062,7 +1062,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>date <strong>(required)</strong></td>
+        <td>Date</td>
         <td>
           string
         </td>
@@ -1070,7 +1070,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>location <strong>(required)</strong></td>
+        <td>Location</td>
         <td>
           string
         </td>
@@ -1078,7 +1078,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>category <strong>(required)</strong></td>
+        <td>Category</td>
         <td>
           string
         </td>
@@ -1086,7 +1086,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_method</td>
+        <td>Contact_method</td>
         <td>
           string
         </td>
@@ -1094,7 +1094,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>contact_details</td>
+        <td>Contact_details</td>
         <td>
           string
         </td>
@@ -1102,7 +1102,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>item_details</td>
+        <td>Item_details</td>
         <td>
           string
         </td>
@@ -1110,7 +1110,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>image_base64</td>
+        <td>Image_base64</td>
         <td>
           string
         </td>
@@ -1124,14 +1124,14 @@ _No headers specified_
 
 ```json
 {
-  "name": "Water Bottle",
-  "date": "2019-08-24T14:15:22Z",
-  "location": "E4A DSA Lab",
-  "category": "Etc",
-  "contact_method": "Telegram",
-  "contact_details": "FindNUS",
-  "item_details": "Blue, with a sticker and broken handle",
-  "image_base64": "string"
+  "Name": "Water Bottle",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "E4A DSA Lab",
+  "Category": "Etc",
+  "Contact_method": "Telegram",
+  "Contact_details": "FindNUS",
+  "Item_details": "Blue, with a sticker and broken handle",
+  "Image_base64": "string"
 }
 ```
 <a id="" />
@@ -1149,7 +1149,7 @@ _No headers specified_
   </thead>
   <tbody>
       <tr>
-        <td>id <strong>(required)</strong></td>
+        <td>Id <strong>(required)</strong></td>
         <td>
           integer
         </td>
@@ -1157,7 +1157,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>name <strong>(required)</strong></td>
+        <td>Name <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -1165,7 +1165,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>date <strong>(required)</strong></td>
+        <td>Date <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -1173,7 +1173,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>location <strong>(required)</strong></td>
+        <td>Location <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -1181,7 +1181,7 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>category <strong>(required)</strong></td>
+        <td>Category <strong>(required)</strong></td>
         <td>
           string
         </td>
@@ -1195,10 +1195,10 @@ _No headers specified_
 
 ```json
 {
-  "id": 0,
-  "name": "string",
-  "date": "2019-08-24T14:15:22Z",
-  "location": "string",
-  "category": "string"
+  "Id": 0,
+  "Name": "string",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "string",
+  "Category": "string"
 }
 ```
