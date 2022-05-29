@@ -3,33 +3,41 @@ package main
 import (
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
-
-// Pings back the requester. Used to show that backend container is alive.
-func debugPingHandler(c *gin.Context) {
-	// Format response
-	c.JSON(200, gin.H{
-		"message": "Hello! You have reached FindNUS.",
-	})
-}
 
 func main() {
 	// Get Heroku's PORT env variable to listen for HTTP requests on
 	port := os.Getenv("PORT")
 	if port == "" {
-		// App running locally
+		// App is running locally
 		port = "8080"
 	}
 
-	// For now, we will create a dummy application to test docker integration
 	router := gin.Default()
+	router.Use(
+		cors.New(cors.Config{
+			AllowAllOrigins:  true,
+			AllowHeaders:     []string{"Origin", "Authorization"},
+			AllowMethods:     []string{"GET", "POST", "PATCH", "PUT"},
+			AllowCredentials: true,
+		}),
+	)
+
+	// Auth Handler
+	firebaseApp := InitFirebase()
 
 	// DEBUG ENDPOINTS
 	grpDebug := router.Group("/debug")
 	{
 		grpDebug.GET("/ping", debugPingHandler)
+		grpDebug.GET("/checkAuth", CheckAuthMiddleware(&firebaseApp), debugCheckAuth)
+		grpDebug.GET("/getDemoItem", debugGetDemoItem)
 	}
 
+	// TODO: Group handlers for /item and /search endpoints in future versions
+
+	setupMongo("Items")
 	router.Run(":" + port)
 }

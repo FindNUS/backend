@@ -1,0 +1,35 @@
+name: Unit-test backend microservice
+
+on:
+  pull_request:
+    branches:
+      - 'uat'
+      - 'prod'
+    paths:
+      - "internal/backend/**"
+
+jobs:
+  build:
+    env:
+      PRODUCTION: false
+    runs-on: ubuntu-latest
+    steps:
+      #Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Golang
+        uses: actions/setup-go@v2
+        with: 
+          go-version: 1.18
+
+      - name: Build backend uService
+        working-directory: ./internal/backend
+        run: go build .
+
+      - name: Run Tests
+        working-directory: ./internal/backend
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+          MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
+        run: go test .

@@ -1,0 +1,34 @@
+name: Deploy Backend uService to Heroku Production
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - "internal/backend/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      #Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Dockerfile
+        run: bash build/setup_backend.sh
+      - name: Build & Deploy Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          docker_heroku_process_type: web
+          docker_build_args: |
+            PRODUCTION
+            FIREBASE_KEY
+            MONGO_URI
+        env:
+          PRODUCTION: true
+          FIREBASE_KEY: ${{ secrets.FIREBASE_PROD_PRIVATE_KEY }}
+          MONGO_URI: ${{ secrets.MONGO_URI_PROD }} 
