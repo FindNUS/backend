@@ -18,6 +18,7 @@ API documentation for FindNUS backend services. Handles the retrieval, processin
   - [`GET` /search](#op-get-search) 
 * [Schemas](#schemas)
   - Item
+  - MiniItem
   - NewLostItem
   - NewFoundItem
   - DeleteItem
@@ -1067,11 +1068,100 @@ _No headers specified_
 <a id="op-get-item-peek" />
 
 Get a list of lost items that can be sorted.
-Peek at the database's latest finds.
-(Sorting and filtering to be implemented in the future)
+Peek at the database's latest finds, paginated.
+(Adding queries for sorting and filtering to be implemented in the future)
 
 
 
+
+
+#### Query parameters
+
+##### &#9655; offset
+
+Number of items to skip
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>offset </td>
+        <td>
+          integer
+        </td>
+        <td>query</td>
+        <td>Number of items to skip</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### &#9655; limit
+
+Number of items to return
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>limit </td>
+        <td>
+          integer
+        </td>
+        <td>query</td>
+        <td>Number of items to return</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### &#9655; category
+
+Type of category to filter by
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>category </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td>Type of category to filter by</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
 
 
 
@@ -1149,22 +1239,6 @@ _No headers specified_
         <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Contact_method</td>
-        <td>
-          string
-        </td>
-        <td>Founder/Lostee Contact Method</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Contact_details</td>
-        <td>
-          string
-        </td>
-        <td>Contact details of Founder/Lostee</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
         <td>Response.Item_details</td>
         <td>
           string
@@ -1178,14 +1252,6 @@ _No headers specified_
           string
         </td>
         <td>Item's accompanying image link</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.User_id</td>
-        <td>
-          string
-        </td>
-        <td>UserID associated to this item. Only applicable for Lookout Items.</td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
@@ -1202,11 +1268,8 @@ _No headers specified_
     "Date": "2019-08-24T14:15:22Z",
     "Location": "E4A DSA Lab",
     "Category": "Cards",
-    "Contact_method": "Telegram",
-    "Contact_details": "FindNUS",
     "Item_details": "Blue, with a sticker and broken handle",
-    "Image_url": "https://imgur.com/gallery/RaHyECD",
-    "User_id": "string"
+    "Image_url": "https://imgur.com/gallery/RaHyECD"
   }
 ]
 ```
@@ -1322,7 +1385,7 @@ _No headers specified_
 ### `GET` /search
 <a id="op-get-search" />
 
-Elasticsearch for an item.
+Text-based search for an item.
 
 
 
@@ -1384,6 +1447,35 @@ Number of items returned per search
         </td>
         <td>query</td>
         <td>Number of items returned per search</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### &#9655; query
+
+Query string to be searched against the database
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>query </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td>Query string to be searched against the database</td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
@@ -1518,6 +1610,92 @@ _No headers specified_
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD",
   "User_id": "string"
+}
+```
+<a id="" />
+
+#### MiniItem
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Id <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>The MongoDB ObjectID associated to this Item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Name <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Name of lost/found item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Date <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Date-time where item is lost/found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Location <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Where the item was found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Category <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Type of item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Item_details</td>
+        <td>
+          string
+        </td>
+        <td></td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Image_url</td>
+        <td>
+          string
+        </td>
+        <td>Item's accompanying image link</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+##### Example _(generated)_
+
+```json
+{
+  "Id": "98721yrr0u14oure",
+  "Name": "Water Bottle",
+  "Date": "2019-08-24T14:15:22Z",
+  "Location": "E4A DSA Lab",
+  "Category": "Cards",
+  "Item_details": "Blue, with a sticker and broken handle",
+  "Image_url": "https://imgur.com/gallery/RaHyECD"
 }
 ```
 <a id="" />

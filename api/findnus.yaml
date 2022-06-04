@@ -158,8 +158,24 @@ paths:
     get:
       description: |
         Get a list of lost items that can be sorted.
-        Peek at the database's latest finds.
-        (Sorting and filtering to be implemented in the future)
+        Peek at the database's latest finds, paginated.
+        (Adding queries for sorting and filtering to be implemented in the future)
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: Number of items to skip
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of items to return
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Type of category to filter by
       responses:
         '200':
           description: Returns an array of lost items that may be filtered
@@ -168,7 +184,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: '#/components/schemas/MiniItem'
   /item/delete:
     delete:
       description: |
@@ -194,11 +210,11 @@ paths:
           description: Item does not exist in the database
         '401':
           description: Firebase credentials not invalid  
-# These set of paths define querying with elasticsearch
+# These set of paths define querying with a text-based search
   /search:
     get:
       description: |
-        Elasticsearch for an item.
+        Text-based search for an item.
       parameters:
         - in: query
           name: offset
@@ -211,6 +227,11 @@ paths:
           schema:
             type: integer
           description: Number of items returned per search
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Query string to be searched against the database
       responses:
         '501':
           description: Function not added yet.
@@ -220,10 +241,7 @@ components:
     Item:
       type: object
       description: |
-        An Item's schema for GET calls to the Frontend.
-        For now, Items are either FULL or TRUNCATED 
-        - FULL: All of the parameters available from the item are returned.
-        - TRUNCATED: Only the 'required' parameters are returned. This form usually comes in an array.
+        An Item's schema containing ALL the Lost/Found item's details.
       required:
       - Id
       - Name
@@ -272,6 +290,47 @@ components:
           type: string
           format: string
           description: UserID associated to this item. Only applicable for Lookout Items.
+    MiniItem:
+      type: object
+      description: |
+        A truncated form of Item meant for indexing and pagination. 
+        Meant to populate frontend search 'cards'. Should come in an array.
+      required:
+      - Id
+      - Name
+      - Date
+      - Location
+      - Category
+      properties:
+        Id: 
+          type: string
+          format: string
+          description: The MongoDB ObjectID associated to this Item
+          example: 98721yrr0u14oure
+        Name:
+          type: string
+          description: Name of lost/found item
+          example: Water Bottle
+        Date:
+          type: string
+          description: Date-time where item is lost/found
+          format: date-time
+        Location:
+          type: string
+          description: Where the item was found
+          example: E4A DSA Lab
+        Category:
+          type: string
+          description: Type of item
+          example: Cards
+        Item_details:
+          type: string
+          example: Blue, with a sticker and broken handle
+        Image_url:
+          type: string
+          format: string
+          description: Item's accompanying image link
+          example: https://imgur.com/gallery/RaHyECD     
     NewLostItem:
       type: object
       description: |
@@ -425,6 +484,7 @@ components:
           type: string
           description: Updated image of Lost/Found item, if applicable
           format: byte
+
   # Define security scheme (Firebase Token)
   securitySchemes:
     firebaseAuth:
