@@ -31,10 +31,10 @@ type NewItem struct {
 	Date            time.Time
 	Location        string
 	Category        int
-	Contact_method  int    `bson:"Contace_methid,omitempty"`
-	Contact_details string `bson:"Contact_details,omitempty"`
-	Item_details    string `bson:"Item_details,omitempty"`
-	Image_url       string `bson:"Image_url,omitempty"`
+	Contact_method  int    `bson:"contact_method,omitempty"`
+	Contact_details string `bson:"contact_details,omitempty"`
+	Item_details    string `bson:"item_details,omitempty"`
+	Image_url       string `bson:"image_url,omitempty"`
 	Image_base64    byte   `bson:"-"` // Ignore this field
 }
 
