@@ -36,8 +36,25 @@ type NewItem struct {
 	Contact_details string    `bson:"Contact_details,omitempty"`
 	Item_details    string    `bson:"Item_details,omitempty"`
 	Image_url       string    `bson:"Image_url,omitempty"`
-	Image_base64    byte      `bson:"-"` // Ignore this field
 	User_id         string    `bson:"User_id,omitempty"`
+}
+
+type PatchItem struct {
+	Id              primitive.ObjectID `bson:"_id"`
+	Name            string             `bson:"Name,omitempty"`
+	Date            time.Time          `bson:"Date,omitempty"`
+	Location        string             `bson:"Location,omitempty"`
+	Category        int                `bson:"Category,omitempty"`
+	Contact_method  int                `bson:"Contact_method,omitempty"`
+	Contact_details string             `bson:"Contact_details,omitempty"`
+	Item_details    string             `bson:"Image_details,omitempty"`
+	Image_url       string             `bson:"Image_url,omitempty"`
+	User_id         string             `bson:"User_id,omitempty"`
+}
+
+type DeletedItem struct {
+	Id      primitive.ObjectID `bson:"_id"`
+	User_id string             `bson:"User_id,omitempty"`
 }
 
 // JSON Message Wrapper

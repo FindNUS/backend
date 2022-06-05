@@ -10,6 +10,7 @@ servers:
     description: Integration environment for User acceptance testing.
 
 paths:
+# These set of paths define debugging endpoints
   /debug/ping:
     get:
       description: |
@@ -34,8 +35,7 @@ paths:
         required: true
         schema:
           type: string
-          example: |
-            Authorization: my-token
+          example: "Authorization: my-firebase-idToken"
       responses:
         '200':
           description: Id token is valid
@@ -68,8 +68,33 @@ paths:
                 type: string
                 example: | 
                   Nothing Found!
-        
-  /item/new:
+# These set of paths define Creation, Update and Delete item operations   
+  /item/new/lost:
+    post:
+      description: |
+        Add new Lost item to be put on Lookout on the database.
+      parameters:
+      - in: header
+        name: Authorization
+        description: Firebase ID token of user 
+        required: true
+        schema:
+          type: string
+          example: "Authorization: my-firebase-idToken"
+      requestBody:
+        description: Callback item payload
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/NewLostItem"
+      responses:
+        '201':
+          description: Item registered into database
+        '400':
+          description: Rejected new item into database
+        '401':
+          description: Firebase credentials not invalid
+  /item/new/found:
     post:
       description: |
         Submit a new item to be stored into the database.
@@ -78,12 +103,35 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: "#/components/schemas/NewItem"
+              $ref: "#/components/schemas/NewFoundItem"
       responses:
         '201':
           description: Item registered into database
         '400':
           description: Rejected new item into database
+  /item/update:
+    patch:
+      description: |
+        Update details of an item on the database.
+      parameters:
+      - in: header
+        name: Authorization
+        description: Firebase ID token of user 
+        required: true
+        schema:
+          type: string
+          example: "Authorization: my-firebase-idToken"
+      requestBody:
+        description: Callback item payload
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/PatchItem"
+      responses:
+        '200': 
+          description: OK
+        '401': 
+          description: Firebase credentials not invalid
   /item/get/{itemId}:
     get:
       description: |
@@ -110,8 +158,24 @@ paths:
     get:
       description: |
         Get a list of lost items that can be sorted.
-        Peek at the database's latest finds.
-        (Sorting and filtering to be implemented in the future)
+        Peek at the database's latest finds, paginated.
+        (Adding queries for sorting and filtering to be implemented in the future)
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: Number of items to skip
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of items to return
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Type of category to filter by
       responses:
         '200':
           description: Returns an array of lost items that may be filtered
@@ -120,26 +184,54 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SearchItem'
-  /item/request:
-    post:
+                  $ref: '#/components/schemas/MiniItem'
+  /item/delete:
+    delete:
       description: |
-        Add a lost item request to the server. 
-      security:
-      - firebaseAuth: []
+        Remove an item listing on the database.
+      parameters:
+        - in: header
+          name: Authorization
+          description: Firebase ID token of user 
+          required: true
+          schema:
+            type: string
+            example: "Authorization: my-firebase-idToken"
       requestBody:
-        description: Request payload
+        description: Callback item payload
         content:
           'application/json':
             schema:
-              $ref: "#/components/schemas/NewItem"
+              $ref: "#/components/schemas/DeleteItem"
       responses:
-        '201':
-          description: Item lookout request added to server. 
+        '200':
+          description: Item successfully removed from database
+        '410':
+          description: Item does not exist in the database
+        '401':
+          description: Firebase credentials not invalid  
+# These set of paths define querying with a text-based search
   /search:
     get:
       description: |
-        Elastisearch for an item.
+        Text-based search for an item.
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: |
+            Number of items to skip
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of items returned per search
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Query string to be searched against the database
       responses:
         '501':
           description: Function not added yet.
@@ -148,7 +240,8 @@ components:
   schemas:
     Item:
       type: object
-      description: A Lost Item's full details
+      description: |
+        An Item's schema containing ALL the Lost/Found item's details.
       required:
       - Id
       - Name
@@ -163,7 +256,7 @@ components:
           example: 98721yrr0u14oure
         Name:
           type: string
-          description: Name of lost item
+          description: Name of lost/found item
           example: Water Bottle
         Date:
           type: string
@@ -176,7 +269,7 @@ components:
         Category:
           type: string
           description: Type of item
-          example: Etc
+          example: Cards
         Contact_method:
           type: string
           description: Founder/Lostee Contact Method
@@ -193,14 +286,111 @@ components:
           format: string
           description: Item's accompanying image link
           example: https://imgur.com/gallery/RaHyECD
-    NewItem:
+        User_id:
+          type: string
+          format: string
+          description: UserID associated to this item. Only applicable for Lookout Items.
+    MiniItem:
       type: object
-      description: A New Lost Item with accompanying Image
+      description: |
+        A truncated form of Item meant for indexing and pagination. 
+        Meant to populate frontend search 'cards'. Should come in an array.
       required:
-        - name
-        - date
-        - location
-        - category
+      - Id
+      - Name
+      - Date
+      - Location
+      - Category
+      properties:
+        Id: 
+          type: string
+          format: string
+          description: The MongoDB ObjectID associated to this Item
+          example: 98721yrr0u14oure
+        Name:
+          type: string
+          description: Name of lost/found item
+          example: Water Bottle
+        Date:
+          type: string
+          description: Date-time where item is lost/found
+          format: date-time
+        Location:
+          type: string
+          description: Where the item was found
+          example: E4A DSA Lab
+        Category:
+          type: string
+          description: Type of item
+          example: Cards
+        Item_details:
+          type: string
+          example: Blue, with a sticker and broken handle
+        Image_url:
+          type: string
+          format: string
+          description: Item's accompanying image link
+          example: https://imgur.com/gallery/RaHyECD     
+    NewLostItem:
+      type: object
+      description: |
+        An Item's schema for POST calls to the backend, for adding NEW items 
+        NewItems have two states They are either a LOOKOUT or FOUND item. 
+        - LOOKOUT: Generated by Losters. Other than the required parameters, a User_id is necessary for Item association to the user.
+        - EXISTING: Generaterd by Finders. At a minimum, only the required parameters are necessary.
+      required:
+        - User_id
+        - Name
+        - Date
+        - Location
+        - Category
+      properties:
+        User_id:
+          type: string
+          description: Unique User_id generated by firebase to associate a user to a Lookout item.
+        Name:
+          type: string
+          description: Name of new lost/found item
+          example: Water Bottle
+        Date:
+          type: string
+          description: Date-time where item is lost/found
+          format: date-time
+        Location:
+          type: string
+          description: Where the item was found
+          example: E4A DSA Lab
+        Category:
+          type: string
+          description: Type of item
+          example: Etc
+        Contact_method:
+          type: string
+          description: Founder/Loster Contact Method
+          example: Telegram
+        Contact_details:
+          type: string
+          description: Contact details of Founder/Lostee
+          example: FindNUS
+        Item_details:
+          type: string
+          example: Blue, with a sticker and broken handle
+        Image_base64:
+          type: string
+          description: Accompanying image of new Lost/Found item, if applicable
+          format: byte
+    NewFoundItem:
+      type: object
+      description: |
+        An Item's schema for POST calls to the backend, for adding NEW items 
+        NewItems have two states They are either a LOOKOUT or FOUND item. 
+        - LOOKOUT: Generated by Losters. Other than the required parameters, a User_id is necessary for Item association to the user.
+        - EXISTING: Generaterd by Finders. At a minimum, only the required parameters are necessary.
+      required:
+        - Name
+        - Date
+        - Location
+        - Category
       properties:
         Name:
           type: string
@@ -220,7 +410,7 @@ components:
           example: Etc
         Contact_method:
           type: string
-          description: Founder/Lostee Contact Method
+          description: Founder/Loster Contact Method
           example: Telegram
         Contact_details:
           type: string
@@ -231,30 +421,70 @@ components:
           example: Blue, with a sticker and broken handle
         Image_base64:
           type: string
-          description: Accompanying image of new Lost/Found item
+          description: Accompanying image of new Lost/Found item, if applicable
           format: byte
-    SearchItem:
+    DeleteItem:
       type: object
-      description: Truncated details for a Lost Item
+      description: |
+        An Item's schema for DELETE delete calls to the backend.
       required:
-      - Id
-      - Name
-      - Date
-      - Location
-      - Category
+        - Id
+      properties:
+       Id: 
+          type: string
+          format: string
+          description: The MongoDB ObjectID associated to this Item
+          example: 98721yrr0u14oure
+    PatchItem:
+      type: object
+      description: |
+        An Item's schema for PATCH calls to the backend, for updatng item details 
+        NewItems have two states They are either a LOOKOUT or FOUND item. 
+        - LOOKOUT: Generated by Losters. Other than the required parameters, a User_id is necessary for Item association to the user.
+        - EXISTING: Generaterd by Finders. At a minimum, only the required parameters are necessary.
+      required:
+        - Id
       properties:
         Id: 
-          type: integer
+          type: string
           format: string
+          description: The MongoDB ObjectID associated to this Item
+          example: 98721yrr0u14oure
+        User_id:
+          type: string
+          description: Unique User_id generated by firebase to associate a user to a Lookout item.
         Name:
           type: string
+          description: Name of new lost/found item
+          example: Water Bottle
         Date:
           type: string
+          description: Date-time where item is lost/found
           format: date-time
         Location:
           type: string
+          description: Where the item was found
+          example: E4A DSA Lab
         Category:
           type: string
+          description: Type of item
+          example: Etc
+        Contact_method:
+          type: string
+          description: Founder/Loster Contact Method
+          example: Telegram
+        Contact_details:
+          type: string
+          description: Contact details of Founder/Lostee
+          example: FindNUS
+        Item_details:
+          type: string
+          example: Blue, with a sticker and broken handle
+        Image_base64:
+          type: string
+          description: Updated image of Lost/Found item, if applicable
+          format: byte
+
   # Define security scheme (Firebase Token)
   securitySchemes:
     firebaseAuth:
