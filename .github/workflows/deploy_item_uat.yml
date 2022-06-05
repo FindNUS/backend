@@ -1,11 +1,11 @@
-name: Deploy Backend uService to Heroku UAT Env 
+name: Deploy Item uService to Heroku UAT Env 
 
 on:
   push:
     branches:
       - 'uat'
     paths:
-      - "internal/backend/**"
+      - "internal/item/**"
   
 jobs:
   build:
@@ -26,11 +26,10 @@ jobs:
           docker_heroku_process_type: web
           docker_build_args: |
             PRODUCTION
-            FIREBASE_KEY
             MONGO_URI
             RABBITMQ_URI
         env:
           PRODUCTION: false
-          FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }} 
           MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
+

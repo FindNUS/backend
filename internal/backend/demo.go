@@ -35,10 +35,6 @@ const (
 	COLL_DEBUG                 = "Debug"
 )
 
-func PrettyPrintStruct(any interface{}) {
-	fmt.Printf("%+v\n", any)
-}
-
 func debugPostItem(collName ItemCollections, item NewItem) {
 	coll := mongoDb.Collection(string(collName))
 	_, err := coll.InsertOne(context.TODO(), item)
