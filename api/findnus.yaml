@@ -121,6 +121,20 @@ paths:
         schema:
           type: string
           example: "Authorization: my-firebase-idToken"
+      - in: query
+        name: Id
+        description: MongoDB ID of the Item
+        required: true
+        schema:
+          type: string
+          example: "Id=629cc52563533a84f60c4c68"
+      - in: query
+        name: User_id
+        description: FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
+        required: true
+        schema:
+          type: string
+          example: "User_id=196afas7"
       requestBody:
         description: Callback item payload
         content:
@@ -136,6 +150,7 @@ paths:
     get:
       description: |
         Get a particular item's full details
+        WARNING: NOT IMPLEMENTED YET
       parameters:
         - name: itemId
           in: path
@@ -197,6 +212,20 @@ paths:
           schema:
             type: string
             example: "Authorization: my-firebase-idToken"
+        - in: query
+          name: Id
+          description: MongoDB ID of the Item
+          required: true
+          schema:
+            type: string
+            example: "Id=629cc52563533a84f60c4c68"
+        - in: query
+          name: User_id
+          description: FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
+          required: false
+          schema:
+            type: string
+            example: "User_id=196afas7"
       requestBody:
         description: Callback item payload
         content:

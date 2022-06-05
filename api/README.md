@@ -753,6 +753,76 @@ Firebase ID token of user
 ```
 
 
+#### Query parameters
+
+##### &#9655; Id
+
+MongoDB ID of the Item
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Id  <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td>MongoDB ID of the Item</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+##### Example
+
+```json
+"Id=629cc52563533a84f60c4c68"
+```
+
+##### &#9655; User_id
+
+FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>User_id  <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td>FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+##### Example
+
+```json
+"User_id=196afas7"
+```
+
 
 
 #### Request body
@@ -894,6 +964,7 @@ _No headers specified_
 <a id="op-get-item-get-itemid" />
 
 Get a particular item's full details
+WARNING: NOT IMPLEMENTED YET
 
 
 
@@ -1320,6 +1391,76 @@ Firebase ID token of user
 "Authorization: my-firebase-idToken"
 ```
 
+
+#### Query parameters
+
+##### &#9655; Id
+
+MongoDB ID of the Item
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Id  <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td>MongoDB ID of the Item</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+##### Example
+
+```json
+"Id=629cc52563533a84f60c4c68"
+```
+
+##### &#9655; User_id
+
+FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>User_id </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td>FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+##### Example
+
+```json
+"User_id=196afas7"
+```
 
 
 
