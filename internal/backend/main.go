@@ -36,8 +36,26 @@ func main() {
 		grpDebug.GET("/getDemoItem", debugGetDemoItem)
 	}
 
-	// TODO: Group handlers for /item and /search endpoints in future versions
-
+	// CRUD HANDLERS (Excluding search)
+	grpItem := router.Group("/item")
+	{
+		// Creation of new items
+		new := grpItem.Group("/new")
+		{
+			new.POST("/lost", HandleNewLostItem)
+			new.POST("/found", HandleNewFoundItem)
+		}
+		// Update of items
+		grpItem.PATCH("/update", HandleUpdateItem) //TODO: Add auth middleware
+		// Deletion
+		grpItem.DELETE("/delete", HandleDeleteItem) //TODO: Add auth middleware
+		// Get specific item
+		grpItem.GET("/get") //TODO
+		// Get range of items
+		grpItem.GET("/peek") //TODO
+	}
 	setupMongo("Items")
+	SetupMessageBrokerConnection()
+	SetupChannelQueues()
 	router.Run(":" + port)
 }

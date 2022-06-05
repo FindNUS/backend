@@ -23,20 +23,41 @@ type Item struct {
 	Contact_details string
 	Item_details    string
 	Image_url       string
+	User_id         string `bson:"User_id, omitempty"`
 }
 
 // NOTE: New Item will require some preprocessing, namely the storage of imgr
 type NewItem struct {
-	Name            string
-	Date            time.Time
-	Location        string
-	Category        int
-	Contact_method  int    `bson:"contact_method,omitempty"`
-	Contact_details string `bson:"contact_details,omitempty"`
-	Item_details    string `bson:"item_details,omitempty"`
-	Image_url       string `bson:"image_url,omitempty"`
-	Image_base64    byte   `bson:"-"` // Ignore this field
+	Name            string    `bson:"Name"`
+	Date            time.Time `bson:"Date"`
+	Location        string    `bson:"Location"`
+	Category        int       `bson:"Category"`
+	Contact_method  int       `bson:"Contact_method,omitempty"`
+	Contact_details string    `bson:"Contact_details,omitempty"`
+	Item_details    string    `bson:"Item_details,omitempty"`
+	Image_url       string    `bson:"Image_url,omitempty"`
+	Image_base64    byte      `bson:"-"` // Ignore this field
+	User_id         string    `bson:"User_id,omitempty"`
 }
+
+// JSON Message Wrapper
+type ItemMsgJSON struct {
+	Operation_type int
+	Params         map[string][]string
+	Body           []byte
+}
+
+// Operation enum to help with routing messages to correct service
+const (
+	OPERATION_DEBUG    int = 0 // /debug/pingItem
+	OPERATION_NEW_ITEM int = 1 // /item/new*
+	// OPERATION_NEW_LOST_ITEM  int = 1
+	// OPERATION_NEW_FOUND_ITEM int = 2
+	OPERATION_GET_ITEM      int = 3 // /item
+	OPERATION_GET_ITEM_LIST int = 4 // /item/peek
+	OPERATION_PATCH_ITEM    int = 5 // /item/update
+	OPERATION_DEL_ITEM      int = 6 // /item/delete
+)
 
 // CATEGORY MAPPING
 func GetCategoryType(cat string) int {
