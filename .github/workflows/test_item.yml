@@ -24,11 +24,11 @@ jobs:
           go-version: 1.18
 
       - name: Build backend uService
-        working-directory: ./internal/backend
+        working-directory: ./internal/item
         run: go build .
 
       - name: Run Tests
-        working-directory: ./internal/backend
+        working-directory: ./internal/item
         env:
           MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
