@@ -36,6 +36,7 @@ type NewItem struct {
 	Contact_details string    `bson:"Contact_details,omitempty"`
 	Item_details    string    `bson:"Item_details,omitempty"`
 	Image_url       string    `bson:"Image_url,omitempty"`
+	Image_base64    byte      `bson:"-"` // Ignore this field
 	User_id         string    `bson:"User_id,omitempty"`
 }
 
@@ -75,22 +76,6 @@ const (
 	OPERATION_PATCH_ITEM    int = 5 // /item/update
 	OPERATION_DEL_ITEM      int = 6 // /item/delete
 )
-
-// CATEGORY MAPPING
-func GetCategoryType(cat string) int {
-	switch cat {
-	case "Cards":
-		return 1
-	case "Notes":
-		return 2
-	case "Electronics":
-		return 3
-	case "Bottles":
-		return 4
-	default:
-		return 0
-	}
-}
 
 func ParseDateString(datestring string) time.Time {
 	layout := "2006-01-02T15:04:05Z"
