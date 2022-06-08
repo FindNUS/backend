@@ -15,9 +15,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-// Util
+// Utility function
 func PrettyPrintStruct(any interface{}) {
-	fmt.Printf("%+v\n", any)
+	log.Printf("%+v\n", any)
 }
 
 // ---- GLOBAL DB VARIABLES ----
@@ -91,6 +91,7 @@ func HandleRequest(rawMsg []byte) {
 		break
 	case OPERATION_GET_ITEM_LIST:
 		//foo
+		fmt.Println("Get Item List Triggered")
 		break
 	case OPERATION_DEL_ITEM:
 		DoDeleteItem(msg)
@@ -106,47 +107,45 @@ func MongoAddItem(collName ItemCollections, item NewItem) interface{} {
 	res, err := coll.InsertOne(context.TODO(), item)
 	if err != nil {
 		log.Fatalf(err.Error())
-	} else {
-		log.Println(res)
 	}
 	return res.InsertedID
 }
 
-func MongoPatchItem(collname ItemCollections, item PatchItem) {
+func MongoPatchItem(collname ItemCollections, item PatchItem) int64 {
 	coll := mongoDb.Collection(string(collname))
 	update := bson.M{"$set": item}
 	res, err := coll.UpdateByID(context.TODO(), item.Id, update)
 	if err != nil {
 		log.Fatalf(err.Error())
-	} else {
-		log.Println(res)
 	}
+	return res.ModifiedCount
 }
 
-func MongoDeleteItem(collname ItemCollections, item DeletedItem) {
+func MongoDeleteItem(collname ItemCollections, item DeletedItem) int64 {
 	coll := mongoDb.Collection(string(collname))
 	res, err := coll.DeleteOne(context.TODO(), item)
 	if err != nil {
 		log.Fatalf(err.Error())
-	} else {
-		log.Println(res)
 	}
+	return res.DeletedCount
 }
 
 // Handle creation of new item
-func DoAddItem(msg ItemMsgJSON) {
+func DoAddItem(msg ItemMsgJSON) interface{} {
 	// Unmarshall body
 	var item NewItem
+	var res interface{}
 	json.Unmarshal(msg.Body, &item)
 	if item.User_id == "" {
 		// Assert that user_id only exists for found items
-		MongoAddItem(COLL_FOUND, item)
+		res = MongoAddItem(COLL_FOUND, item)
 	} else {
-		MongoAddItem(COLL_LOST, item)
+		res = MongoAddItem(COLL_LOST, item)
 	}
+	return res
 }
 
-func DoUpdateItem(msg ItemMsgJSON) {
+func DoUpdateItem(msg ItemMsgJSON) int64 {
 	var item PatchItem
 	json.Unmarshal(msg.Body, &item)
 	var id string
@@ -154,30 +153,29 @@ func DoUpdateItem(msg ItemMsgJSON) {
 	// Safety check, should not trigger
 	if _, ok := msg.Params["Id"]; !ok {
 		log.Println("Update failed, item does not exist")
-		return
+		return -1
 	}
 	id = msg.Params["Id"][0]
 	item.Id, err = primitive.ObjectIDFromHex(id)
 	if err != nil {
 		log.Println("ERROR WHILE PATCHING:", err.Error())
-		return
+		return -1
 	}
 	id = msg.Params["Id"][0]
 	if _, ok := msg.Params["User_id"]; ok {
 		item.User_id = msg.Params["User_id"][0]
 	}
 	// Check which collection the request belongs to
-	// This logic is flimsy.
-	if item.User_id != "" {
-		// User_id presence implies the msg belongs to LOST collection
-		MongoPatchItem(COLL_LOST, item)
-	} else {
+	if item.User_id == "" {
 		// Item belongs to FOUND collection
-		MongoPatchItem(COLL_FOUND, item)
+		return MongoPatchItem(COLL_FOUND, item)
+	} else {
+		// User_id presence implies the msg belongs to LOST collection
+		return MongoPatchItem(COLL_LOST, item)
 	}
 }
 
-func DoDeleteItem(msg ItemMsgJSON) {
+func DoDeleteItem(msg ItemMsgJSON) int64 {
 	// Assert that msg contains enough parameters
 	var item DeletedItem
 	var id string
@@ -185,13 +183,13 @@ func DoDeleteItem(msg ItemMsgJSON) {
 	// Safety check, should not trigger
 	if _, ok := msg.Params["Id"]; !ok {
 		log.Println("Delete failed, item does not exist")
-		return
+		return -1
 	}
 	id = msg.Params["Id"][0]
 	item.Id, err = primitive.ObjectIDFromHex(id)
 	if err != nil {
 		log.Println("ERROR WHILE DELETING:", err.Error())
-		return
+		return -1
 	}
 	id = msg.Params["Id"][0]
 	if _, ok := msg.Params["User_id"]; ok {
@@ -199,8 +197,8 @@ func DoDeleteItem(msg ItemMsgJSON) {
 	}
 	// Check which collection the deleted item belongs to
 	if item.User_id == "" {
-		MongoDeleteItem(COLL_FOUND, item)
+		return MongoDeleteItem(COLL_FOUND, item)
 	} else {
-		MongoDeleteItem(COLL_LOST, item)
+		return MongoDeleteItem(COLL_LOST, item)
 	}
 }
