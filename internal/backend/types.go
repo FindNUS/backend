@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -61,17 +62,41 @@ const (
 
 // CATEGORY MAPPING
 func GetCategoryType(cat string) int {
+	cat = strings.ToLower(cat)
 	switch cat {
-	case "Cards":
+	case "etc":
+		return 0
+	case "cards":
 		return 1
-	case "Notes":
+	case "notes":
 		return 2
-	case "Electronics":
+	case "electronics":
 		return 3
-	case "Bottles":
+	case "bottles":
 		return 4
 	default:
+		return -1
+	}
+}
+
+// CONTACT_METHOD MAPPING
+func GetContactMethod(method string) int {
+	method = strings.ToLower(method)
+	switch method {
+	case "nus_security":
 		return 0
+	case "telegram":
+		return 1
+	case "whatsapp":
+		return 2
+	case "wechat":
+		return 3
+	case "line":
+		return 4
+	case "phone_number":
+		return 5
+	default:
+		return -1
 	}
 }
 

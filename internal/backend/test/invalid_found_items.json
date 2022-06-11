@@ -1,0 +1,40 @@
+[
+    {
+        "Name": "No Date",
+        "Location": "Kent Ridge MRT",
+        "Category": "Electronics",
+        "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    },
+    {
+        "Name": "No Location",
+        "Date": "2022-01-31T01:42:30Z",
+        "Category": "Electronics",
+        "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    },
+    {
+        "Name": "No Category",
+        "Date": "2022-01-31T01:42:30Z",
+        "Location": "Kent Ridge MRT",
+        "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    },
+    {
+        "Date": "2022-01-31T01:42:30Z",
+        "Location": "No Name",
+        "Category": "Electronics",
+        "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    },
+    {
+        "Name": "Invalid Date",
+        "Date": "201:42:30Z",
+        "Location": "Kent Ridge MRT",
+        "Category": "Electronics",
+        "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    },
+    {
+        "Name": "Invalid Category",
+        "Date": "2022-01-31T01:42:30Z",
+        "Location": "Kent Ridge MRT",
+        "Category": "Foobar",
+        "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    }
+]
