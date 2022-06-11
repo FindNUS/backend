@@ -29,16 +29,18 @@ func TestParseFoundItemBody(t *testing.T) {
 	testdata := loadTestItems("valid_found_items.json")
 	for _, item := range testdata {
 		bytes, _ := json.Marshal(item)
-		if ans := ParseFoundItemBody(bytes); ans == nil {
+		if _, err := ParseFoundItemBody(bytes); err != nil {
 			t.Log("Found item wrongly flagged as invalid: ", item)
+			t.Log("Error: ", err.Error())
 			t.Fail()
 		}
 	}
 	testdata = loadTestItems("invalid_found_items.json")
 	for _, item := range testdata {
 		bytes, _ := json.Marshal(item)
-		if ans := ParseFoundItemBody(bytes); ans != nil {
+		if _, err := ParseFoundItemBody(bytes); err == nil {
 			t.Log("Found item wrongly flagged as valid: ", item)
+			t.Log(err.Error())
 			t.Fail()
 		}
 	}
@@ -48,16 +50,18 @@ func TestParseLostItemBody(t *testing.T) {
 	testdata := loadTestItems("valid_lost_items.json")
 	for _, item := range testdata {
 		bytes, _ := json.Marshal(item)
-		if ans := ParseLostItemBody(bytes); ans == nil {
+		if _, err := ParseLostItemBody(bytes); err != nil {
 			t.Log("Lost item wrongly flagged as invalid: ", item)
+			t.Log(err.Error())
 			t.Fail()
 		}
 	}
 	testdata = loadTestItems("invalid_lost_items.json")
 	for _, item := range testdata {
 		bytes, _ := json.Marshal(item)
-		if ans := ParseLostItemBody(bytes); ans != nil {
+		if _, err := ParseLostItemBody(bytes); err == nil {
 			t.Log("Lost item wrongly flagged as valid: ", item)
+			t.Log(err.Error())
 			t.Fail()
 		}
 	}
