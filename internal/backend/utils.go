@@ -2,14 +2,15 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
+	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func PrettyPrintStruct(any interface{}) {
-	fmt.Printf("%+v\n", any)
+	log.Printf("%+v\n", any)
 }
 
 // Special handlers for Category mapping
@@ -19,6 +20,7 @@ func BodyHandleCategory(body *map[string]interface{}) bool {
 	if !ok {
 		return false
 	}
+	log.Println("Category string received: " + tmp)
 	if cat := GetCategoryType(tmp); cat < 0 {
 		return false
 	} else {
@@ -46,21 +48,22 @@ func BodyHandleDate(body *map[string]interface{}) bool {
 	if !ok {
 		return false
 	}
-	_, err := time.Parse("2006-01-02T15:04:05Z07:00", tmp)
+	log.Println("Date string received: " + tmp)
+	_, err := time.Parse("2006-01-02T15:04:05Z", tmp)
 	return (err == nil)
 }
 
 // Checks message body for valid New Lost Item structure
-func ParseLostItemBody(bytes []byte) []byte {
+func ParseLostItemBody(bytes []byte) ([]byte, error) {
 	var generalItem map[string]interface{}
 	// var item NewItem
 	json.Unmarshal(bytes, &generalItem)
 	// Handle special parameters
 	if !BodyHandleDate(&generalItem) {
-		return nil
+		return nil, errors.New("Date is invalid")
 	}
 	if !BodyHandleCategory(&generalItem) {
-		return nil
+		return nil, errors.New("Category is invalid")
 	}
 	BodyHandleContactMethod(&generalItem)
 	// Check for general required fields existence
@@ -68,24 +71,24 @@ func ParseLostItemBody(bytes []byte) []byte {
 	requiredFields := []string{"Name", "Location", "User_id"}
 	for _, field := range requiredFields {
 		if _, ok = generalItem[field]; !ok {
-			return nil
+			return nil, errors.New("Missing Name, Location &/or User_id")
 		}
 	}
 	bytes, _ = json.Marshal(generalItem)
-	return bytes
+	return bytes, nil
 }
 
 // Checks message body for valid New Found Item structure
-func ParseFoundItemBody(bytes []byte) []byte {
+func ParseFoundItemBody(bytes []byte) ([]byte, error) {
 	var generalItem map[string]interface{}
 	// var item NewItem
 	json.Unmarshal(bytes, &generalItem)
 	// Handle special parameters
 	if !BodyHandleDate(&generalItem) {
-		return nil
+		return nil, errors.New("Date is invalid")
 	}
 	if !BodyHandleCategory(&generalItem) {
-		return nil
+		return nil, errors.New("Category is invalid")
 	}
 	BodyHandleContactMethod(&generalItem)
 	// Check for general required fields existence
@@ -93,11 +96,11 @@ func ParseFoundItemBody(bytes []byte) []byte {
 	requiredFields := []string{"Name", "Location"}
 	for _, field := range requiredFields {
 		if _, ok = generalItem[field]; !ok {
-			return nil
+			return nil, errors.New("Missing Name &/or Location")
 		}
 	}
 	bytes, _ = json.Marshal(generalItem)
-	return bytes
+	return bytes, nil
 }
 
 func GetParams(c *gin.Context) map[string][]string {

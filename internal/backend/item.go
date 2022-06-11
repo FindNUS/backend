@@ -11,10 +11,10 @@ func HandleNewFoundItem(c *gin.Context) {
 	params := GetParams(c)
 	// TODO safety check for required fields
 	rawBody, _ := ioutil.ReadAll(c.Request.Body)
-	body := ParseFoundItemBody(rawBody)
+	body, err := ParseFoundItemBody(rawBody)
 	if body == nil {
 		c.JSON(400, gin.H{
-			"message": "Form body has issues",
+			"message": "Form body has issues: " + err.Error(),
 		})
 		return
 	}
@@ -29,10 +29,10 @@ func HandleNewLostItem(c *gin.Context) {
 	// No params check needed
 	params := GetParams(c)
 	rawBody, _ := ioutil.ReadAll(c.Request.Body)
-	body := ParseLostItemBody(rawBody)
-	if body == nil {
+	body, err := ParseLostItemBody(rawBody)
+	if err != nil {
 		c.JSON(400, gin.H{
-			"message": "Form body has issues. Did you include in a User_id?",
+			"message": "Form body has issues: " + err.Error(),
 		})
 		return
 	}
@@ -53,7 +53,7 @@ func HandleDeleteItem(c *gin.Context) {
 	paramlen := len(params)
 	if paramlen < 1 || params["Id"] == nil {
 		c.JSON(400, gin.H{
-			"message": "Missing parameters!",
+			"message": "Missing parameters! Ensure that there is at least an Id parameter",
 		})
 		return
 	}
@@ -81,7 +81,7 @@ func HandleUpdateItem(c *gin.Context) {
 	paramlen := len(params)
 	if paramlen < 1 || params["Id"] == nil {
 		c.JSON(400, gin.H{
-			"message": "Missing parameters!",
+			"message": "Missing parameters! Ensure that there is at least an Id parameter",
 		})
 		return
 	}
