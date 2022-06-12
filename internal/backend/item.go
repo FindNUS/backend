@@ -2,15 +2,25 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func HandleNewFoundItem(c *gin.Context) {
 	// No params check needed
-	params := GetParams(c)
 	// TODO safety check for required fields
-	rawBody, _ := ioutil.ReadAll(c.Request.Body)
+	params := GetParams(c)
+	log.Println("Params: ")
+	PrettyPrintStruct(params)
+	rawBody, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(400, gin.H{
+			"message": "Could not read body: " + err.Error(),
+		})
+		return
+	}
 	body, err := ParseFoundItemBody(rawBody)
 	if body == nil {
 		c.JSON(400, gin.H{
@@ -28,7 +38,16 @@ func HandleNewFoundItem(c *gin.Context) {
 func HandleNewLostItem(c *gin.Context) {
 	// No params check needed
 	params := GetParams(c)
-	rawBody, _ := ioutil.ReadAll(c.Request.Body)
+	log.Println("Params: ")
+	PrettyPrintStruct(params)
+	rawBody, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(400, gin.H{
+			"message": "Could not read body: " + err.Error(),
+		})
+		return
+	}
 	body, err := ParseLostItemBody(rawBody)
 	if err != nil {
 		c.JSON(400, gin.H{
