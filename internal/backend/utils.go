@@ -58,6 +58,9 @@ func ParseLostItemBody(bytes []byte) ([]byte, error) {
 	var generalItem map[string]interface{}
 	// var item NewItem
 	json.Unmarshal(bytes, &generalItem)
+
+	log.Println(generalItem)
+
 	// Handle special parameters
 	if !BodyHandleDate(&generalItem) {
 		return nil, errors.New("Date is invalid")
@@ -83,6 +86,9 @@ func ParseFoundItemBody(bytes []byte) ([]byte, error) {
 	var generalItem map[string]interface{}
 	// var item NewItem
 	json.Unmarshal(bytes, &generalItem)
+
+	log.Println(generalItem)
+
 	// Handle special parameters
 	if !BodyHandleDate(&generalItem) {
 		return nil, errors.New("Date is invalid")
@@ -103,6 +109,7 @@ func ParseFoundItemBody(bytes []byte) ([]byte, error) {
 	return bytes, nil
 }
 
+// Unwraps the URL's parameters
 func GetParams(c *gin.Context) map[string][]string {
 	var params map[string][]string
 	params = c.Request.URL.Query()
