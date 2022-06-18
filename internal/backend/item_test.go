@@ -24,7 +24,7 @@ func TestHandleNewLostItem(t *testing.T) {
 	bodybytes, _ := json.Marshal(body)
 	ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
 
-	HandleNewLostItem(ginContext)
+	HandleNewLostItem(ginContext, nil)
 	if httpwriter.Code != 400 {
 		t.Fatalf("Wrong code")
 	}
@@ -40,7 +40,7 @@ func TestHandleNewLostItem(t *testing.T) {
 	}
 	bodybytes, _ = json.Marshal(body)
 	ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
-	HandleNewLostItem(ginContext)
+	HandleNewLostItem(ginContext, nil)
 	if httpwriter.Code != 400 {
 		t.Fatalf("Wrong code - Assertion type")
 	}
@@ -59,7 +59,7 @@ func TestHandleNewFoundItem(t *testing.T) {
 	}
 	bodybytes, _ := json.Marshal(body)
 	ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
-	HandleNewFoundItem(ginContext)
+	HandleNewFoundItem(ginContext, nil)
 	if httpwriter.Code != 400 {
 		t.Fatalf("Wrong code - Assertion type")
 	}

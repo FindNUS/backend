@@ -7,12 +7,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleNewFoundItem(c *gin.Context) {
-	// No params check needed
-	// TODO safety check for required fields
+// Handles POST item requests.
+// Determines if the POST request belongs to the LOST or FOUND collection
+func HandleNewItem(c *gin.Context) {
 	params := GetParams(c)
-	log.Println("Params: ")
-	PrettyPrintStruct(params)
+	if _, ok := params["User_id"]; ok {
+		HandleNewLostItem(c, params)
+	} else {
+		HandleNewFoundItem(c, params)
+	}
+}
+
+func HandleNewFoundItem(c *gin.Context, params map[string][]string) {
+	// No params check needed
 	rawBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println(err.Error())
@@ -35,11 +42,8 @@ func HandleNewFoundItem(c *gin.Context) {
 	})
 }
 
-func HandleNewLostItem(c *gin.Context) {
+func HandleNewLostItem(c *gin.Context, params map[string][]string) {
 	// No params check needed
-	params := GetParams(c)
-	log.Println("Params: ")
-	PrettyPrintStruct(params)
 	rawBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println(err.Error())
