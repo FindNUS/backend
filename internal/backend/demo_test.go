@@ -47,7 +47,7 @@ func TestDebugGetDemoItem(t *testing.T) {
 		URL: &url.URL{},
 	}
 	q = req.URL.Query()
-	q.Add("name", "Foobar")
+	q.Add("Name", "Foobar")
 	ginContext.Request, _ = http.NewRequest("GET", "/debug/getDemoItem", nil)
 	req.URL.RawQuery = q.Encode()
 
