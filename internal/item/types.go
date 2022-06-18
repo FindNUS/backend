@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -58,6 +59,11 @@ type DeletedItem struct {
 	User_id string             `bson:"User_id,omitempty"`
 }
 
+type SingleItem struct {
+	Id      primitive.ObjectID `bson:"_id"`
+	User_id string             `bson:"User_id,omitempty"`
+}
+
 // JSON Message Wrapper
 type ItemMsgJSON struct {
 	Operation_type int
@@ -83,4 +89,23 @@ func ParseDateString(datestring string) time.Time {
 		return res
 	}
 	return time.Now()
+}
+
+// CATEGORY MAPPING str -> int
+func GetCategoryType(cat string) int {
+	cat = strings.ToLower(cat)
+	switch cat {
+	case "etc":
+		return 0
+	case "cards":
+		return 1
+	case "notes":
+		return 2
+	case "electronics":
+		return 3
+	case "bottles":
+		return 4
+	default:
+		return -1
+	}
 }
