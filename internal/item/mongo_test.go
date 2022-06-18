@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 	"testing"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func loadTestItems(filename string) []map[string]interface{} {
@@ -37,39 +35,35 @@ func buildItemMsgJson(params map[string][]string, body []byte) ItemMsgJSON {
 	return msg
 }
 
-func TestAddUpdateDelete(t *testing.T) {
-	// Test routine for Lost item (with user id)
-	item := loadTestItems("debug_add_item.json")
+func TestMongoGetManyItems(t *testing.T) {
 	SetupMongo()
-	bytes, _ := json.Marshal(item[0])
-	msg := buildItemMsgJson(nil, bytes)
-	// Add test
-	res := DoAddItem(msg)
-	if res == nil {
-		t.Fatal("Add item returned nil", item)
+	args := make(map[string][]string)
+	// Test limit
+	args["limit"] = []string{"10"}
+	items := MongoGetManyItems(COLL_FOUND, args)
+	if len(items) != 10 {
+		t.FailNow()
 	}
-	id, ok := res.(primitive.ObjectID)
-	if !ok {
-		t.Fatal("Object ID error")
+	for _, item := range items {
+		PrettyPrintStruct(item)
 	}
-	// log.Println("Object Id for testing: ", id)
-
-	// Create dummy parameters for proper parsing
-	dummyparams := make(map[string][]string)
-	dummyparams["Id"] = []string{id.Hex()}
-	userid, _ := item[0]["User_id"].(string)
-	dummyparams["User_id"] = []string{userid}
-	// Simulate a change in item details
-	item[0]["Id"] = id.Hex()
-	item[0]["Location"] = "New Location"
-	// Patch test
-	bytes, _ = json.Marshal(item[0])
-	msg = buildItemMsgJson(dummyparams, bytes)
-	if numUpdate := DoUpdateItem(msg); numUpdate != 1 {
-		t.Fatal("Patch item failed, number of modified: ", numUpdate)
+	// Test offset
+	args["limit"] = []string{"5"}
+	args["offset"] = []string{"5"}
+	items = MongoGetManyItems(COLL_FOUND, args)
+	if len(items) != 5 {
+		t.FailNow()
 	}
-	// Delete test
-	if numDel := DoDeleteItem(msg); numDel != 1 {
-		log.Fatal("Delete fail for ", id, ". Expected 1 delete but got ", numDel)
+	for _, item := range items {
+		PrettyPrintStruct(item)
+	}
+	// Test category filterimg
+	args["category"] = []string{"Electronics", "Notes"}
+	items = MongoGetManyItems(COLL_DEBUG, args)
+	for _, item := range items {
+		if !(item.Category == 3 || item.Category == 2) {
+			t.Fatalf("Category filter query returned wrong item category")
+		}
+		PrettyPrintStruct(item)
 	}
 }
