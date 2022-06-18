@@ -85,7 +85,7 @@ func debugGetDemoItem(c *gin.Context) {
 	name := c.Query("name")
 	res, err := coll.Find(
 		context.TODO(),
-		bson.D{{"name", name}},
+		bson.D{{"Name", name}},
 	)
 	if err != nil {
 		c.JSON(500, gin.H{

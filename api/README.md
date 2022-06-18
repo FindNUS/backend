@@ -9,20 +9,20 @@ API documentation for FindNUS backend services. Handles the retrieval, processin
   - [`GET` /debug/ping](#op-get-debug-ping) 
   - [`GET` /debug/checkAuth](#op-get-debug-checkauth) 
   - [`GET` /debug/getDemoItem](#op-get-debug-getdemoitem) 
-  - [`POST` /item/new/lost](#op-post-item-new-lost) 
-  - [`POST` /item/new/found](#op-post-item-new-found) 
-  - [`PATCH` /item/update](#op-patch-item-update) 
-  - [`GET` /item/get/{itemId}](#op-get-item-get-itemid) 
+  - [`POST` /item](#op-post-item) 
+  - [`PATCH` /item](#op-patch-item) 
+  - [`GET` /item](#op-get-item) 
+  - [`DELETE` /item](#op-delete-item) 
   - [`GET` /item/peek](#op-get-item-peek) 
-  - [`DELETE` /item/delete](#op-delete-item-delete) 
   - [`GET` /search](#op-get-search) 
 * [Schemas](#schemas)
   - Item
   - MiniItem
-  - NewLostItem
-  - NewFoundItem
+  - NewItem
   - DeleteItem
   - PatchItem
+  - Category
+  - ContactMethod
 
 
 <a id="servers" />
@@ -301,7 +301,7 @@ _No headers specified_
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Contact_method</td>
@@ -309,7 +309,7 @@ _No headers specified_
           string
         </td>
         <td>Founder/Lostee Contact Method</td>
-        <td><em>Any</em></td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
       </tr>
       <tr>
         <td>Contact_details</td>
@@ -402,8 +402,8 @@ Nothing Found!
 
 </div>
 
-### `POST` /item/new/lost
-<a id="op-post-item-new-lost" />
+### `POST` /item
+<a id="op-post-item" />
 
 Add new Lost item to be put on Lookout on the database.
 
@@ -465,7 +465,7 @@ Firebase ID token of user
   </thead>
   <tbody>
       <tr>
-        <td>User_id <strong>(required)</strong></td>
+        <td>User_id</td>
         <td>
           string
         </td>
@@ -502,15 +502,15 @@ Firebase ID token of user
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Contact_method</td>
         <td>
           string
         </td>
-        <td>Founder/Loster Contact Method</td>
-        <td><em>Any</em></td>
+        <td>Founder/Lostee Contact Method</td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
       </tr>
       <tr>
         <td>Contact_details</td>
@@ -548,7 +548,7 @@ Firebase ID token of user
   "Name": "Water Bottle",
   "Date": "2019-08-24T14:15:22Z",
   "Location": "E4A DSA Lab",
-  "Category": "Etc",
+  "Category": "Cards",
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
@@ -562,7 +562,7 @@ Firebase ID token of user
 #### Responses
 
 
-##### ▶ 201 - Item registered into database
+##### ▶ 200 - Item registered into database
 
 ###### Headers
 _No headers specified_
@@ -580,136 +580,8 @@ _No headers specified_
 
 </div>
 
-### `POST` /item/new/found
-<a id="op-post-item-new-found" />
-
-Submit a new item to be stored into the database.
-
-
-
-
-
-
-
-#### Request body
-###### application/json
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Name <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Name of new lost/found item</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Date <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Date-time where item is lost/found</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Location <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Where the item was found</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Category <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Type of item</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Contact_method</td>
-        <td>
-          string
-        </td>
-        <td>Founder/Loster Contact Method</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Contact_details</td>
-        <td>
-          string
-        </td>
-        <td>Contact details of Founder/Lostee</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Item_details</td>
-        <td>
-          string
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Image_base64</td>
-        <td>
-          string
-        </td>
-        <td>Accompanying image of new Lost/Found item, if applicable</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-##### Example _(generated)_
-
-```json
-{
-  "Name": "Water Bottle",
-  "Date": "2019-08-24T14:15:22Z",
-  "Location": "E4A DSA Lab",
-  "Category": "Etc",
-  "Contact_method": "Telegram",
-  "Contact_details": "FindNUS",
-  "Item_details": "Blue, with a sticker and broken handle",
-  "Image_base64": "string"
-}
-```
-
-
-
-
-#### Responses
-
-
-##### ▶ 201 - Item registered into database
-
-###### Headers
-_No headers specified_
-
-##### ▶ 400 - Rejected new item into database
-
-###### Headers
-_No headers specified_
-
-
-</div>
-
-### `PATCH` /item/update
-<a id="op-patch-item-update" />
+### `PATCH` /item
+<a id="op-patch-item" />
 
 Update details of an item on the database.
 
@@ -794,6 +666,7 @@ MongoDB ID of the Item
 FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
 
 
+
 <table>
   <thead>
     <tr>
@@ -811,7 +684,8 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
           string
         </td>
         <td>query</td>
-        <td>FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.</td>
+        <td><p>FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.</p>
+      </td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
@@ -886,15 +760,15 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Contact_method</td>
         <td>
           string
         </td>
-        <td>Founder/Loster Contact Method</td>
-        <td><em>Any</em></td>
+        <td>Founder/Lostee Contact Method</td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
       </tr>
       <tr>
         <td>Contact_details</td>
@@ -933,7 +807,7 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
   "Name": "Water Bottle",
   "Date": "2019-08-24T14:15:22Z",
   "Location": "E4A DSA Lab",
-  "Category": "Etc",
+  "Category": "Cards",
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
@@ -960,19 +834,20 @@ _No headers specified_
 
 </div>
 
-### `GET` /item/get/{itemId}
-<a id="op-get-item-get-itemid" />
+### `GET` /item
+<a id="op-get-item" />
 
 Get a particular item's full details
-WARNING: NOT IMPLEMENTED YET
 
 
 
-#### Path parameters
 
-##### &#9655; itemId
 
-Item Id reference
+#### Query parameters
+
+##### &#9655; Id
+
+Item Id reference. Case sensitive.
 
 
 <table>
@@ -987,18 +862,45 @@ Item Id reference
   </thead>
   <tbody>
       <tr>
-        <td>itemId  <strong>(required)</strong></td>
+        <td>Id  <strong>(required)</strong></td>
         <td>
-          integer
+          string
         </td>
-        <td>path</td>
-        <td>Item Id reference</td>
+        <td>query</td>
+        <td>Item Id reference. Case sensitive.</td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
 
 
+##### &#9655; User_id
+
+User_id filter to search for this Id in the LOST collection. Case sensitive.
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>User_id </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td>User_id filter to search for this Id in the LOST collection. Case sensitive.</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
 
 
 
@@ -1065,7 +967,7 @@ _No headers specified_
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Contact_method</td>
@@ -1073,7 +975,7 @@ _No headers specified_
           string
         </td>
         <td>Founder/Lostee Contact Method</td>
-        <td><em>Any</em></td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
       </tr>
       <tr>
         <td>Contact_details</td>
@@ -1135,220 +1037,8 @@ _No headers specified_
 
 </div>
 
-### `GET` /item/peek
-<a id="op-get-item-peek" />
-
-Get a list of lost items that can be sorted.
-Peek at the database's latest finds, paginated.
-(Adding queries for sorting and filtering to be implemented in the future)
-
-
-
-
-
-#### Query parameters
-
-##### &#9655; offset
-
-Number of items to skip
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>In</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>offset </td>
-        <td>
-          integer
-        </td>
-        <td>query</td>
-        <td>Number of items to skip</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-##### &#9655; limit
-
-Number of items to return
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>In</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>limit </td>
-        <td>
-          integer
-        </td>
-        <td>query</td>
-        <td>Number of items to return</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-##### &#9655; category
-
-Type of category to filter by
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>In</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>category </td>
-        <td>
-          string
-        </td>
-        <td>query</td>
-        <td>Type of category to filter by</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-
-
-
-#### Responses
-
-
-##### ▶ 200 - Returns an array of lost items that may be filtered
-
-###### Headers
-_No headers specified_
-
-###### application/json
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Response</td>
-        <td>
-          array(object)
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Id <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>The MongoDB ObjectID associated to this Item</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Name <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Name of lost/found item</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Date <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Date-time where item is lost/found</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Location <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Where the item was found</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Category <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Type of item</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Item_details</td>
-        <td>
-          string
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Response.Image_url</td>
-        <td>
-          string
-        </td>
-        <td>Item's accompanying image link</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-##### Example _(generated)_
-
-```json
-[
-  {
-    "Id": "98721yrr0u14oure",
-    "Name": "Water Bottle",
-    "Date": "2019-08-24T14:15:22Z",
-    "Location": "E4A DSA Lab",
-    "Category": "Cards",
-    "Item_details": "Blue, with a sticker and broken handle",
-    "Image_url": "https://imgur.com/gallery/RaHyECD"
-  }
-]
-```
-
-</div>
-
-### `DELETE` /item/delete
-<a id="op-delete-item-delete" />
+### `DELETE` /item
+<a id="op-delete-item" />
 
 Remove an item listing on the database.
 
@@ -1430,7 +1120,10 @@ MongoDB ID of the Item
 
 ##### &#9655; User_id
 
-FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
+FindNUS User_Id (for lost item lookout requests). 
+Include this to remove from Lost (Lookout) Items collection. 
+Case sensitive.
+
 
 
 <table>
@@ -1450,7 +1143,10 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
           string
         </td>
         <td>query</td>
-        <td>FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.</td>
+        <td><p>FindNUS User_Id (for lost item lookout requests).
+      Include this to remove from Lost (Lookout) Items collection.
+      Case sensitive.</p>
+      </td>
         <td><em>Any</em></td>
       </tr>
   </tbody>
@@ -1520,6 +1216,224 @@ _No headers specified_
 ###### Headers
 _No headers specified_
 
+
+</div>
+
+### `GET` /item/peek
+<a id="op-get-item-peek" />
+
+Get a list of lost items that can be sorted.
+Peek at the database's latest finds, paginated.
+(Adding queries for sorting and filtering to be implemented in the future)
+
+
+
+
+
+#### Query parameters
+
+##### &#9655; offset
+
+Number of items to skip (Case sensitive)
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>offset </td>
+        <td>
+          integer
+        </td>
+        <td>query</td>
+        <td>Number of items to skip (Case sensitive)</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### &#9655; limit
+
+Number of items to return (Case sensitive)
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>limit </td>
+        <td>
+          integer
+        </td>
+        <td>query</td>
+        <td>Number of items to return (Case sensitive)</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### &#9655; category
+
+Types of category to filter by.
+Chain multiple category values to filter by the
+For example, category=Cards&category=Etc will include results from both Cards and Etc. 
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>category </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td><p>Types of category to filter by.
+      Chain multiple category values to filter by the
+      For example, category=Cards&amp;category=Etc will include results from both Cards and Etc.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+#### Responses
+
+
+##### ▶ 200 - Returns an array of lost items that may be filtered
+
+###### Headers
+_No headers specified_
+
+###### application/json
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Response</td>
+        <td>
+          array(object)
+        </td>
+        <td></td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Id <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>The MongoDB ObjectID associated to this Item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Name <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Name of lost/found item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Date <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Date-time where item is lost/found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Location <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Where the item was found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Category <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Type of item</td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
+      </tr>
+      <tr>
+        <td>Response.Item_details</td>
+        <td>
+          string
+        </td>
+        <td></td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Image_url</td>
+        <td>
+          string
+        </td>
+        <td>Item's accompanying image link</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### Example _(generated)_
+
+```json
+[
+  {
+    "Id": "98721yrr0u14oure",
+    "Name": "Water Bottle",
+    "Date": "2019-08-24T14:15:22Z",
+    "Location": "E4A DSA Lab",
+    "Category": "Cards",
+    "Item_details": "Blue, with a sticker and broken handle",
+    "Image_url": "https://imgur.com/gallery/RaHyECD"
+  }
+]
+```
 
 </div>
 
@@ -1692,7 +1606,7 @@ _No headers specified_
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Contact_method</td>
@@ -1700,7 +1614,7 @@ _No headers specified_
           string
         </td>
         <td>Founder/Lostee Contact Method</td>
-        <td><em>Any</em></td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
       </tr>
       <tr>
         <td>Contact_details</td>
@@ -1805,7 +1719,7 @@ _No headers specified_
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Item_details</td>
@@ -1841,7 +1755,7 @@ _No headers specified_
 ```
 <a id="" />
 
-#### NewLostItem
+#### NewItem
 
 <table>
   <thead>
@@ -1854,7 +1768,7 @@ _No headers specified_
   </thead>
   <tbody>
       <tr>
-        <td>User_id <strong>(required)</strong></td>
+        <td>User_id</td>
         <td>
           string
         </td>
@@ -1891,15 +1805,15 @@ _No headers specified_
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Contact_method</td>
         <td>
           string
         </td>
-        <td>Founder/Loster Contact Method</td>
-        <td><em>Any</em></td>
+        <td>Founder/Lostee Contact Method</td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
       </tr>
       <tr>
         <td>Contact_details</td>
@@ -1936,102 +1850,7 @@ _No headers specified_
   "Name": "Water Bottle",
   "Date": "2019-08-24T14:15:22Z",
   "Location": "E4A DSA Lab",
-  "Category": "Etc",
-  "Contact_method": "Telegram",
-  "Contact_details": "FindNUS",
-  "Item_details": "Blue, with a sticker and broken handle",
-  "Image_base64": "string"
-}
-```
-<a id="" />
-
-#### NewFoundItem
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Name <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Name of new lost/found item</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Date <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Date-time where item is lost/found</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Location <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Where the item was found</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Category <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td>Type of item</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Contact_method</td>
-        <td>
-          string
-        </td>
-        <td>Founder/Loster Contact Method</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Contact_details</td>
-        <td>
-          string
-        </td>
-        <td>Contact details of Founder/Lostee</td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Item_details</td>
-        <td>
-          string
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
-        <td>Image_base64</td>
-        <td>
-          string
-        </td>
-        <td>Accompanying image of new Lost/Found item, if applicable</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-##### Example _(generated)_
-
-```json
-{
-  "Name": "Water Bottle",
-  "Date": "2019-08-24T14:15:22Z",
-  "Location": "E4A DSA Lab",
-  "Category": "Etc",
+  "Category": "Cards",
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
@@ -2130,15 +1949,15 @@ _No headers specified_
           string
         </td>
         <td>Type of item</td>
-        <td><em>Any</em></td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Contact_method</td>
         <td>
           string
         </td>
-        <td>Founder/Loster Contact Method</td>
-        <td><em>Any</em></td>
+        <td>Founder/Lostee Contact Method</td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
       </tr>
       <tr>
         <td>Contact_details</td>
@@ -2176,10 +1995,70 @@ _No headers specified_
   "Name": "Water Bottle",
   "Date": "2019-08-24T14:15:22Z",
   "Location": "E4A DSA Lab",
-  "Category": "Etc",
+  "Category": "Cards",
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_base64": "string"
 }
+```
+<a id="" />
+
+#### Category
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Category</td>
+        <td>
+          string
+        </td>
+        <td>Non-case sensitive category name</td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
+      </tr>
+  </tbody>
+</table>
+
+##### Example _(generated)_
+
+```json
+"Etc"
+```
+<a id="" />
+
+#### ContactMethod
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>ContactMethod</td>
+        <td>
+          string
+        </td>
+        <td>Non-case sensitive contact method</td>
+        <td><code>nus_security</code>, <code>telegram</code>, <code>whatsapp</code>, <code>wechat</code>, <code>line</code>, <code>phone_number</code></td>
+      </tr>
+  </tbody>
+</table>
+
+##### Example _(generated)_
+
+```json
+"nus_security"
 ```

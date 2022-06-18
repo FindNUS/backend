@@ -69,7 +69,7 @@ paths:
                 example: | 
                   Nothing Found!
 # These set of paths define Creation, Update and Delete item operations   
-  /item/new/lost:
+  /item:
     post:
       description: |
         Add new Lost item to be put on Lookout on the database.
@@ -86,30 +86,15 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: "#/components/schemas/NewLostItem"
+              $ref: "#/components/schemas/NewItem"
       responses:
-        '201':
+        '200':
           description: Item registered into database
         '400':
           description: Rejected new item into database
         '401':
           description: Firebase credentials not invalid
-  /item/new/found:
-    post:
-      description: |
-        Submit a new item to be stored into the database.
-      requestBody:
-        description: Callback item payload
-        content:
-          'application/json':
-            schema:
-              $ref: "#/components/schemas/NewFoundItem"
-      responses:
-        '201':
-          description: Item registered into database
-        '400':
-          description: Rejected new item into database
-  /item/update:
+  # /item:
     patch:
       description: |
         Update details of an item on the database.
@@ -130,7 +115,8 @@ paths:
           example: "Id=629cc52563533a84f60c4c68"
       - in: query
         name: User_id
-        description: FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
+        description: |
+          FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
         required: true
         schema:
           type: string
@@ -146,19 +132,25 @@ paths:
           description: OK
         '401': 
           description: Firebase credentials not invalid
-  /item/get/{itemId}:
+  # /item:
     get:
       description: |
         Get a particular item's full details
-        WARNING: NOT IMPLEMENTED YET
       parameters:
-        - name: itemId
-          in: path
+        - name: Id
+          in: query
           required: true
-          description: Item Id reference
+          description: Item Id reference. Case sensitive.
           schema:
-            type : integer
-            format: int64
+            type: string
+            format: string
+            minimum: 1
+        - name: User_id
+          in: query
+          description: User_id filter to search for this Id in the LOST collection. Case sensitive.
+          schema:
+            type: string
+            format: string
             minimum: 1
       responses:
         '200':
@@ -169,38 +161,7 @@ paths:
                 $ref: '#/components/schemas/Item'
         '404':
           description: Item not found
-  /item/peek:
-    get:
-      description: |
-        Get a list of lost items that can be sorted.
-        Peek at the database's latest finds, paginated.
-        (Adding queries for sorting and filtering to be implemented in the future)
-      parameters:
-        - in: query
-          name: offset
-          schema:
-            type: integer
-          description: Number of items to skip
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: Number of items to return
-        - in: query
-          name: category
-          schema:
-            type: string
-          description: Type of category to filter by
-      responses:
-        '200':
-          description: Returns an array of lost items that may be filtered
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MiniItem'
-  /item/delete:
+  # /item:
     delete:
       description: |
         Remove an item listing on the database.
@@ -221,7 +182,10 @@ paths:
             example: "Id=629cc52563533a84f60c4c68"
         - in: query
           name: User_id
-          description: FindNUS User Id (for lost item lookout requests). Include this to remove from Lost (Lookout) Items collection.
+          description: |
+            FindNUS User_Id (for lost item lookout requests). 
+            Include this to remove from Lost (Lookout) Items collection. 
+            Case sensitive.
           required: false
           schema:
             type: string
@@ -239,6 +203,43 @@ paths:
           description: Item does not exist in the database
         '401':
           description: Firebase credentials not invalid  
+  /item/peek:
+    get:
+      description: |
+        Get a list of lost items that can be sorted.
+        Peek at the database's latest finds, paginated.
+        (Adding queries for sorting and filtering to be implemented in the future)
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: Number of items to skip (Case sensitive)
+          example: offset=10
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of items to return (Case sensitive)
+          example: limit=5
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: |
+            Types of category to filter by.
+            Chain multiple category values to filter by the
+            For example, category=Cards&category=Etc will include results from both Cards and Etc. 
+          example: category=Etc
+      responses:
+        '200':
+          description: Returns an array of lost items that may be filtered
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MiniItem'
 # These set of paths define querying with a text-based search
   /search:
     get:
@@ -296,11 +297,11 @@ components:
           description: Where the item was found
           example: E4A DSA Lab
         Category:
-          type: string
+          $ref: "#/components/schemas/Category"
           description: Type of item
           example: Cards
         Contact_method:
-          type: string
+          $ref: "#/components/schemas/ContactMethod"
           description: Founder/Lostee Contact Method
           example: Telegram
         Contact_details:
@@ -349,7 +350,7 @@ components:
           description: Where the item was found
           example: E4A DSA Lab
         Category:
-          type: string
+          $ref: "#/components/schemas/Category"
           description: Type of item
           example: Cards
         Item_details:
@@ -360,15 +361,14 @@ components:
           format: string
           description: Item's accompanying image link
           example: https://imgur.com/gallery/RaHyECD     
-    NewLostItem:
+    NewItem:
       type: object
       description: |
         An Item's schema for POST calls to the backend, for adding NEW items 
-        NewItems have two states They are either a LOOKOUT or FOUND item. 
-        - LOOKOUT: Generated by Losters. Other than the required parameters, a User_id is necessary for Item association to the user.
-        - EXISTING: Generaterd by Finders. At a minimum, only the required parameters are necessary.
+        NewItems have two states. They are either a LOST or FOUND item. 
+        - LOST: Generated by Losters. Other than the required parameters, **a User_id is required** for Item association to the user.
+        - FOUN: Generaterd by Finders. At a minimum, only the required parameters are necessary.
       required:
-        - User_id
         - Name
         - Date
         - Location
@@ -390,56 +390,12 @@ components:
           description: Where the item was found
           example: E4A DSA Lab
         Category:
-          type: string
+          $ref: "#/components/schemas/Category"
           description: Type of item
-          example: Etc
+          example: Cards
         Contact_method:
-          type: string
-          description: Founder/Loster Contact Method
-          example: Telegram
-        Contact_details:
-          type: string
-          description: Contact details of Founder/Lostee
-          example: FindNUS
-        Item_details:
-          type: string
-          example: Blue, with a sticker and broken handle
-        Image_base64:
-          type: string
-          description: Accompanying image of new Lost/Found item, if applicable
-          format: byte
-    NewFoundItem:
-      type: object
-      description: |
-        An Item's schema for POST calls to the backend, for adding NEW items 
-        NewItems have two states They are either a LOOKOUT or FOUND item. 
-        - LOOKOUT: Generated by Losters. Other than the required parameters, a User_id is necessary for Item association to the user.
-        - EXISTING: Generaterd by Finders. At a minimum, only the required parameters are necessary.
-      required:
-        - Name
-        - Date
-        - Location
-        - Category
-      properties:
-        Name:
-          type: string
-          description: Name of new lost/found item
-          example: Water Bottle
-        Date:
-          type: string
-          description: Date-time where item is lost/found
-          format: date-time
-        Location:
-          type: string
-          description: Where the item was found
-          example: E4A DSA Lab
-        Category:
-          type: string
-          description: Type of item
-          example: Etc
-        Contact_method:
-          type: string
-          description: Founder/Loster Contact Method
+          $ref: "#/components/schemas/ContactMethod"
+          description: Founder/Lostee Contact Method
           example: Telegram
         Contact_details:
           type: string
@@ -495,12 +451,12 @@ components:
           description: Where the item was found
           example: E4A DSA Lab
         Category:
-          type: string
+          $ref: "#/components/schemas/Category"
           description: Type of item
-          example: Etc
+          example: Cards
         Contact_method:
-          type: string
-          description: Founder/Loster Contact Method
+          $ref: "#/components/schemas/ContactMethod"
+          description: Founder/Lostee Contact Method
           example: Telegram
         Contact_details:
           type: string
@@ -513,7 +469,25 @@ components:
           type: string
           description: Updated image of Lost/Found item, if applicable
           format: byte
-
+    Category:
+      type: string
+      enum:
+        - Etc
+        - Cards
+        - Notes
+        - Electronics
+        - Bottles
+      description: Non-case sensitive category name
+    ContactMethod:
+      type: string
+      enum:
+        - nus_security
+        - telegram
+        - whatsapp
+        - wechat
+        - line
+        - phone_number
+      description: Non-case sensitive contact method
   # Define security scheme (Firebase Token)
   securitySchemes:
     firebaseAuth:

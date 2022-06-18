@@ -16,15 +16,15 @@ import (
 // Type definitions for the marshalling of data
 type Item struct {
 	Id              primitive.ObjectID `bson:"_id"`
-	Name            string
-	Date            time.Time
-	Location        string
-	Category        int
-	Contact_method  int
-	Contact_details string
-	Item_details    string
-	Image_url       string
-	User_id         string `bson:"User_id, omitempty"`
+	Name            string             `bson:"Name"`
+	Date            time.Time          `bson:"Date"`
+	Location        string             `bson:"Location"`
+	Category        string             `bson:"Category"`
+	Contact_method  string             `bson:"Contact_method,omitempty" json:"Contact_method,omitempty"`
+	Contact_details string             `bson:"Contact_details,omitempty" json:"Contact_details,omitempty"`
+	Item_details    string             `bson:"Item_details,omitempty" json:"Item_details,omitempty"`
+	Image_url       string             `bson:"Image_url,omitempty" json:"Image_url,omitempty"`
+	User_id         string             `bson:"User_id, omitempty" json:"User_id,omitempty"`
 }
 
 // NOTE: New Item will require some preprocessing, namely the storage of imgr
@@ -60,7 +60,7 @@ const (
 	OPERATION_DEL_ITEM      int = 6 // /item/delete
 )
 
-// CATEGORY MAPPING
+// CATEGORY MAPPING str -> int
 func GetCategoryType(cat string) int {
 	cat = strings.ToLower(cat)
 	switch cat {
@@ -76,6 +76,25 @@ func GetCategoryType(cat string) int {
 		return 4
 	default:
 		return -1
+	}
+}
+
+// Category mapping int -> str
+func GetCategoryString(cat float64) string {
+	// WARNING: Floating point errors probable
+	switch cat {
+	case 0:
+		return "Etc"
+	case 1:
+		return "Cards"
+	case 2:
+		return "Notes"
+	case 3:
+		return "Electronics"
+	case 4:
+		return "Bottles"
+	default:
+		return "Unknown"
 	}
 }
 
@@ -97,6 +116,26 @@ func GetContactMethod(method string) int {
 		return 5
 	default:
 		return -1
+	}
+}
+
+func GetContactString(cat float64) string {
+	// WARNING: Floating point errors probable
+	switch cat {
+	case 0:
+		return "Nus_security"
+	case 1:
+		return "Telegram"
+	case 2:
+		return "Whatsapp"
+	case 3:
+		return "Wechat"
+	case 4:
+		return "Line"
+	case 5:
+		return "Phone_number"
+	default:
+		return "Unknown"
 	}
 }
 

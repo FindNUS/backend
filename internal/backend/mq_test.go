@@ -15,7 +15,7 @@ func TestGetJobId(t *testing.T) {
 		go func() {
 			n := rand.Intn(10)
 			time.Sleep(time.Duration(n) * time.Microsecond)
-			id := GetItemJobId()
+			id := GetJobId()
 			ch <- id
 		}()
 	}

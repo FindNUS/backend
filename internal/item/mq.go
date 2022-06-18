@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"log"
 	"os"
 
@@ -11,7 +12,8 @@ import (
 // Global variables to allow MQ access
 var MqConn *amqp.Connection
 var ItemChannel *amqp.Channel
-var ItemQueueConfig amqp.Queue
+var ItemQueue amqp.Queue
+var GetItemQueue amqp.Queue
 
 // Thread-safe jobId implementation
 
@@ -40,46 +42,79 @@ func SetupMessageBrokerConnection() {
 	}
 }
 
-// Setup Queue reference
-func SetupChannelQueues() {
+// Setup Channels
+func SetupChannel() {
 	var err error
 	ItemChannel, err = MqConn.Channel()
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
-	ItemQueueConfig, err = ItemChannel.QueueDeclare(
-		"q_item", // name
-		false,    // durable
-		false,    // delete when unused
-		false,    // exclusive
-		false,    // no-wait
-		nil,      // arguments
-	)
 }
 
 // Subroutine to handle message consumption
 func ConsumeMessages() {
+	// Consume Item (POST PATCH DELETE) messages
 	msgs, err := ItemChannel.Consume(
-		ItemQueueConfig.Name, // queue
-		"",                   // consumer
-		true,                 // auto-ack
-		false,                // exclusive
-		false,                // no-local
-		false,                // no-wait
-		nil,                  // args
+		"q_item", // queue
+		"",       // consumer
+		true,     // auto-ack
+		false,    // exclusive
+		false,    // no-local
+		false,    // no-wait
+		nil,      // args
 	)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	forever := make(chan bool)
+	for d := range msgs {
+		log.Printf("Received a message: %s", d.Body)
+		HandleRequest(d)
+	}
+	log.Println("Consume Item messages shutting down")
+}
 
-	go func() {
-		for d := range msgs {
-			HandleRequest(d.Body)
-			log.Printf("Received a message: %s", d.Body)
-		}
-	}()
+// Subroutine to handle GET messages
+func ConsumeGetMessages() {
+	// Consume Item (POST PATCH DELETE) messages
+	msgs, err := ItemChannel.Consume(
+		"q_get_req", // queue
+		"",          // consumer
+		true,        // auto-ack
+		false,       // exclusive
+		false,       // no-local
+		false,       // no-wait
+		nil,         // args
+	)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	<-forever
+	ItemChannel.Qos(
+		1,     // prefetch count
+		0,     // prefetch size
+		false, // global
+	)
+
+	for d := range msgs {
+		log.Printf("Received a GET message: %s", d.Body)
+		HandleRequest(d)
+	}
+	log.Println("Consume Get Messages shutting down")
+}
+
+func PublishResponse(item interface{}, d amqp.Delivery) {
+	// Marshall response
+	msg, _ := json.Marshal(item)
+	ItemChannel.Publish(
+		"",        // exchange
+		d.ReplyTo, // routing key (name)
+		false,     // mandatory
+		false,     // immediate
+		amqp.Publishing{
+			ContentType:   "application/json",
+			CorrelationId: d.CorrelationId,
+			Body:          []byte(msg),
+		},
+	)
 }

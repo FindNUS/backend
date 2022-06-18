@@ -19,22 +19,20 @@ import (
 // Do this because Github and Heroku do not have a native way of storing JSON secrets
 func GetGoogleCredJson(isProd bool) map[string]string {
 	var projectId string
-	var private_key_id string
 	// Get private key from environment and replace unescaped newlines
 	private_key, _ := os.LookupEnv("FIREBASE_KEY")
 	private_key = strings.ReplaceAll(private_key, "\\n", "\n")
+	private_key_id, _ := os.LookupEnv("FIREBASE_KEY_ID")
 	var client_email string
 	var client_id string
 	var client_x509_cert_url string
 	if isProd {
 		projectId = "findnus-prod"
-		private_key_id = "8c637a14442a5a1848af1da952d859148cfc063c"
 		client_email = "firebase-adminsdk-ssly0@findnus-prod.iam.gserviceaccount.com"
 		client_id = "117830696574462735012"
 		client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ssly0%40findnus-prod.iam.gserviceaccount.com"
 	} else {
 		projectId = "findnus-dev"
-		private_key_id = "0cdf90c387f5d81121bcccb8ba1f9403e77cf2a4"
 		client_email = "firebase-adminsdk-9zxcr@findnus-dev.iam.gserviceaccount.com"
 		client_id = "116839976717740702813"
 		client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-9zxcr%40findnus-dev.iam.gserviceaccount.com"
