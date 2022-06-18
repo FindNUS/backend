@@ -40,22 +40,24 @@ func main() {
 	grpItem := router.Group("/item")
 	{
 		// Creation of new items
-		new := grpItem.Group("/new")
-		{
-			new.POST("/lost", HandleNewLostItem)
-			new.POST("/found", HandleNewFoundItem)
-		}
+		// grpItem.POST("/lost", HandleNewLostItem)
+		// grpItem.POST("/found", HandleNewFoundItem)
+		grpItem.POST("", HandleNewItem)
+
 		// Update of items
-		grpItem.PATCH("/update", HandleUpdateItem) //TODO: Add auth middleware
+		grpItem.PATCH("", HandleUpdateItem) //TODO: Add auth middleware
 		// Deletion
-		grpItem.DELETE("/delete", HandleDeleteItem) //TODO: Add auth middleware
+		grpItem.DELETE("", HandleDeleteItem) //TODO: Add auth middleware
 		// Get specific item
-		grpItem.GET("/get") //TODO
+		grpItem.GET("", HandleGetOneItem) //TODO
 		// Get range of items
-		grpItem.GET("/peek") //TODO
+		grpItem.GET("/peek", HandleGetManyItems) //TODO
 	}
 	setupMongo("Items")
 	SetupMessageBrokerConnection()
 	SetupChannelQueues()
+
+	// Consume RPC return calls for GET messages
+	go ConsumeGetItemMessage()
 	router.Run(":" + port)
 }
