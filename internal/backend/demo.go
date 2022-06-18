@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -94,8 +95,15 @@ func debugGetDemoItem(c *gin.Context) {
 	}
 	var items []Item
 	for res.Next(context.TODO()) {
-		var item Item
-		res.Decode(&item)
+		var generic map[string]interface{}
+		var genericItem map[string]interface{}
+		// Simulate RPC marshalling
+		res.Decode(&generic)
+		generic["Id"] = generic["_id"].(primitive.ObjectID).Hex()
+		delete(generic, "_id")
+		sim, _ := json.Marshal(generic)
+		json.Unmarshal(sim, &genericItem)
+		item := ParseGetOneItemRPC(genericItem)
 		items = append(items, item)
 	}
 	if len(items) == 0 {
@@ -105,6 +113,7 @@ func debugGetDemoItem(c *gin.Context) {
 		return
 	}
 	println("GET OK")
+	PrettyPrintStruct(items[0])
 	c.JSON(200, items)
 }
 
