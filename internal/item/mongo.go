@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -75,33 +75,6 @@ func SetupMongo() {
 	fmt.Println("MONGO SETUP OK")
 }
 
-// Recieves work to be done
-func HandleRequest(rawMsg []byte) {
-	msg := UnmarshallMessage(rawMsg)
-	switch msg.Operation_type {
-	case OPERATION_NEW_ITEM:
-		DoAddItem(msg)
-		break
-	case OPERATION_PATCH_ITEM:
-		DoUpdateItem(msg)
-		break
-	case OPERATION_GET_ITEM:
-		//foo
-		fmt.Println("Get Item Triggered")
-		break
-	case OPERATION_GET_ITEM_LIST:
-		//foo
-		fmt.Println("Get Item List Triggered")
-		break
-	case OPERATION_DEL_ITEM:
-		DoDeleteItem(msg)
-		break
-	default:
-		// foo
-		break
-	}
-}
-
 func MongoAddItem(collName ItemCollections, item NewItem) interface{} {
 	coll := mongoDb.Collection(string(collName))
 	res, err := coll.InsertOne(context.TODO(), item)
@@ -130,75 +103,91 @@ func MongoDeleteItem(collname ItemCollections, item DeletedItem) int64 {
 	return res.DeletedCount
 }
 
-// Handle creation of new item
-func DoAddItem(msg ItemMsgJSON) interface{} {
-	// Unmarshall body
-	var item NewItem
-	var res interface{}
-	json.Unmarshal(msg.Body, &item)
-	if item.User_id == "" {
-		// Assert that user_id only exists for found items
-		res = MongoAddItem(COLL_FOUND, item)
-	} else {
-		res = MongoAddItem(COLL_LOST, item)
+// Get one specific item based on its id
+func MongoGetItem(collname ItemCollections, id string, userid string) Item {
+	coll := mongoDb.Collection(string(collname))
+	myid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Println("Error getting ObjectID from hex")
 	}
-	return res
+	query := bson.D{{"_id", myid}}
+	if len(userid) > 0 {
+		query = append(query, bson.E{"User_id", userid})
+	}
+	res, err := coll.Find(
+		context.TODO(),
+		query,
+	)
+	var item Item
+	// This should only run once
+	for res.Next(context.TODO()) {
+		res.Decode(&item)
+	}
+	return item
 }
 
-func DoUpdateItem(msg ItemMsgJSON) int64 {
-	var item PatchItem
-	json.Unmarshal(msg.Body, &item)
-	var id string
+// Query for a paginated list of truncated items based on a set of filters
+func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Item {
+	coll := mongoDb.Collection(string(collname))
+	limit := int64(0)
+	offset := int64(0)
+	var ok bool
 	var err error
-	// Safety check, should not trigger
-	if _, ok := msg.Params["Id"]; !ok {
-		log.Println("Update failed, item does not exist")
-		return -1
+	// Parse pagination variables
+	if _, ok = args["limit"]; ok {
+		limit, err = strconv.ParseInt(args["limit"][0], 10, 64)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		delete(args, "limit")
 	}
-	id = msg.Params["Id"][0]
-	item.Id, err = primitive.ObjectIDFromHex(id)
-	if err != nil {
-		log.Println("ERROR WHILE PATCHING:", err.Error())
-		return -1
+	if _, ok = args["offset"]; ok {
+		offset, err = strconv.ParseInt(args["offset"][0], 10, 64)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		delete(args, "offset")
 	}
-	id = msg.Params["Id"][0]
-	if _, ok := msg.Params["User_id"]; ok {
-		item.User_id = msg.Params["User_id"][0]
-	}
-	// Check which collection the request belongs to
-	if item.User_id == "" {
-		// Item belongs to FOUND collection
-		return MongoPatchItem(COLL_FOUND, item)
-	} else {
-		// User_id presence implies the msg belongs to LOST collection
-		return MongoPatchItem(COLL_LOST, item)
-	}
-}
+	// Parse category filters
 
-func DoDeleteItem(msg ItemMsgJSON) int64 {
-	// Assert that msg contains enough parameters
-	var item DeletedItem
-	var id string
-	var err error
-	// Safety check, should not trigger
-	if _, ok := msg.Params["Id"]; !ok {
-		log.Println("Delete failed, item does not exist")
-		return -1
+	// { $or : [ { "Category": {"$eq", "foo"}, {...} } ]
+	var filter bson.M
+	if catFilter, ok := args["category"]; ok {
+		tmp := []bson.M{}
+		for _, catStr := range catFilter {
+			catInt := GetCategoryType(catStr)
+			if err != nil {
+				log.Println("Error parsing category filter")
+			}
+			tmp = append(tmp, bson.M{"Category": catInt})
+		}
+		filter = bson.M{"$or": tmp}
 	}
-	id = msg.Params["Id"][0]
-	item.Id, err = primitive.ObjectIDFromHex(id)
+	log.Println(filter)
+	opts := options.Find()
+	// Specify what fields to return. Id is implicitly returned
+	opts.SetProjection(
+		bson.D{
+			{"Name", 1},
+			{"Date", 1},
+			{"Location", 1},
+			{"Category", 1},
+		},
+	)
+	opts.SetSort(bson.D{{"Date", -1}})
+	opts.SetSkip(offset)
+	opts.SetLimit(limit)
+
+	// TODO: Consider parsing all other filters, if they exist
+	res, err := coll.Find(context.TODO(), filter, opts)
 	if err != nil {
-		log.Println("ERROR WHILE DELETING:", err.Error())
-		return -1
+		log.Fatal(err.Error())
 	}
-	id = msg.Params["Id"][0]
-	if _, ok := msg.Params["User_id"]; ok {
-		item.User_id = msg.Params["User_id"][0]
+	var items []Item
+	for res.Next(context.TODO()) {
+		var item Item
+		res.Decode(&item)
+		items = append(items, item)
 	}
-	// Check which collection the deleted item belongs to
-	if item.User_id == "" {
-		return MongoDeleteItem(COLL_FOUND, item)
-	} else {
-		return MongoDeleteItem(COLL_LOST, item)
-	}
+	return items
 }
