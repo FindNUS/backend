@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/streadway/amqp"
 )
 
@@ -21,8 +19,6 @@ func HandleRequest(d amqp.Delivery) {
 		PublishResponse(item, d)
 		break
 	case OPERATION_GET_ITEM_LIST:
-		//foo
-		fmt.Println("Get Item List Triggered")
 		items := DoGetManyItems(msg)
 		PublishResponse(items, d)
 		break
