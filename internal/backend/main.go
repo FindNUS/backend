@@ -40,8 +40,6 @@ func main() {
 	grpItem := router.Group("/item")
 	{
 		// Creation of new items
-		// grpItem.POST("/lost", HandleNewLostItem)
-		// grpItem.POST("/found", HandleNewFoundItem)
 		grpItem.POST("", HandleNewItem)
 
 		// Update of items
