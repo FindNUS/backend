@@ -1,0 +1,34 @@
+name: Deploy Item uService to Heroku Prod Env 
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - "internal/item/**"
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      #Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Dockerfile
+        run: bash build/setup_item.sh
+      - name: Build & Deploy Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          docker_heroku_process_type: worker
+          docker_build_args: |
+            PRODUCTION
+            MONGO_URI
+            RABBITMQ_URI
+        env:
+          PRODUCTION: true
+          MONGO_URI: ${{ secrets.MONGO_URI_PROD }}
+          RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_PROD }}
