@@ -30,19 +30,6 @@ func BodyHandleCategory(body *map[string]interface{}) bool {
 	return true
 }
 
-// Special handler for Contact_method mapping
-// Pass-by pointer to reduce stack memory load
-// DEPRECIATED
-func BodyHandleContactMethod(body *map[string]interface{}) {
-	// tmp, ok := (*body)["Contact_method"].(string)
-	// if !ok {
-	// 	return
-	// }
-	// TODO: Invalid contact method will be processed as "Unspecified"
-	// cat := GetContactMethod(tmp)
-	// (*body)["Contact_method"] = cat
-}
-
 // Date validity handler
 // Pass-by pointer to reduce stack memory load
 func BodyHandleDate(body *map[string]interface{}) bool {
@@ -70,7 +57,6 @@ func ParseLostItemBody(bytes []byte) ([]byte, error) {
 	if !BodyHandleCategory(&generalItem) {
 		return nil, errors.New("Category is invalid")
 	}
-	// BodyHandleContactMethod(&generalItem)
 	// Check for general required fields existence
 	var ok bool
 	requiredFields := []string{"Name", "Location", "User_id"}
