@@ -16,7 +16,8 @@ func DoAddItem(msg ItemMsgJSON) interface{} {
 	// Unmarshall body
 	var item NewItem
 	var res interface{}
-	json.Unmarshal(msg.Body, &item)
+	body := ParseNewItemBody(msg.Body)
+	json.Unmarshal(body, &item)
 	if item.User_id == "" {
 		// Assert that user_id only exists for found items
 		res = MongoAddItem(COLL_FOUND, item)
@@ -28,7 +29,8 @@ func DoAddItem(msg ItemMsgJSON) interface{} {
 
 func DoUpdateItem(msg ItemMsgJSON) int64 {
 	var item PatchItem
-	json.Unmarshal(msg.Body, &item)
+	body := ParseNewItemBody(msg.Body)
+	json.Unmarshal(body, &item)
 	var id string
 	var err error
 	// Safety check, should not trigger

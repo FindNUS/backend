@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"testing"
 )
 
@@ -15,7 +14,7 @@ func TestDoGetItem(t *testing.T) {
 		nil,
 	}
 	item := DoGetItem(msg)
-	log.Println(item)
+	PrettyPrintStruct(item)
 	if item == (Item{}) {
 		t.Fatal("Item returned is empty")
 	}
@@ -28,7 +27,7 @@ func TestDoGetItem(t *testing.T) {
 		nil,
 	}
 	item = DoGetItem(msg)
-	log.Println(item)
+	PrettyPrintStruct(item)
 	if item == (Item{}) {
 		t.Fatal("Item returned is empty")
 	}
