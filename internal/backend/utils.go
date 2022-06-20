@@ -20,25 +20,27 @@ func BodyHandleCategory(body *map[string]interface{}) bool {
 	if !ok {
 		return false
 	}
-	log.Println("Category string received: " + tmp)
+	// log.Println("Category string received: " + tmp)
 	if cat := GetCategoryType(tmp); cat < 0 {
 		return false
-	} else {
-		(*body)["Category"] = cat
 	}
+	// else {
+	// 	(*body)["Category"] = cat
+	// }
 	return true
 }
 
 // Special handler for Contact_method mapping
 // Pass-by pointer to reduce stack memory load
+// DEPRECIATED
 func BodyHandleContactMethod(body *map[string]interface{}) {
-	tmp, ok := (*body)["Contact_method"].(string)
-	if !ok {
-		return
-	}
+	// tmp, ok := (*body)["Contact_method"].(string)
+	// if !ok {
+	// 	return
+	// }
 	// TODO: Invalid contact method will be processed as "Unspecified"
-	cat := GetContactMethod(tmp)
-	(*body)["Contact_method"] = cat
+	// cat := GetContactMethod(tmp)
+	// (*body)["Contact_method"] = cat
 }
 
 // Date validity handler
@@ -48,7 +50,7 @@ func BodyHandleDate(body *map[string]interface{}) bool {
 	if !ok {
 		return false
 	}
-	log.Println("Date string received: " + tmp)
+	// log.Println("Date string received: " + tmp)
 	_, err := time.Parse("2006-01-02T15:04:05Z", tmp)
 	return (err == nil)
 }
@@ -68,7 +70,7 @@ func ParseLostItemBody(bytes []byte) ([]byte, error) {
 	if !BodyHandleCategory(&generalItem) {
 		return nil, errors.New("Category is invalid")
 	}
-	BodyHandleContactMethod(&generalItem)
+	// BodyHandleContactMethod(&generalItem)
 	// Check for general required fields existence
 	var ok bool
 	requiredFields := []string{"Name", "Location", "User_id"}
@@ -96,7 +98,7 @@ func ParseFoundItemBody(bytes []byte) ([]byte, error) {
 	if !BodyHandleCategory(&generalItem) {
 		return nil, errors.New("Category is invalid")
 	}
-	BodyHandleContactMethod(&generalItem)
+	// BodyHandleContactMethod(&generalItem)
 	// Check for general required fields existence
 	var ok bool
 	requiredFields := []string{"Name", "Location"}

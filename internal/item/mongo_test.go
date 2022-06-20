@@ -61,7 +61,7 @@ func TestMongoGetManyItems(t *testing.T) {
 	args["category"] = []string{"Electronics", "Notes"}
 	items = MongoGetManyItems(COLL_DEBUG, args)
 	for _, item := range items {
-		if !(item.Category == 3 || item.Category == 2) {
+		if !(item.Category == "Electronics" || item.Category == "Notes") {
 			t.Fatalf("Category filter query returned wrong item category")
 		}
 		PrettyPrintStruct(item)

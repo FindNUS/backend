@@ -3,9 +3,9 @@
     "User_id": "19fa21",
     "Date": "2022-05-26T08:51:48.782Z",
     "Location": "UTown Bus Stop",
-    "Category": 2,
+    "Category": "Electronics",
     "Image_url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Multi-use_water_bottle.JPG",
     "Item_details": "Blue, Yellow, Red",
     "Contact_details": "@FindNUS",
-    "Contact_method": 1
+    "Contact_method": "Line"
 }]

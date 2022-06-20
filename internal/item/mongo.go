@@ -118,12 +118,12 @@ func MongoGetItem(collname ItemCollections, id string, userid string) Item {
 		context.TODO(),
 		query,
 	)
-	var item Item
+	var generalItem map[string]interface{}
 	// This should only run once
 	for res.Next(context.TODO()) {
-		res.Decode(&item)
+		res.Decode(&generalItem)
 	}
-	return item
+	return ParseGetItemBody(generalItem)
 }
 
 // Query for a paginated list of truncated items based on a set of filters
@@ -184,9 +184,11 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 		log.Fatal(err.Error())
 	}
 	var items []Item
+	var generalItem map[string]interface{}
 	for res.Next(context.TODO()) {
 		var item Item
-		res.Decode(&item)
+		res.Decode(&generalItem)
+		item = ParseGetItemBody(generalItem)
 		items = append(items, item)
 	}
 	return items
