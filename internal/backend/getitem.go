@@ -53,18 +53,6 @@ func HandleGetManyItems(c *gin.Context) {
 func ParseGetOneItemRPC(tmp map[string]interface{}) Item {
 	// var tmp map[string]interface{}
 	var res Item
-	// json.Unmarshal(data, &tmp)
-
-	// Transform required maps
-	tmp["Category"] = GetCategoryString(tmp["Category"].(float64))
-
-	// Transform optional maps
-	if val, ok := tmp["Contact_method"]; ok {
-		tmp["Contact_method"] = GetContactString(val.(float64))
-	}
-
-	// TODO: See if we can implement a custom unmarshaller that handles re-mapping of fields..
-	// ..directly rather than having to marshal and unmarshal which is inefficient
 	raw, _ := json.Marshal(tmp)
 	json.Unmarshal(raw, &res)
 	return res

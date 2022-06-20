@@ -19,8 +19,8 @@ type Item struct {
 	Name            string
 	Date            time.Time
 	Location        string
-	Category        int
-	Contact_method  int
+	Category        string
+	Contact_method  string
 	Contact_details string
 	Item_details    string
 	Image_url       string
@@ -62,6 +62,16 @@ type DeletedItem struct {
 type SingleItem struct {
 	Id      primitive.ObjectID `bson:"_id"`
 	User_id string             `bson:"User_id,omitempty"`
+}
+
+type ElasticItem struct {
+	Id           primitive.ObjectID
+	Name         string
+	Date         time.Time
+	Location     string
+	Category     string
+	Item_details string
+	User_id      string `json:"User_id,omitempty"`
 }
 
 // JSON Message Wrapper
@@ -107,5 +117,65 @@ func GetCategoryType(cat string) int {
 		return 4
 	default:
 		return -1
+	}
+}
+
+// Category mapping int -> str
+func GetCategoryString(cat int32) string {
+	// WARNING: Floating point errors probable
+	switch cat {
+	case 0:
+		return "Etc"
+	case 1:
+		return "Cards"
+	case 2:
+		return "Notes"
+	case 3:
+		return "Electronics"
+	case 4:
+		return "Bottles"
+	default:
+		return "Unknown"
+	}
+}
+
+// CONTACT_METHOD MAPPING
+func GetContactMethod(method string) int {
+	method = strings.ToLower(method)
+	switch method {
+	case "nus_security":
+		return 0
+	case "telegram":
+		return 1
+	case "whatsapp":
+		return 2
+	case "wechat":
+		return 3
+	case "line":
+		return 4
+	case "phone_number":
+		return 5
+	default:
+		return -1
+	}
+}
+
+func GetContactString(cat int32) string {
+	// WARNING: Floating point errors probable
+	switch cat {
+	case 0:
+		return "Nus_security"
+	case 1:
+		return "Telegram"
+	case 2:
+		return "Whatsapp"
+	case 3:
+		return "Wechat"
+	case 4:
+		return "Line"
+	case 5:
+		return "Phone_number"
+	default:
+		return "Unknown"
 	}
 }
