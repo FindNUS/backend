@@ -38,6 +38,7 @@ func ParseGetItemBody(tmp map[string]interface{}) Item {
 	if val, ok := tmp["Contact_method"]; ok {
 		tmp["Contact_method"] = GetContactString(val.(int32))
 	}
+	tmp["Id"] = tmp["_id"]
 	b, err := json.Marshal(tmp)
 	if err != nil {
 		log.Fatal(err.Error())

@@ -15,7 +15,7 @@ import (
 
 // Type definitions for the marshalling of data
 type Item struct {
-	Id              primitive.ObjectID `bson:"_id" json:"_id"`
+	Id              primitive.ObjectID `bson:"_id"`
 	Name            string
 	Date            time.Time
 	Location        string
