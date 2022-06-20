@@ -2,31 +2,31 @@
         "Name": "Water bottle",
         "Date": "2022-05-26T08:51:48.782Z",
         "Location": "UTown Bus Stop",
-        "Category": 4,
+        "Category": "Bottles",
         "Image_url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Multi-use_water_bottle.JPG",
         "Item_details": "Blue, Yellow, Red",
         "Contact_details": "@FindNUS",
-        "Contact_method": 4
+        "Contact_method": "Line"
     },
     {
         "Name": "Laptop",
         "Date": "2022-01-19T01:32:06Z",
         "Location": "Techno Edge",
-        "Category": 3,
+        "Category": "Electronics",
         "Image_url": "https://i.pcmag.com/imagery/reviews/01UrWRBXWtTELjnPqUWaYkA-5.fit_lim.size_960x.jpg"
     },
     {
         "Name": "Mouse",
         "Date": "2022-04-16T20:02:30Z",
         "Location": "Central Library",
-        "Category": 3,
+        "Category": "Electronics",
         "Image_url": "https://resource.logitech.com/w_800,c_lpad,ar_4:3,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/m190-wireless-mouse/m190-wireless-mouse-midgrey-glamour-lg.png?v=1"
     },
     {
         "Name": "Matric card",
         "Date": "2022-01-01T09:34:27Z",
         "Location": "Science Library",
-        "Category": 1,
+        "Category": "Cards",
         "Image_url": "https://images.squarespace-cdn.com/content/v1/56b6f4247c65e4255b1b99cd/1591869955610-UAO5IPFKV02ITICE28N0/image-asset.png"
     },
     {
@@ -38,14 +38,14 @@
         "Image_url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Multi-use_water_bottle.JPG",
         "Item_details": "Blue, Yellow, Red",
         "Contact_details": "@FindNUS",
-        "Contact_method": 0
+        "Contact_method": "Bottles"
     },
     {
         "Name": "Laptop",
         "User_id": "19fa21",
         "Date": "2022-01-19T01:32:06Z",
         "Location": "Techno Edge",
-        "Category": 3,
+        "Category": "Electronics",
         "Image_url": "https://i.pcmag.com/imagery/reviews/01UrWRBXWtTELjnPqUWaYkA-5.fit_lim.size_960x.jpg"
     },
     {
@@ -53,7 +53,7 @@
         "User_id": "19fa21",
         "Date": "2022-04-16T20:02:30Z",
         "Location": "Central Library",
-        "Category": 3,
+        "Category": "Electronics",
         "Image_url": "https://resource.logitech.com/w_800,c_lpad,ar_4:3,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/m190-wireless-mouse/m190-wireless-mouse-midgrey-glamour-lg.png?v=1"
     },
     {
@@ -61,7 +61,7 @@
         "User_id": "19fa21",
         "Date": "2022-01-01T09:34:27Z",
         "Location": "Science Library",
-        "Category": 1,
+        "Category": "Cards",
         "Image_url": "https://images.squarespace-cdn.com/content/v1/56b6f4247c65e4255b1b99cd/1591869955610-UAO5IPFKV02ITICE28N0/image-asset.png"
     },
     {
@@ -69,20 +69,20 @@
         "User_id": "19fa21",
         "Date": "2022-03-06T18:25:07Z",
         "Location": "Mac Commons",
-        "Category": 2
+        "Category": "Notes"
     },
     {
         "Name": "CAP 5.0",
         "User_id": "19fa21",
         "Date": "2022-05-01T06:47:31Z",
         "Location": "MPSH2",
-        "Category": 2
+        "Category": "Notes"
     },
     {
         "Name": "Airpods",
         "User_id": "19fa21",
         "Date": "2022-01-31T01:42:30Z",
         "Location": "Kent Ridge MRT",
-        "Category": 3
+        "Category": "Electronics"
     }
 ]
