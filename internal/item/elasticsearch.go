@@ -117,8 +117,17 @@ func ElasticUpdateItem() {
 
 }
 
-func ElasticDeleteItem() {
-
+func ElasticDeleteItem(id string) {
+	ctx := context.Background()
+	qry := elastic.NewTermQuery("Id", id)
+	res, err := EsClient.Delete(qry).Index("found_items").Do(context.Background())
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+	if res.Found {
+		fmt.Print("Document deleted from from index\n")
+	}
 }
 
 // Get item by id (not search)
