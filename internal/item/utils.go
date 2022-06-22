@@ -31,6 +31,9 @@ func ParseNewItemBody(bytes []byte) []byte {
 
 // Processes MongoDB item and remaps certain fields
 func ParseGetItemBody(tmp map[string]interface{}) Item {
+	if tmp == nil {
+		return Item{}
+	}
 	var item Item
 	// Transform category
 	tmp["Category"] = GetCategoryString(tmp["Category"].(int32))

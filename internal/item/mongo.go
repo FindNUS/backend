@@ -123,6 +123,9 @@ func MongoGetItem(collname ItemCollections, id string, userid string) Item {
 	for res.Next(context.TODO()) {
 		res.Decode(&generalItem)
 	}
+	if generalItem == nil {
+		return Item{}
+	}
 	return ParseGetItemBody(generalItem)
 }
 
@@ -187,11 +190,14 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	var items []Item
+	items := []Item{}
 	var generalItem map[string]interface{}
 	for res.Next(context.TODO()) {
 		var item Item
 		res.Decode(&generalItem)
+		if generalItem == nil {
+			continue
+		}
 		item = ParseGetItemBody(generalItem)
 		items = append(items, item)
 	}
