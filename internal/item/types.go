@@ -65,13 +65,11 @@ type SingleItem struct {
 }
 
 type ElasticItem struct {
-	Id           primitive.ObjectID
-	Name         string
-	Date         time.Time
-	Location     string
-	Category     string
-	Item_details string
-	User_id      string `json:"User_id,omitempty"`
+	Id           string `json:"Id"`
+	Name         string `json:"Name"`
+	Location     string `json:"Location"`
+	Category     string `json:"Category"`
+	Item_details string `json:"Item_details"`
 }
 
 // JSON Message Wrapper

@@ -33,11 +33,13 @@ func HandleRequest(d amqp.Delivery) {
 
 // Item microservice entrypoint
 func main() {
-	SetupMongo()
-	SetupMessageBrokerConnection()
-	SetupChannel()
-	go ConsumeMessages()
-	go ConsumeGetMessages()
-	forever := make(chan bool)
-	<-forever
+	// SetupMongo()
+	// SetupMessageBrokerConnection()
+	// SetupChannel()
+	// go ConsumeMessages()
+	// go ConsumeGetMessages()
+	// forever := make(chan bool)
+	// <-forever
+	SetupElasticClient()
+	ElasticInitIndex()
 }
