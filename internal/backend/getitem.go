@@ -34,6 +34,7 @@ func HandleGetOneItem(c *gin.Context) {
 		c.JSON(404, gin.H{
 			"message": "Item not found!",
 		})
+		return
 	}
 	c.JSON(200, item)
 }
