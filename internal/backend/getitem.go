@@ -30,6 +30,11 @@ func HandleGetOneItem(c *gin.Context) {
 	var generic map[string]interface{}
 	json.Unmarshal(res, &generic)
 	item := ParseGetOneItemRPC(generic)
+	if item == (Item{}) {
+		c.JSON(404, gin.H{
+			"message": "Item not found!",
+		})
+	}
 	c.JSON(200, item)
 }
 
