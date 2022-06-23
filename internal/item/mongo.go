@@ -165,11 +165,10 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 	}
 	// Parse User_id filter, if exist
 	if tmp, ok := args["User_id"]; ok {
-		log.Println("OK")
 		filter["User_id"] = tmp[0]
 	}
 
-	log.Println("filter: ", filter)
+	log.Println("Searching MongoDB with filter:", filter)
 	opts := options.Find()
 	// Specify what fields to return. Id is implicitly returned
 	opts.SetProjection(

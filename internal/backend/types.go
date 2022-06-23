@@ -58,6 +58,7 @@ const (
 	OPERATION_GET_ITEM_LIST int = 4 // /item/peek
 	OPERATION_PATCH_ITEM    int = 5 // /item/update
 	OPERATION_DEL_ITEM      int = 6 // /item/delete
+	OPERATION_SEARCH        int = 7 // /search
 )
 
 // CATEGORY MAPPING str -> int

@@ -32,4 +32,6 @@ jobs:
         env:
           MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
+          BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}
+
         run: go test .
