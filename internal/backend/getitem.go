@@ -66,7 +66,7 @@ func ParseGetOneItemRPC(tmp map[string]interface{}) Item {
 
 func ParseGetManyItemsRPC(data []byte) []Item {
 	var tmp []map[string]interface{} // element of unmarshalled items
-	var res []Item
+	res := []Item{}
 	err := json.Unmarshal(data, &tmp)
 	if err != nil {
 		log.Fatal(err.Error())
