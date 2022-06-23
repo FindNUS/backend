@@ -65,13 +65,12 @@ type SingleItem struct {
 }
 
 type ElasticItem struct {
-	Id           primitive.ObjectID
-	Name         string
-	Date         time.Time
-	Location     string
-	Category     string
-	Item_details string
-	User_id      string `json:"User_id,omitempty"`
+	Id           string    `json:"Id"`
+	Name         string    `json:"Name"`
+	Location     string    `json:"Location"`
+	Category     string    `json:"Category"`
+	Item_details string    `json:"Item_details"`
+	Date         time.Time `json:"Date"`
 }
 
 // JSON Message Wrapper
@@ -91,6 +90,7 @@ const (
 	OPERATION_GET_ITEM_LIST int = 4 // /item/peek
 	OPERATION_PATCH_ITEM    int = 5 // /item/update
 	OPERATION_DEL_ITEM      int = 6 // /item/delete
+	OPERATION_SEARCH        int = 7 // /search
 )
 
 func ParseDateString(datestring string) time.Time {

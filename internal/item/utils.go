@@ -76,3 +76,12 @@ func BodyHandleContactMethod(body *map[string]interface{}) {
 	cat := GetContactMethod(tmp)
 	(*body)["Contact_method"] = cat
 }
+
+// Parses an ElasticSearch URL query for use in the actual ElasticSearch
+func GetElasticQuery(params map[string][]string) string {
+	query := ""
+	if param, ok := params["query"]; ok {
+		query = param[0]
+	}
+	return query
+}

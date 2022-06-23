@@ -41,7 +41,6 @@ func main() {
 	{
 		// Creation of new items
 		grpItem.POST("", HandleNewItem)
-
 		// Update of items
 		grpItem.PATCH("", HandleUpdateItem) //TODO: Add auth middleware
 		// Deletion
@@ -51,7 +50,14 @@ func main() {
 		// Get range of items
 		grpItem.GET("/peek", HandleGetManyItems) //TODO
 	}
+
+	// Elastic search for items
+	router.GET("/search", HandleElasticSearch)
+
+	// Database setup (for debugging)
 	setupMongo("Items")
+
+	// Message Broker setup for inter-microservice communication
 	SetupMessageBrokerConnection()
 	SetupChannelQueues()
 
