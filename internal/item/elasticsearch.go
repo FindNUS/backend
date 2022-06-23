@@ -186,6 +186,7 @@ func ElasticSearchGeneral(qry string) []ElasticItem {
 	mmq.Type("most_fields")
 	mmq.Operator("or")
 	mmq.Fuzziness("2")
+	// Execute the search
 	ctx := context.TODO()
 	EsClient.Refresh().Do(context.Background())
 	res, err := EsClient.Search().Index(IndexName).Query(mmq).Do(ctx)
