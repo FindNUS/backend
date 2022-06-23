@@ -9,7 +9,7 @@ func TestDoGetItem(t *testing.T) {
 	SetupMongo()
 	// Test FOUND collection
 	params := make(map[string][]string, 2)
-	params["Id"] = []string{"629cc43263533a84f60c4c66"}
+	params["Id"] = []string{"62b47abcf9904afd25588691"}
 	msg := ItemMsgJSON{
 		OPERATION_GET_ITEM,
 		params,
@@ -22,7 +22,7 @@ func TestDoGetItem(t *testing.T) {
 	}
 	// Test LOST collection
 	params["User_id"] = []string{"123a"}
-	params["Id"] = []string{"62a3f742a972503bb927997c"}
+	params["Id"] = []string{"62b47a2f6511b87bb640f118"}
 	msg = ItemMsgJSON{
 		OPERATION_GET_ITEM,
 		params,
