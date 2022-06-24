@@ -108,7 +108,7 @@ func ImgurDeleteImageRef(delHash string) bool {
 	}
 	clientId := "Client-ID " + imgurClientID
 	log.Println("-" + clientId + "-")
-	req.Header.Add("Authorization", "Client-ID "+imgurClientID)
+	req.Header.Add("Authorization", clientId)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	// Execute and validate the HTTP request
@@ -141,7 +141,7 @@ func ImgurAddNewImage(base64str string) (string, string) {
 	}
 	clientId := "Client-ID " + imgurClientID
 	log.Println("-" + clientId + "-")
-	req.Header.Add("Authorization", "Client-ID "+imgurClientID)
+	req.Header.Add("Authorization", clientId)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	// Execute and validate the HTTP request
