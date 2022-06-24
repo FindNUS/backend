@@ -118,10 +118,12 @@ func BodyHandleImage_Base64(body *map[string]interface{}) {
 	if link == "" {
 		return
 	}
+	log.Println("Imgur link:", link, "Imgur hash:", hash)
 	// Set the image url
 	(*body)["Image_url"] = link
 	newId := MongoStoreImgurRef(link, hash).(primitive.ObjectID)
 	if newId == primitive.NilObjectID {
 		log.Println("WARNING: Possible error storing imgurRef for", link)
 	}
+	log.Println("Final body:", *body)
 }
