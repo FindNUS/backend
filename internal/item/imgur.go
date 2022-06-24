@@ -156,7 +156,7 @@ func ImgurAddNewImage(base64str string) (string, string) {
 	json.Unmarshal(b, &tmp)
 
 	// Sieve out imagelink and deletehash from the response body
-	// PrettyPrintStruct(tmp)
+	PrettyPrintStruct(tmp)
 	if data, ok := tmp["data"]; ok {
 		payload, exist := data.(map[string]interface{})
 		if exist {
