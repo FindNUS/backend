@@ -159,6 +159,7 @@ func ImgurAddNewImage(base64str string) (string, string) {
 	PrettyPrintStruct(tmp)
 	if data, ok := tmp["data"]; ok {
 		payload, exist := data.(map[string]interface{})
+		log.Println("Payload:", payload)
 		if exist {
 			imageLink, _ = payload["link"].(string)
 			deleteHash, _ = payload["deletehash"].(string)
