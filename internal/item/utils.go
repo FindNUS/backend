@@ -18,10 +18,13 @@ func UnmarshallMessage(bytes []byte) ItemMsgJSON {
 func ParseNewItemBody(bytes []byte) []byte {
 	var generalItem map[string]interface{}
 	json.Unmarshal(bytes, &generalItem)
+	// Category Handler
 	if !BodyHandleCategory(&generalItem) {
 		return nil
 	}
+	// Other special field handlers
 	BodyHandleContactMethod(&generalItem)
+	BodyHandleImage_Base64(&generalItem)
 	bytes, err := json.Marshal(generalItem)
 	if err != nil {
 		return nil
@@ -84,4 +87,39 @@ func GetElasticQuery(params map[string][]string) string {
 		query = param[0]
 	}
 	return query
+}
+
+// Special handler for Image_base64 parameter.
+// Updates an item's Imgur reference
+func BodyHandleImage_Base64(body *map[string]interface{}) {
+	base64str, ok := (*body)["Image_base64"].(string)
+	if !ok {
+		return
+	}
+	// Check if the Image is an update to an existing item
+	// If yes, delete the image reference
+	objId, ok := (*body)["Id"].(string)
+	if ok {
+		ref := MongoGetImgurRef(objId)
+		numDel := MongoDeleteImgurRef(ref.ImageLink)
+		delOK := ImgurDeleteImageRef(ref.ImageDelHash)
+		if numDel != 1 {
+			log.Println("Error updating Id=", objId, "MongoDelete failed")
+		}
+		if !delOK {
+			log.Println("Error updating Id=", objId, "ImgurDelete failed")
+		}
+	}
+	// Remove the large base64 parameter
+	delete((*body), "Image_base64")
+	link, hash := ImgurAddNewImage(base64str)
+	if link == "" {
+		return
+	}
+	// Set the image url
+	(*body)["Image_url"] = link
+	objId = MongoStoreImgurRef(link, hash).(string)
+	if objId == "" {
+		log.Println("WARNING: Possible error storing imgurRef for", link)
+	}
 }

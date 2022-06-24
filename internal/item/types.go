@@ -37,7 +37,7 @@ type NewItem struct {
 	Contact_details string    `bson:"Contact_details,omitempty"`
 	Item_details    string    `bson:"Item_details,omitempty"`
 	Image_url       string    `bson:"Image_url,omitempty"`
-	Image_base64    byte      `bson:"-"` // Ignore this field
+	Image_base64    byte      `bson:"Image_base64,omitempty"`
 	User_id         string    `bson:"User_id,omitempty"`
 }
 

@@ -92,6 +92,10 @@ func DoDeleteItem(msg ItemMsgJSON) (string, error) {
 		item.User_id = msg.Params["User_id"][0]
 		id = "" // Prevent ElasticSearch operation
 	}
+
+	// Delete image of item, if needed
+	ImgurDeleteImageFromId(id)
+
 	// Based which collection the deleted item belongs to
 	if item.User_id == "" {
 		MongoDeleteItem(COLL_FOUND, item)
