@@ -33,6 +33,7 @@ const (
 	COLL_LOST  ItemCollections = "Lost"
 	COLL_FOUND                 = "Found"
 	COLL_DEBUG                 = "Debug"
+	COLL_IMGUR                 = "Imgur"
 )
 
 func debugPostItem(collName ItemCollections, item NewItem) {
