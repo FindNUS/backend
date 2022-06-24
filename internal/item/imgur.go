@@ -62,6 +62,28 @@ func MongoStoreImgurRef(link, delhash string) interface{} {
 	return res.InsertedID
 }
 
+func MongoGetImgurRefFromLink(link string) ImgurRef {
+	coll := mongoDb.Collection(string(COLL_IMGUR))
+	// objId, _ := primitive.ObjectIDFromHex(id)
+	query := bson.D{{"Image_url", link}}
+	res, err := coll.Find(
+		context.TODO(),
+		query,
+	)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	// var generalItem map[string]interface{}
+	imgurRef := ImgurRef{}
+	for res.Next(context.TODO()) {
+		// This should only run once
+		// If there are more than one case, the lastmost item will be returned
+		res.Decode(&imgurRef)
+	}
+	return imgurRef
+}
+
+// TODO depreciate this
 func MongoGetImgurRef(id string) ImgurRef {
 	coll := mongoDb.Collection(string(COLL_IMGUR))
 	objId, _ := primitive.ObjectIDFromHex(id)
@@ -170,7 +192,13 @@ func ImgurAddNewImage(base64str string) (string, string) {
 }
 
 func ImgurDeleteImageFromId(mongoId string) {
-	ref := MongoGetImgurRef(mongoId)
+	item := MongoGetItem(COLL_FOUND, mongoId, "")
+	// ref := MongoGetImgurRef(mongoId)
+	ref := ImgurRef{}
+	if item.Image_url != "" {
+		ref = MongoGetImgurRefFromLink(item.Image_url)
+	}
+
 	if ref != (ImgurRef{}) {
 		numDel := MongoDeleteImgurRef(ref.ImageLink)
 		delOK := ImgurDeleteImageRef(ref.ImageDelHash)
