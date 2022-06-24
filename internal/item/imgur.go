@@ -65,7 +65,7 @@ func MongoStoreImgurRef(link, delhash string) interface{} {
 func MongoGetImgurRefFromLink(link string) ImgurRef {
 	coll := mongoDb.Collection(string(COLL_IMGUR))
 	// objId, _ := primitive.ObjectIDFromHex(id)
-	query := bson.D{{"Image_url", link}}
+	query := bson.D{{"ImageLink", link}}
 	res, err := coll.Find(
 		context.TODO(),
 		query,
