@@ -88,9 +88,11 @@ func TestElasticSearchGeneral(t *testing.T) {
 func TestElasticParseBody(t *testing.T) {
 	item := loadTestItems("debug_add_item.json")
 	bytes, _ := json.Marshal(item[0])
-	msg := buildItemMsgJson(nil, bytes)
+	// msg := buildItemMsgJson(nil, bytes)
 	randId := primitive.NewObjectID()
-	esItem := ElasticParseBody(msg.Body, randId)
+	var itemStruct Item
+	json.Unmarshal(bytes, &itemStruct)
+	esItem := ElasticParseBody(itemStruct, randId)
 	if esItem == (ElasticItem{}) {
 		t.Fatalf("Parse item body failed, parsed esItem returned empty!")
 	}

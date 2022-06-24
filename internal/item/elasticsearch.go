@@ -89,6 +89,9 @@ func ElasticInitIndex() {
 				},
 				"Location": {
 					"type":"text"	
+				},
+				"Image_url": {
+					"type":"text"
 				}
 			}
 		}
@@ -204,8 +207,9 @@ func ElasticSearchGeneral(qry string) []ElasticItem {
 }
 
 // Takes in raw bytes and Id argument to create an elastic item
-func ElasticParseBody(raw []byte, id primitive.ObjectID) ElasticItem {
+func ElasticParseBody(item Item, id primitive.ObjectID) ElasticItem {
 	esItem := ElasticItem{}
+	raw, _ := json.Marshal(item)
 	json.Unmarshal(raw, &esItem)
 	esItem.Id = id.Hex()
 	return esItem
