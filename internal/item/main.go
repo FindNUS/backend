@@ -18,7 +18,8 @@ func HandleRequest(d amqp.Delivery) {
 			return
 		}
 		if collection == COLL_FOUND {
-			esItem := ElasticParseBody(msg.Body, objId)
+			item := MongoGetItem(COLL_FOUND, objId.Hex(), "")
+			esItem := ElasticParseBody(item, objId)
 			if esItem != (ElasticItem{}) {
 				ElasticAddItem(esItem)
 			}
@@ -38,8 +39,12 @@ func HandleRequest(d amqp.Delivery) {
 				log.Println("Error patching item to EsCloud:", err.Error())
 				return
 			}
-			esItem := ElasticParseBody(msg.Body, objId)
-			ElasticUpdateItem(esItem)
+			item := MongoGetItem(COLL_FOUND, objId.Hex(), "")
+			// Safety check for FOUND collection
+			if item != (Item{}) {
+				esItem := ElasticParseBody(item, objId)
+				ElasticUpdateItem(esItem)
+			}
 		}
 		break
 

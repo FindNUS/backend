@@ -51,6 +51,7 @@ type PatchItem struct {
 	Contact_details string             `bson:"Contact_details,omitempty"`
 	Item_details    string             `bson:"Image_details,omitempty"`
 	Image_url       string             `bson:"Image_url,omitempty"`
+	Image_base64    string             `bson:"Image_base64,omitempty"`
 	User_id         string             `bson:"User_id,omitempty"`
 }
 
@@ -70,6 +71,7 @@ type ElasticItem struct {
 	Location     string    `json:"Location"`
 	Category     string    `json:"Category"`
 	Item_details string    `json:"Item_details"`
+	Image_url    string    `json:"Image_url"`
 	Date         time.Time `json:"Date"`
 }
 
