@@ -179,6 +179,7 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 			{"Location", 1},
 			{"Category", 1},
 			{"User_id", 1},
+			{"Image_url", 1},
 		},
 	)
 	opts.SetSort(bson.D{{"Date", -1}})
