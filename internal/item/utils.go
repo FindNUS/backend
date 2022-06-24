@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"log"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Marshaller-Unmarshaller
@@ -98,9 +100,9 @@ func BodyHandleImage_Base64(body *map[string]interface{}) {
 	}
 	// Check if the Image is an update to an existing item
 	// If yes, delete the image reference
-	objId, ok := (*body)["Id"].(string)
+	objId, ok := (*body)["Id"].(primitive.ObjectID)
 	if ok {
-		ref := MongoGetImgurRef(objId)
+		ref := MongoGetImgurRef(objId.Hex())
 		numDel := MongoDeleteImgurRef(ref.ImageLink)
 		delOK := ImgurDeleteImageRef(ref.ImageDelHash)
 		if numDel != 1 {
@@ -118,8 +120,8 @@ func BodyHandleImage_Base64(body *map[string]interface{}) {
 	}
 	// Set the image url
 	(*body)["Image_url"] = link
-	objId = MongoStoreImgurRef(link, hash).(string)
-	if objId == "" {
+	newId := MongoStoreImgurRef(link, hash).(string)
+	if newId == "" {
 		log.Println("WARNING: Possible error storing imgurRef for", link)
 	}
 }
