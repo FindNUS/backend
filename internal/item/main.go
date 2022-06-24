@@ -83,6 +83,7 @@ func HandleRequest(d amqp.Delivery) {
 
 // Item microservice entrypoint
 func main() {
+	SetupImgur()
 	SetupElasticClient()
 	ElasticInitIndex()
 	SetupMongo()
