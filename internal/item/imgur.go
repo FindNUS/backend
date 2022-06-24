@@ -197,6 +197,9 @@ func ImgurDeleteImageFromId(mongoId string) {
 	ref := ImgurRef{}
 	if item.Image_url != "" {
 		ref = MongoGetImgurRefFromLink(item.Image_url)
+		log.Println("ref for", mongoId, "found:", ref)
+	} else {
+		log.Println("No image url found for", mongoId)
 	}
 
 	if ref != (ImgurRef{}) {
