@@ -140,7 +140,7 @@ func ImgurAddNewImage(base64str string) (string, string) {
 		panic(err.Error())
 	}
 	clientId := "Client-ID " + imgurClientID
-	log.Println("-" + clientId + "-")
+	// log.Println("-" + clientId + "-")
 	req.Header.Add("Authorization", clientId)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
@@ -156,7 +156,7 @@ func ImgurAddNewImage(base64str string) (string, string) {
 	json.Unmarshal(b, &tmp)
 
 	// Sieve out imagelink and deletehash from the response body
-	PrettyPrintStruct(tmp)
+	// PrettyPrintStruct(tmp)
 	if data, ok := tmp["data"]; ok {
 		payload, exist := data.(map[string]interface{})
 		if exist {

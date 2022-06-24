@@ -68,7 +68,7 @@ func ConsumeMessages() {
 	}
 
 	for d := range msgs {
-		log.Printf("Received a message: %s", d.Body)
+		// log.Printf("Received a message: %s", d.Body)
 		HandleRequest(d)
 	}
 	log.Println("Consume Item messages shutting down")
@@ -97,7 +97,7 @@ func ConsumeGetMessages() {
 	)
 
 	for d := range msgs {
-		log.Printf("Received a GET message: %s", d.Body)
+		// log.Printf("Received a GET message: %s", d.Body)
 		HandleRequest(d)
 	}
 	log.Println("Consume Get Messages shutting down")
