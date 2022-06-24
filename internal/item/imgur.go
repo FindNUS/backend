@@ -134,7 +134,6 @@ func ImgurAddNewImage(base64str string) (string, string) {
 		panic(err.Error())
 	}
 
-	// http.NewRequest("POST", url, )
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, payload)
 	if err != nil {

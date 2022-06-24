@@ -8,6 +8,8 @@ ARG RABBITMQ_URI
 ENV RABBITMQ_URI=${RABBITMQ_URI}
 ARG BONSAI_ES_URI
 ENV BONSAI_ES_URI=${BONSAI_ES_URI}
+ARG IMGUR_CLIENT_ID
+ENV IMGUR_CLIENT_ID=${IMGUR_CLIENT_ID}}
 # Copy mod and sum to workdir
 COPY ./internal/item/go.mod ./
 COPY ./internal/item/go.sum ./
