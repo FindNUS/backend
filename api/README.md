@@ -38,41 +38,15 @@ API documentation for FindNUS backend services. Handles the retrieval, processin
   <tbody>
     <tr>
       <td><a href="https://findnus.herokuapp.com" target="_blank">https://findnus.herokuapp.com</a></td>
-      <td>Heroku domain that hosts the backend services for FindNUS</td>
+      <td>Production cluster that is hosting the backend services for FindNUS</td>
     </tr>
     <tr>
       <td><a href="https://uat-findnus.herokuapp.com" target="_blank">https://uat-findnus.herokuapp.com</a></td>
-      <td>Integration environment for User acceptance testing.</td>
+      <td>User-Acceptance Testing cluster environment for testing</td>
     </tr>
   </tbody>
 </table>
 
-<a name="security"></a>
-## Security
-
-<table class="table">
-  <thead class="table__head">
-    <tr class="table__head__row">
-      <th class="table__head__cell">Type</th>
-      <th class="table__head__cell">In</th>
-      <th class="table__head__cell">Name</th>
-      <th class="table__head__cell">Scheme</th>
-      <th class="table__head__cell">Format</th>
-      <th class="table__head__cell">Description</th>
-    </tr>
-  </thead>
-  <tbody class="table__body">
-    <tr class="table__body__row">
-      <td class="table__body__cell">http</td>
-      <td class="table__body__cell"></td>
-      <td class="table__body__cell"></td>
-      <td class="table__body__cell">bearer</td>
-      <td class="table__body__cell"></td>
-      <td class="table__body__cell"></td>
-    </tr>
-
-  </tbody>
-</table>
 
 ## Paths
 
@@ -1034,6 +1008,11 @@ _No headers specified_
 ###### Headers
 _No headers specified_
 
+##### ▶ 500 - Internal server error. Likely to be a message queue fault.
+
+###### Headers
+_No headers specified_
+
 
 </div>
 
@@ -1201,17 +1180,12 @@ Case sensitive.
 #### Responses
 
 
-##### ▶ 200 - Item successfully removed from database
+##### ▶ 200 - Deletion request received and will be processed if the item exists.
 
 ###### Headers
 _No headers specified_
 
 ##### ▶ 401 - Firebase credentials not invalid
-
-###### Headers
-_No headers specified_
-
-##### ▶ 410 - Item does not exist in the database
 
 ###### Headers
 _No headers specified_
@@ -1222,9 +1196,9 @@ _No headers specified_
 ### `GET` /item/peek
 <a id="op-get-item-peek" />
 
-Get a list of lost items that can be sorted.
-Peek at the database's latest finds, paginated.
-(Adding queries for sorting and filtering to be implemented in the future)
+Get a list of lost items sorted by date.
+These items are paginated and filtered by category, if requested.
+The default returns the latest 20 items, with no category filter.
 
 
 
@@ -1400,12 +1374,158 @@ _No headers specified_
         <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
-        <td>Response.Item_details</td>
+        <td>Response.Image_url</td>
         <td>
           string
         </td>
+        <td>Item's accompanying image link</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### Example _(generated)_
+
+```json
+[
+  {
+    "Id": "98721yrr0u14oure",
+    "Name": "Water Bottle",
+    "Date": "2019-08-24T14:15:22Z",
+    "Location": "E4A DSA Lab",
+    "Category": "Cards",
+    "Image_url": "https://imgur.com/gallery/RaHyECD"
+  }
+]
+```
+##### ▶ 500 - Internal server error. Likely to be a message queue fault.
+
+###### Headers
+_No headers specified_
+
+
+</div>
+
+### `GET` /search
+<a id="op-get-search" />
+
+Text-based search for an item.
+
+
+
+
+
+#### Query parameters
+
+##### &#9655; query
+
+Text query to search for lost items. 
+Can be any arbitrary string - the ElasticSearch engine will attempt to best-match the query.
+The query will be performed over the FOUND collection's Name, Category, Location and Item Detail fields.
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>query </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td><p>Text query to search for lost items.
+      Can be any arbitrary string - the ElasticSearch engine will attempt to best-match the query.
+      The query will be performed over the FOUND collection's Name, Category, Location and Item Detail fields.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+#### Responses
+
+
+##### ▶ 200 - Returns an array of Found items that were matched to the query string.
+
+###### Headers
+_No headers specified_
+
+###### application/json
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Response</td>
+        <td>
+          array(object)
+        </td>
         <td></td>
         <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Id <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>The MongoDB ObjectID associated to this Item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Name <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Name of lost/found item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Date <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Date-time where item is lost/found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Location <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Where the item was found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Category <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Type of item</td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
         <td>Response.Image_url</td>
@@ -1429,122 +1549,11 @@ _No headers specified_
     "Date": "2019-08-24T14:15:22Z",
     "Location": "E4A DSA Lab",
     "Category": "Cards",
-    "Item_details": "Blue, with a sticker and broken handle",
     "Image_url": "https://imgur.com/gallery/RaHyECD"
   }
 ]
 ```
-
-</div>
-
-### `GET` /search
-<a id="op-get-search" />
-
-Text-based search for an item.
-
-
-
-
-
-#### Query parameters
-
-##### &#9655; offset
-
-Number of items to skip
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>In</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>offset </td>
-        <td>
-          integer
-        </td>
-        <td>query</td>
-        <td><p>Number of items to skip</p>
-      </td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-##### &#9655; limit
-
-Number of items returned per search
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>In</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>limit </td>
-        <td>
-          integer
-        </td>
-        <td>query</td>
-        <td>Number of items returned per search</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-##### &#9655; query
-
-Query string to be searched against the database
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>In</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>query </td>
-        <td>
-          string
-        </td>
-        <td>query</td>
-        <td>Query string to be searched against the database</td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-
-
-
-#### Responses
-
-
-##### ▶ 501 - Function not added yet.
+##### ▶ 500 - Internal server error. Likely to be a message queue fault.
 
 ###### Headers
 _No headers specified_
@@ -1722,14 +1731,6 @@ _No headers specified_
         <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
       </tr>
       <tr>
-        <td>Item_details</td>
-        <td>
-          string
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-      <tr>
         <td>Image_url</td>
         <td>
           string
@@ -1749,7 +1750,6 @@ _No headers specified_
   "Date": "2019-08-24T14:15:22Z",
   "Location": "E4A DSA Lab",
   "Category": "Cards",
-  "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD"
 }
 ```
