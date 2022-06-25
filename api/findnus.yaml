@@ -2,12 +2,12 @@ openapi: "3.0.0"
 info:
   title: FindNUS_api
   description: API documentation for FindNUS backend services. Handles the retrieval, processing and management of Lost Items found in NUS.
-  version: "0.1-280522"
+  version: "0.2-250622"
 servers:
   - url: https://findnus.herokuapp.com
-    description: Heroku domain that hosts the backend services for FindNUS
+    description: Production cluster that is hosting the backend services for FindNUS
   - url: https://uat-findnus.herokuapp.com
-    description: Integration environment for User acceptance testing.
+    description: User-Acceptance Testing cluster environment for testing
 
 paths:
 # These set of paths define debugging endpoints
@@ -161,6 +161,8 @@ paths:
                 $ref: '#/components/schemas/Item'
         '404':
           description: Item not found
+        "500":
+          description: Internal server error. Likely to be a message queue fault.
   # /item:
     delete:
       description: |
@@ -198,17 +200,15 @@ paths:
               $ref: "#/components/schemas/DeleteItem"
       responses:
         '200':
-          description: Item successfully removed from database
-        '410':
-          description: Item does not exist in the database
+          description: Deletion request received and will be processed if the item exists.
         '401':
           description: Firebase credentials not invalid  
   /item/peek:
     get:
       description: |
-        Get a list of lost items that can be sorted.
-        Peek at the database's latest finds, paginated.
-        (Adding queries for sorting and filtering to be implemented in the future)
+        Get a list of lost items sorted by date.
+        These items are paginated and filtered by category, if requested.
+        The default returns the latest 20 items, with no category filter.
       parameters:
         - in: query
           name: offset
@@ -240,6 +240,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MiniItem'
+        "500":
+          description: Internal server error. Likely to be a message queue fault.
 # These set of paths define querying with a text-based search
   /search:
     get:
@@ -247,24 +249,25 @@ paths:
         Text-based search for an item.
       parameters:
         - in: query
-          name: offset
-          schema:
-            type: integer
-          description: |
-            Number of items to skip
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: Number of items returned per search
-        - in: query
           name: query
           schema:
             type: string
-          description: Query string to be searched against the database
+          description: |
+            Text query to search for lost items. 
+            Can be any arbitrary string - the ElasticSearch engine will attempt to best-match the query.
+            The query will be performed over the FOUND collection's Name, Category, Location and Item Detail fields.
       responses:
-        '501':
-          description: Function not added yet.
+        "200":
+          description: Returns an array of Found items that were matched to the query string.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MiniItem'
+        "500":
+          description: Internal server error. Likely to be a message queue fault.
+
                     
 components:
   schemas:
@@ -323,7 +326,7 @@ components:
     MiniItem:
       type: object
       description: |
-        A truncated form of Item meant for indexing and pagination. 
+        A truncated form of Item meant for indexing, pagination and carding. 
         Meant to populate frontend search 'cards'. Should come in an array.
       required:
       - Id
@@ -353,9 +356,6 @@ components:
           $ref: "#/components/schemas/Category"
           description: Type of item
           example: Cards
-        Item_details:
-          type: string
-          example: Blue, with a sticker and broken handle
         Image_url:
           type: string
           format: string
@@ -489,7 +489,7 @@ components:
         - phone_number
       description: Non-case sensitive contact method
   # Define security scheme (Firebase Token)
-  securitySchemes:
-    firebaseAuth:
-      type: http
-      scheme: bearer
+  # securitySchemes:
+  #   firebaseAuth:
+  #     type: http
+  #     scheme: bearer

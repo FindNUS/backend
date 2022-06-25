@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -12,22 +13,35 @@ import (
  */
 
 // Handle creation of new item
-func DoAddItem(msg ItemMsgJSON) interface{} {
+// Returns a string representing which ItemCollection the item was added to and its Id
+func DoAddItem(msg ItemMsgJSON) (ItemCollections, primitive.ObjectID) {
 	// Unmarshall body
 	var item NewItem
-	var res interface{}
+	var res primitive.ObjectID
+	var interf interface{} // safety
+	collection := COLL_LOST
 	body := ParseNewItemBody(msg.Body)
 	json.Unmarshal(body, &item)
 	if item.User_id == "" {
 		// Assert that user_id only exists for found items
-		res = MongoAddItem(COLL_FOUND, item)
+		interf = MongoAddItem(COLL_FOUND, item)
+		collection = COLL_FOUND
 	} else {
-		res = MongoAddItem(COLL_LOST, item)
+		interf = MongoAddItem(COLL_LOST, item)
+		collection = COLL_LOST
 	}
-	return res
+	var ok bool
+	if res, ok = interf.(primitive.ObjectID); !ok {
+		log.Println("Error casting object ID in DoAddItem.")
+		return collection, primitive.NilObjectID
+	}
+	log.Println("ID of added item:", res)
+	return collection, res
 }
 
-func DoUpdateItem(msg ItemMsgJSON) int64 {
+// Updates an Item and returns its mongoDB id and an error, if any
+// Does not return the string when User_id exists (avoid false deletion in FOUND ES)
+func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 	var item PatchItem
 	body := ParseNewItemBody(msg.Body)
 	json.Unmarshal(body, &item)
@@ -35,53 +49,58 @@ func DoUpdateItem(msg ItemMsgJSON) int64 {
 	var err error
 	// Safety check, should not trigger
 	if _, ok := msg.Params["Id"]; !ok {
-		log.Println("Update failed, item does not exist")
-		return -1
+		return "", errors.New("Update item failed, item does not exist")
 	}
 	id = msg.Params["Id"][0]
 	item.Id, err = primitive.ObjectIDFromHex(id)
 	if err != nil {
-		log.Println("ERROR WHILE PATCHING:", err.Error())
-		return -1
+		return "", errors.New("ERROR WHILE PATCHING: " + err.Error())
 	}
-	id = msg.Params["Id"][0]
 	if _, ok := msg.Params["User_id"]; ok {
 		item.User_id = msg.Params["User_id"][0]
+		id = "" // Prevent ElasticSearch operation
 	}
 	// Check which collection the request belongs to
 	if item.User_id == "" {
 		// Item belongs to FOUND collection
-		return MongoPatchItem(COLL_FOUND, item)
+		MongoPatchItem(COLL_FOUND, item)
 	} else {
 		// User_id presence implies the msg belongs to LOST collection
-		return MongoPatchItem(COLL_LOST, item)
+		MongoPatchItem(COLL_LOST, item)
 	}
+	return id, nil
 }
 
-func DoDeleteItem(msg ItemMsgJSON) int64 {
+// Deletes an Item and returns its mongoDB id and an error, if any
+// Does not return the string when User_id exists (avoid false deletion in FOUND ES)
+func DoDeleteItem(msg ItemMsgJSON) (string, error) {
 	// Assert that msg contains enough parameters
 	var item DeletedItem
 	var id string
 	var err error
 	// Safety check, should not trigger
 	if _, ok := msg.Params["Id"]; !ok {
-		log.Println("Delete failed, item does not exist")
-		return -1
+		return "", errors.New("Delete failed, item does not exist")
 	}
 	id = msg.Params["Id"][0]
 	item.Id, err = primitive.ObjectIDFromHex(id)
 	if err != nil {
-		log.Println("ERROR WHILE DELETING:", err.Error())
-		return -1
+		return "", errors.New("Error while deleting: " + err.Error())
 	}
-	id = msg.Params["Id"][0]
+	// User_id check to determine collection
 	if _, ok := msg.Params["User_id"]; ok {
 		item.User_id = msg.Params["User_id"][0]
+		id = "" // Prevent ElasticSearch operation
 	}
-	// Check which collection the deleted item belongs to
+
+	// Delete image of item, if needed
+	ImgurDeleteImageFromId(id)
+
+	// Based which collection the deleted item belongs to
 	if item.User_id == "" {
-		return MongoDeleteItem(COLL_FOUND, item)
+		MongoDeleteItem(COLL_FOUND, item)
 	} else {
-		return MongoDeleteItem(COLL_LOST, item)
+		MongoDeleteItem(COLL_LOST, item)
 	}
+	return id, nil
 }

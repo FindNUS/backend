@@ -33,6 +33,7 @@ const (
 	COLL_LOST  ItemCollections = "Lost"
 	COLL_FOUND                 = "Found"
 	COLL_DEBUG                 = "Debug"
+	COLL_IMGUR                 = "Imgur"
 )
 
 func debugPostItem(collName ItemCollections, item NewItem) {
@@ -123,6 +124,9 @@ func MongoGetItem(collname ItemCollections, id string, userid string) Item {
 	for res.Next(context.TODO()) {
 		res.Decode(&generalItem)
 	}
+	if generalItem == nil {
+		return Item{}
+	}
 	return ParseGetItemBody(generalItem)
 }
 
@@ -139,19 +143,16 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		delete(args, "limit")
 	}
 	if _, ok = args["offset"]; ok {
 		offset, err = strconv.ParseInt(args["offset"][0], 10, 64)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		delete(args, "offset")
 	}
 	// Parse category filters
-
 	// { $or : [ { "Category": {"$eq", "foo"}, {...} } ]
-	var filter bson.M
+	filter := bson.M{}
 	if catFilter, ok := args["category"]; ok {
 		tmp := []bson.M{}
 		for _, catStr := range catFilter {
@@ -163,7 +164,12 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 		}
 		filter = bson.M{"$or": tmp}
 	}
-	log.Println(filter)
+	// Parse User_id filter, if exist
+	if tmp, ok := args["User_id"]; ok {
+		filter["User_id"] = tmp[0]
+	}
+
+	log.Println("Searching MongoDB with filter:", filter)
 	opts := options.Find()
 	// Specify what fields to return. Id is implicitly returned
 	opts.SetProjection(
@@ -172,6 +178,8 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 			{"Date", 1},
 			{"Location", 1},
 			{"Category", 1},
+			{"User_id", 1},
+			{"Image_url", 1},
 		},
 	)
 	opts.SetSort(bson.D{{"Date", -1}})
@@ -183,11 +191,14 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	var items []Item
+	items := []Item{}
 	var generalItem map[string]interface{}
 	for res.Next(context.TODO()) {
 		var item Item
 		res.Decode(&generalItem)
+		if generalItem == nil {
+			continue
+		}
 		item = ParseGetItemBody(generalItem)
 		items = append(items, item)
 	}

@@ -28,8 +28,12 @@ jobs:
             PRODUCTION
             MONGO_URI
             RABBITMQ_URI
+            BONSAI_ES_URI
+            IMGUR_CLIENT_ID
         env:
           PRODUCTION: false
           MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
+          BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}
+          IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
 

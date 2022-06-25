@@ -39,25 +39,29 @@ func TestMongoGetManyItems(t *testing.T) {
 	SetupMongo()
 	args := make(map[string][]string)
 	// Test limit
-	args["limit"] = []string{"10"}
-	items := MongoGetManyItems(COLL_FOUND, args)
-	if len(items) != 10 {
-		t.FailNow()
-	}
-	for _, item := range items {
-		PrettyPrintStruct(item)
-	}
-	// Test offset
 	args["limit"] = []string{"5"}
-	args["offset"] = []string{"5"}
-	items = MongoGetManyItems(COLL_FOUND, args)
+	items := MongoGetManyItems(COLL_DEBUG, args)
 	if len(items) != 5 {
-		t.FailNow()
+		log.Fatal("Items do not fit limit")
 	}
 	for _, item := range items {
 		PrettyPrintStruct(item)
 	}
-	// Test category filterimg
+	log.Println("GetManyItems limit PASS")
+
+	// Test offset
+	args["limit"] = []string{"2"}
+	args["offset"] = []string{"2"}
+	items = MongoGetManyItems(COLL_DEBUG, args)
+	if len(items) != 2 {
+		log.Fatal("Items offset error - length is not 2")
+	}
+	for _, item := range items {
+		PrettyPrintStruct(item)
+	}
+	log.Println("GetManyItems offset PASS")
+
+	// Test category filtering
 	args["category"] = []string{"Electronics", "Notes"}
 	items = MongoGetManyItems(COLL_DEBUG, args)
 	for _, item := range items {
@@ -66,4 +70,21 @@ func TestMongoGetManyItems(t *testing.T) {
 		}
 		PrettyPrintStruct(item)
 	}
+	log.Println("GetManyItems Category filter PASS")
+
+	// Test User_id filtering
+	args["User_id"] = []string{"123a"}
+	delete(args, "offset")
+	delete(args, "limit")
+	delete(args, "category")
+	items = MongoGetManyItems(COLL_DEBUG, args)
+	log.Println(len(items))
+	for _, item := range items {
+		if !(item.User_id == "123a") {
+			t.Fatalf("User_id filter failed")
+		}
+		PrettyPrintStruct(item)
+	}
+	log.Println("GetManyItems User_id filter PASS")
+
 }
