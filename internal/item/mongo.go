@@ -192,8 +192,8 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 		log.Fatal(err.Error())
 	}
 	items := []Item{}
-	var generalItem map[string]interface{}
 	for res.Next(context.TODO()) {
+		var generalItem map[string]interface{}
 		var item Item
 		res.Decode(&generalItem)
 		if generalItem == nil {
