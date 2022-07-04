@@ -1,0 +1,21 @@
+[
+{
+    "": [""]
+},
+{
+    "offset": ["10"]
+},
+{
+    "limit": ["10"]
+},
+{
+    "offset": ["20"],
+    "limit": ["1001"]
+},
+{
+    "offset": ["79"],
+    "limit": ["86"],
+    "foobar": ["baz"],
+    "category": ["Electronics"]
+}
+]
