@@ -3,64 +3,45 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func TestHandleNewLostItem(t *testing.T) {
-	// Test that user_id guard works
+// Test that overall HTTP handler and utils body parser work
+func TestHandleNewItem(t *testing.T) {
+	// SetupDebugQueues()
+	// Test invalid items
 	httpwriter := httptest.NewRecorder()
 	ginContext, _ := gin.CreateTestContext(httpwriter)
-	body := map[string]interface{}{
-		"Name":     "Laptop",
-		"Date":     time.Now(),
-		"Location": "Unknown",
-		"Category": "Cards",
-	}
-	bodybytes, _ := json.Marshal(body)
-	ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
+	bodies := loadTestItems("invalid_lost_items.json")
+	bodies = append(bodies, loadTestItems("invalid_found_items.json")...)
+	for _, body := range bodies {
+		log.Println("OK")
+		bodybytes, _ := json.Marshal(body)
+		ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
+		HandleNewItem(ginContext)
+		if httpwriter.Code != 400 {
+			t.Fail()
+			t.Log("HandleNewItem failed -- Expected 400 but got 200.\nFailed item:", body)
+		}
 
-	HandleNewLostItem(ginContext, nil)
-	if httpwriter.Code != 400 {
-		t.Fatalf("Wrong code")
 	}
-	// Test type-senstive Category guard
+	// Test valid items
 	httpwriter = httptest.NewRecorder()
 	ginContext, _ = gin.CreateTestContext(httpwriter)
-	body = map[string]interface{}{
-		"Name":     "Laptop",
-		"Date":     time.Now(),
-		"Location": "Unknown",
-		"Category": 77,
-		"User_id":  "7j0fs",
-	}
-	bodybytes, _ = json.Marshal(body)
-	ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
-	HandleNewLostItem(ginContext, nil)
-	if httpwriter.Code != 400 {
-		t.Fatalf("Wrong code - Assertion type")
-	}
-}
-
-func TestHandleNewFoundItem(t *testing.T) {
-	// Test type-senstive Category guard
-	httpwriter := httptest.NewRecorder()
-	ginContext, _ := gin.CreateTestContext(httpwriter)
-	body := map[string]interface{}{
-		"Name":     "Laptop",
-		"Date":     time.Now(),
-		"Location": "Unknown",
-		"Category": 77,
-		"User_id":  "7j0fs",
-	}
-	bodybytes, _ := json.Marshal(body)
-	ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
-	HandleNewFoundItem(ginContext, nil)
-	if httpwriter.Code != 400 {
-		t.Fatalf("Wrong code - Assertion type")
+	bodies = loadTestItems("valid_lost_items.json")
+	bodies = append(bodies, loadTestItems("valid_found_items.json")...)
+	for _, body := range bodies {
+		bodybytes, _ := json.Marshal(body)
+		ginContext.Request, _ = http.NewRequest("POST", "", bytes.NewBuffer(bodybytes))
+		HandleNewItem(ginContext)
+		if httpwriter.Code != 200 {
+			t.Fail()
+			t.Log("HandleNewItem failed -- Expected 200 but got !200.\nFailed item:", body)
+		}
 	}
 }

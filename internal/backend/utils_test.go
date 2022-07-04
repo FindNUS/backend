@@ -25,11 +25,12 @@ func loadTestItems(filename string) []map[string]interface{} {
 	return res
 }
 
-func TestParseFoundItemBody(t *testing.T) {
+// Redundant test for Body Parsing Function
+func TestParseItemBody(t *testing.T) {
 	testdata := loadTestItems("valid_found_items.json")
 	for _, item := range testdata {
 		bytes, _ := json.Marshal(item)
-		if _, err := ParseFoundItemBody(bytes); err != nil {
+		if _, err := ParseItemBody(bytes); err != nil {
 			t.Log("Found item wrongly flagged as invalid: ", item)
 			t.Log("Error: ", err.Error())
 			t.Fail()
@@ -38,31 +39,36 @@ func TestParseFoundItemBody(t *testing.T) {
 	testdata = loadTestItems("invalid_found_items.json")
 	for _, item := range testdata {
 		bytes, _ := json.Marshal(item)
-		if _, err := ParseFoundItemBody(bytes); err == nil {
+		if _, err := ParseItemBody(bytes); err == nil {
 			t.Log("Found item wrongly flagged as valid: ", item)
 			t.Log(err.Error())
 			t.Fail()
 		}
 	}
 }
-
-func TestParseLostItemBody(t *testing.T) {
-	testdata := loadTestItems("valid_lost_items.json")
-	for _, item := range testdata {
-		bytes, _ := json.Marshal(item)
-		if _, err := ParseLostItemBody(bytes); err != nil {
-			t.Log("Lost item wrongly flagged as invalid: ", item)
-			t.Log(err.Error())
+func TestValidatePeekParams(t *testing.T) {
+	loadRaw := loadTestItems("valid_peek_url.json")
+	b, _ := json.Marshal(loadRaw)
+	var items []map[string][]string
+	json.Unmarshal(b, &items)
+	var err error
+	for _, item := range items {
+		// PrettyPrintStruct(item)
+		err = ValidatePeekParams(item)
+		if err != nil {
 			t.Fail()
+			t.Log("ValidatePeekParams failed when it is supposed to pass!\n Failed query:", item)
 		}
 	}
-	testdata = loadTestItems("invalid_lost_items.json")
-	for _, item := range testdata {
-		bytes, _ := json.Marshal(item)
-		if _, err := ParseLostItemBody(bytes); err == nil {
-			t.Log("Lost item wrongly flagged as valid: ", item)
-			t.Log(err.Error())
+	loadRaw = loadTestItems("invalid_peek_url.json")
+	b, _ = json.Marshal(loadRaw)
+	json.Unmarshal(b, &items)
+	for _, item := range items {
+		// PrettyPrintStruct(item)
+		err = ValidatePeekParams(item)
+		if err == nil {
 			t.Fail()
+			t.Log("ValidatePeekParams passed when it is supposed to pass!\n Failed query:", item)
 		}
 	}
 }
