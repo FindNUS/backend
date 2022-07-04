@@ -39,9 +39,18 @@ func HandleGetOneItem(c *gin.Context) {
 	c.JSON(200, item)
 }
 
-// Filter peek
+// Gin handler for /peek to get the latest Found/Lost items, sorted by time, filtered by category
 func HandleGetManyItems(c *gin.Context) {
+	// Get parameters and check for validity
 	params := GetParams(c)
+	if err := ValidatePeekParams(params); err != nil {
+		log.Println("Rejecting request due to parameter error")
+		c.JSON(400, gin.H{
+			"message": "Error in URL parameter: " + err.Error(),
+		})
+		return
+	}
+
 	msg := PrepareMessage(params, nil, OPERATION_GET_ITEM_LIST)
 	id := GetJobId()
 	PublishGetItemMessage(ItemChannel, msg, id)

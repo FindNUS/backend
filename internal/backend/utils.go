@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -42,35 +43,8 @@ func BodyHandleDate(body *map[string]interface{}) bool {
 	return (err == nil)
 }
 
-// Checks message body for valid New Lost Item structure
-func ParseLostItemBody(bytes []byte) ([]byte, error) {
-	var generalItem map[string]interface{}
-	// var item NewItem
-	json.Unmarshal(bytes, &generalItem)
-
-	log.Println(generalItem)
-
-	// Handle special parameters
-	if !BodyHandleDate(&generalItem) {
-		return nil, errors.New("Date is invalid")
-	}
-	if !BodyHandleCategory(&generalItem) {
-		return nil, errors.New("Category is invalid")
-	}
-	// Check for general required fields existence
-	var ok bool
-	requiredFields := []string{"Name", "Location", "User_id"}
-	for _, field := range requiredFields {
-		if _, ok = generalItem[field]; !ok {
-			return nil, errors.New("Missing Name, Location &/or User_id")
-		}
-	}
-	bytes, _ = json.Marshal(generalItem)
-	return bytes, nil
-}
-
 // Checks message body for valid New Found Item structure
-func ParseFoundItemBody(bytes []byte) ([]byte, error) {
+func ParseItemBody(bytes []byte) ([]byte, error) {
 	var generalItem map[string]interface{}
 	// var item NewItem
 	json.Unmarshal(bytes, &generalItem)
@@ -102,6 +76,31 @@ func GetParams(c *gin.Context) map[string][]string {
 	var params map[string][]string
 	params = c.Request.URL.Query()
 	return params
+}
+
+// Checks if offset & limit are proper
+func ValidatePeekParams(params map[string][]string) error {
+	if paramArr, ok := params["offset"]; ok {
+		tmp := paramArr[0]
+		num, err := strconv.ParseInt(tmp, 10, 64)
+		if err != nil {
+			return err
+		}
+		if num <= 0 {
+			return errors.New("offset cannot be <= 0!")
+		}
+	}
+	if paramArr, ok := params["limit"]; ok {
+		tmp := paramArr[0]
+		num, err := strconv.ParseInt(tmp, 10, 64)
+		if err != nil {
+			return err
+		}
+		if num <= 0 {
+			return errors.New("limit cannot be <= 0!")
+		}
+	}
+	return nil
 }
 
 // Wraps a HTTP request context into a JSON format ready to delivery to RabbitMQ
