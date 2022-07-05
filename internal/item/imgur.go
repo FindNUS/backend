@@ -193,13 +193,13 @@ func ImgurAddNewImage(base64str string) (string, string) {
 
 func ImgurDeleteImageFromId(mongoId string) {
 	item := MongoGetItem(COLL_FOUND, mongoId, "")
-	// ref := MongoGetImgurRef(mongoId)
 	ref := ImgurRef{}
 	if item.Image_url != "" {
 		ref = MongoGetImgurRefFromLink(item.Image_url)
 		log.Println("ref for", mongoId, "found:", ref)
 	} else {
-		log.Println("No image url found for", mongoId)
+		log.Println("No image url found for", mongoId, ", skipping ImgurDelete")
+		return
 	}
 
 	if ref != (ImgurRef{}) {
