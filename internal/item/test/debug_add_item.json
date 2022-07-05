@@ -1,11 +1,10 @@
 [{
-    "Name": "Debug Add Item",
-    "User_id": "19fa21",
+    "Name": "Debug Add Item Unit Test",
+    "User_id": "debug123",
     "Date": "2022-05-26T08:51:48.782Z",
     "Location": "UTown Bus Stop",
     "Category": "Electronics",
-    "Image_url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Multi-use_water_bottle.JPG",
-    "Item_details": "Blue, Yellow, Red",
     "Contact_details": "@FindNUS",
     "Contact_method": "Line"
-}]
+}
+]
