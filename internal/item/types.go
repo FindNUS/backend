@@ -42,17 +42,17 @@ type NewItem struct {
 }
 
 type PatchItem struct {
-	Id              primitive.ObjectID `bson:"_id"`
-	Name            string             `bson:"Name,omitempty"`
-	Date            time.Time          `bson:"Date,omitempty"`
-	Location        string             `bson:"Location,omitempty"`
-	Category        int                `bson:"Category,omitempty"`
-	Contact_method  int                `bson:"Contact_method,omitempty"`
-	Contact_details string             `bson:"Contact_details,omitempty"`
-	Item_details    string             `bson:"Image_details,omitempty"`
-	Image_url       string             `bson:"Image_url,omitempty"`
-	Image_base64    string             `bson:"Image_base64,omitempty"`
-	User_id         string             `bson:"User_id,omitempty"`
+	Id              primitive.ObjectID `bson:"_id" json:"Id"`
+	Name            string             `bson:"Name,omitempty" json:"Name,omitempty"`
+	Date            time.Time          `bson:"Date,omitempty" json:"Date,omitempty"`
+	Location        string             `bson:"Location,omitempty" json:"Location,omitempty"`
+	Category        int                `bson:"Category,omitempty" json:"Category,omitempty"`
+	Contact_method  int                `bson:"Contact_method,omitempty" json:"Contact_method,omitempty"`
+	Contact_details string             `bson:"Contact_details,omitempty" json:"Contact_details,omitempty"`
+	Item_details    string             `bson:"Item_details,omitempty" json:"Item_details,omitempty"`
+	Image_url       string             `bson:"Image_url,omitempty" json:"Image_url,omitempty"`
+	Image_base64    string             `bson:"-" json:"Image_base64,omitempty"`
+	User_id         string             `bson:"User_id,omitempty" json:"User_id,omitempty"`
 }
 
 type DeletedItem struct {
@@ -107,8 +107,6 @@ func ParseDateString(datestring string) time.Time {
 func GetCategoryType(cat string) int {
 	cat = strings.ToLower(cat)
 	switch cat {
-	case "etc":
-		return 0
 	case "cards":
 		return 1
 	case "notes":
@@ -117,6 +115,8 @@ func GetCategoryType(cat string) int {
 		return 3
 	case "bottles":
 		return 4
+	case "etc":
+		return 5
 	default:
 		return -1
 	}
@@ -127,7 +127,7 @@ func GetCategoryString(cat int32) string {
 	// WARNING: Floating point errors probable
 	switch cat {
 	case 0:
-		return "Etc"
+		return "Etc" //legacy issue
 	case 1:
 		return "Cards"
 	case 2:
@@ -136,6 +136,8 @@ func GetCategoryString(cat int32) string {
 		return "Electronics"
 	case 4:
 		return "Bottles"
+	case 5:
+		return "Etc"
 	default:
 		return "Unknown"
 	}
@@ -145,8 +147,6 @@ func GetCategoryString(cat int32) string {
 func GetContactMethod(method string) int {
 	method = strings.ToLower(method)
 	switch method {
-	case "nus_security":
-		return 0
 	case "telegram":
 		return 1
 	case "whatsapp":
@@ -157,6 +157,8 @@ func GetContactMethod(method string) int {
 		return 4
 	case "phone_number":
 		return 5
+	case "nus_security":
+		return 6
 	default:
 		return -1
 	}
@@ -166,7 +168,7 @@ func GetContactString(cat int32) string {
 	// WARNING: Floating point errors probable
 	switch cat {
 	case 0:
-		return "Nus_security"
+		return "Nus_security" //legacy issue
 	case 1:
 		return "Telegram"
 	case 2:
@@ -177,6 +179,8 @@ func GetContactString(cat int32) string {
 		return "Line"
 	case 5:
 		return "Phone_number"
+	case 6:
+		return "Nus_security"
 	default:
 		return "Unknown"
 	}

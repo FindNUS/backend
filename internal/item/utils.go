@@ -29,6 +29,25 @@ func ParseNewItemBody(bytes []byte) []byte {
 	BodyHandleImage_Base64(&generalItem)
 	bytes, err := json.Marshal(generalItem)
 	if err != nil {
+		log.Println("ParseNewItem failed, returning nil due to:", err.Error())
+		return nil
+	}
+	return bytes
+}
+
+// Processes the raw message body, remapping certain fields.
+// Functionally identical to ParseNewItemBody, but does not enforce the existence of certain parameters
+func ParseUpdateItemBody(bytes []byte) []byte {
+	var generalItem map[string]interface{}
+	json.Unmarshal(bytes, &generalItem)
+	// Category Handler
+	BodyHandleCategory(&generalItem)
+	// Other special field handlers
+	BodyHandleContactMethod(&generalItem)
+	BodyHandleImage_Base64(&generalItem)
+	bytes, err := json.Marshal(generalItem)
+	if err != nil {
+		log.Println("ParseUpdateItemBody failed, returning nil due to:", err.Error())
 		return nil
 	}
 	return bytes
