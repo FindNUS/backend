@@ -110,6 +110,7 @@ func MongoGetItem(collname ItemCollections, id string, userid string) Item {
 	myid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		log.Println("Error getting ObjectID from hex")
+		log.Println("Hex:", id)
 	}
 	query := bson.D{{"_id", myid}}
 	if len(userid) > 0 {
