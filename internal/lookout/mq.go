@@ -12,8 +12,6 @@ import (
 // Global variables to allow MQ access
 var MqConn *amqp.Connection
 var ItemChannel *amqp.Channel
-var ItemQueue amqp.Queue
-var GetItemQueue amqp.Queue
 
 // Setup RabbitMQ service. Remember to defer connection close.
 func SetupMessageBrokerConnection() {
@@ -49,40 +47,17 @@ func SetupChannel() {
 	}
 }
 
-// Subroutine to handle message consumption
-func ConsumeMessages() {
+// Subroutine to handle lookout messages
+func ConsumeLookoutMessages() {
 	// Consume Item (POST PATCH DELETE) messages
 	msgs, err := ItemChannel.Consume(
-		"q_item", // queue
-		"",       // consumer
-		true,     // auto-ack
-		false,    // exclusive
-		false,    // no-local
-		false,    // no-wait
-		nil,      // args
-	)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	for d := range msgs {
-		// log.Printf("Received a message: %s", d.Body)
-		HandleRequest(d)
-	}
-	log.Println("Consume Item messages shutting down")
-}
-
-// Subroutine to handle GET messages
-func ConsumeGetMessages() {
-	// Consume Item (POST PATCH DELETE) messages
-	msgs, err := ItemChannel.Consume(
-		"q_get_req", // queue
-		"",          // consumer
-		true,        // auto-ack
-		false,       // exclusive
-		false,       // no-local
-		false,       // no-wait
-		nil,         // args
+		"q_lookout_req", // queue
+		"",              // consumer
+		true,            // auto-ack
+		false,           // exclusive
+		false,           // no-local
+		false,           // no-wait
+		nil,             // args
 	)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -98,7 +73,7 @@ func ConsumeGetMessages() {
 		// log.Printf("Received a GET message: %s", d.Body)
 		HandleRequest(d)
 	}
-	log.Println("Consume Get Messages shutting down")
+	log.Println("Consume Lookout Messages shutting down")
 }
 
 func PublishResponse(item interface{}, d amqp.Delivery) {

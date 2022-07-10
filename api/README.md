@@ -1,6 +1,9 @@
-# FindNUS_api
+# FindNUS Backend API
 
-API documentation for FindNUS backend services. Handles the retrieval, processing and management of Lost Items found in NUS.
+<p>API documentation for FindNUS backend services.
+Handles the retrieval, processing and management of Lost Items found in NUS.
+Comes with additional spicy features like NLP and elasticsearch.</p>
+
 
 ## Table of Contents
 
@@ -15,6 +18,7 @@ API documentation for FindNUS backend services. Handles the retrieval, processin
   - [`DELETE` /item](#op-delete-item) 
   - [`GET` /item/peek](#op-get-item-peek) 
   - [`GET` /search](#op-get-search) 
+  - [`GET` /lookout](#op-get-lookout) 
 * [Schemas](#schemas)
   - Item
   - MiniItem
@@ -317,6 +321,16 @@ _No headers specified_
         <td>UserID associated to this item. Only applicable for Lookout Items.</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Lookout</td>
+        <td>
+          boolean
+        </td>
+        <td><p>Flag determining whether the Lost item has subscribed to the Lookout service.
+      This flag IS REQUIRED.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -334,7 +348,8 @@ _No headers specified_
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD",
-  "User_id": "string"
+  "User_id": "string",
+  "Lookout": false
 }
 ```
 ##### ▶ 404 - Get request is valid, item not found
@@ -510,6 +525,16 @@ Firebase ID token of user
         <td>Accompanying image of new Lost/Found item, if applicable</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Lookout</td>
+        <td>
+          boolean
+        </td>
+        <td><p>Flag determining whether the Lost item has subscribed to the Lookout service.
+      This flag should only exist for Lost items.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -526,7 +551,8 @@ Firebase ID token of user
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
-  "Image_base64": "string"
+  "Image_base64": "string",
+  "Lookout": false
 }
 ```
 
@@ -768,6 +794,16 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
         <td>Updated image of Lost/Found item, if applicable</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Lookout</td>
+        <td>
+          boolean
+        </td>
+        <td><p>Flag determining whether the Lost item has subscribed to the Lookout service.
+      This flag should only exist for Lost items.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -785,7 +821,8 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
-  "Image_base64": "string"
+  "Image_base64": "string",
+  "Lookout": false
 }
 ```
 
@@ -983,6 +1020,16 @@ _No headers specified_
         <td>UserID associated to this item. Only applicable for Lookout Items.</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Lookout</td>
+        <td>
+          boolean
+        </td>
+        <td><p>Flag determining whether the Lost item has subscribed to the Lookout service.
+      This flag IS REQUIRED.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1000,7 +1047,8 @@ _No headers specified_
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD",
-  "User_id": "string"
+  "User_id": "string",
+  "Lookout": false
 }
 ```
 ##### ▶ 404 - Item not found
@@ -1561,6 +1609,188 @@ _No headers specified_
 
 </div>
 
+### `GET` /lookout
+<a id="op-get-lookout" />
+
+Get a list of found items that FindNUS decides are a good possible match to the lost item queried. 
+
+
+
+
+
+#### Query parameters
+
+##### &#9655; Id
+
+Id of the lost item
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Id </td>
+        <td>
+          integer
+        </td>
+        <td>query</td>
+        <td>Id of the lost item</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### &#9655; User_id
+
+User_id of the lost item's owner
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>User_id </td>
+        <td>
+          integer
+        </td>
+        <td>query</td>
+        <td>User_id of the lost item's owner</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+#### Responses
+
+
+##### ▶ 200 - Returns an array of found items that best match the lost item.
+
+###### Headers
+_No headers specified_
+
+###### application/json
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>Response</td>
+        <td>
+          array(object)
+        </td>
+        <td></td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Id <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>The MongoDB ObjectID associated to this Item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Name <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Name of lost/found item</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Date <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Date-time where item is lost/found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Location <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Where the item was found</td>
+        <td><em>Any</em></td>
+      </tr>
+      <tr>
+        <td>Response.Category <strong>(required)</strong></td>
+        <td>
+          string
+        </td>
+        <td>Type of item</td>
+        <td><code>Etc</code>, <code>Cards</code>, <code>Notes</code>, <code>Electronics</code>, <code>Bottles</code></td>
+      </tr>
+      <tr>
+        <td>Response.Image_url</td>
+        <td>
+          string
+        </td>
+        <td>Item's accompanying image link</td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### Example _(generated)_
+
+```json
+[
+  {
+    "Id": "98721yrr0u14oure",
+    "Name": "Water Bottle",
+    "Date": "2019-08-24T14:15:22Z",
+    "Location": "E4A DSA Lab",
+    "Category": "Cards",
+    "Image_url": "https://imgur.com/gallery/RaHyECD"
+  }
+]
+```
+##### ▶ 400 - Bad request. Missing one or both of User_id and id.
+
+###### Headers
+_No headers specified_
+
+##### ▶ 500 - Internal server error. Likely to be a message queue fault.
+
+###### Headers
+_No headers specified_
+
+
+</div>
+
 ## Schemas
 
 <a id="" />
@@ -1657,6 +1887,16 @@ _No headers specified_
         <td>UserID associated to this item. Only applicable for Lookout Items.</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Lookout</td>
+        <td>
+          boolean
+        </td>
+        <td><p>Flag determining whether the Lost item has subscribed to the Lookout service.
+      This flag IS REQUIRED.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1673,7 +1913,8 @@ _No headers specified_
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD",
-  "User_id": "string"
+  "User_id": "string",
+  "Lookout": false
 }
 ```
 <a id="" />
@@ -1839,6 +2080,16 @@ _No headers specified_
         <td>Accompanying image of new Lost/Found item, if applicable</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Lookout</td>
+        <td>
+          boolean
+        </td>
+        <td><p>Flag determining whether the Lost item has subscribed to the Lookout service.
+      This flag should only exist for Lost items.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1854,7 +2105,8 @@ _No headers specified_
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
-  "Image_base64": "string"
+  "Image_base64": "string",
+  "Lookout": false
 }
 ```
 <a id="" />
@@ -1983,6 +2235,16 @@ _No headers specified_
         <td>Updated image of Lost/Found item, if applicable</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Lookout</td>
+        <td>
+          boolean
+        </td>
+        <td><p>Flag determining whether the Lost item has subscribed to the Lookout service.
+      This flag should only exist for Lost items.</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1999,7 +2261,8 @@ _No headers specified_
   "Contact_method": "Telegram",
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
-  "Image_base64": "string"
+  "Image_base64": "string",
+  "Lookout": false
 }
 ```
 <a id="" />

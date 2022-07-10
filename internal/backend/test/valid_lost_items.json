@@ -59,6 +59,24 @@
         "Image_url": "https://i.insider.com/61d5c65a5a119b00184b1e1a?width=700"
     },
     {
+        "Name": "CS1231 Notes",
+        "User_id": "19fa21",
+        "Date": "2022-03-06T18:25:07Z",
+        "Location": "Mac Commons",
+        "Category": "Notes",
+        "Image_url": "https://staging.igotnoteslah.com/wp-content/uploads/2020/12/1-67.jpg",
+        "Lookout": false
+    },
+    {
+        "Name": "CS1231 Notes",
+        "User_id": "19fa21",
+        "Date": "2022-03-06T18:25:07Z",
+        "Location": "Mac Commons",
+        "Category": "Notes",
+        "Image_url": "https://staging.igotnoteslah.com/wp-content/uploads/2020/12/1-67.jpg",
+        "Lookout": true
+    },
+    {
         "Name": "Tux",
         "User_id": "19fa21",
         "Date": "2022-03-27T10:08:26Z",

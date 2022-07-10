@@ -1,7 +1,10 @@
 openapi: "3.0.0"
 info:
-  title: FindNUS_api
-  description: API documentation for FindNUS backend services. Handles the retrieval, processing and management of Lost Items found in NUS.
+  title: FindNUS Backend API
+  description: |
+    API documentation for FindNUS backend services.
+    Handles the retrieval, processing and management of Lost Items found in NUS.
+    Comes with additional spicy features like NLP and elasticsearch.
   version: "0.2-250622"
 servers:
   - url: https://findnus.herokuapp.com
@@ -267,7 +270,37 @@ paths:
                   $ref: '#/components/schemas/MiniItem'
         "500":
           description: Internal server error. Likely to be a message queue fault.
-
+# These set of paths define the 'smart search' service provided by the lookout microservice
+  /lookout:
+    get:
+      description: |
+        Get a list of found items that FindNUS decides are a good possible match to the lost item queried. 
+      parameters:
+        - in: query
+          name: Id
+          schema:
+            type: integer
+          description: Id of the lost item
+          example: 82173aiadj
+        - in: query
+          name: User_id
+          schema:
+            type: integer
+          description: User_id of the lost item's owner
+          example: 82173aiadj
+      responses:
+        '200':
+          description: Returns an array of found items that best match the lost item.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MiniItem'
+        "400":
+          description: Bad request. Missing one or both of User_id and id.
+        "500":
+          description: Internal server error. Likely to be a message queue fault.
                     
 components:
   schemas:
@@ -323,6 +356,12 @@ components:
           type: string
           format: string
           description: UserID associated to this item. Only applicable for Lookout Items.
+        Lookout:
+          type: boolean
+          description: |
+            Flag determining whether the Lost item has subscribed to the Lookout service.
+            This flag IS REQUIRED.
+          example: false
     MiniItem:
       type: object
       description: |
@@ -408,6 +447,12 @@ components:
           type: string
           description: Accompanying image of new Lost/Found item, if applicable
           format: byte
+        Lookout:
+          type: boolean
+          description: |
+            Flag determining whether the Lost item has subscribed to the Lookout service.
+            This flag should only exist for Lost items.
+          example: false
     DeleteItem:
       type: object
       description: |
@@ -469,6 +514,12 @@ components:
           type: string
           description: Updated image of Lost/Found item, if applicable
           format: byte
+        Lookout:
+          type: boolean
+          description: |
+            Flag determining whether the Lost item has subscribed to the Lookout service.
+            This flag should only exist for Lost items.
+          example: false
     Category:
       type: string
       enum:
@@ -481,7 +532,7 @@ components:
     ContactMethod:
       type: string
       enum:
-        - nus_security
+        - nus_security 
         - telegram
         - whatsapp
         - wechat
