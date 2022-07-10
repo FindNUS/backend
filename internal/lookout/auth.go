@@ -1,5 +1,5 @@
 /*
-	This file describles logic to take care of firebase authentication
+	This file describes logic to take care of firebase authentication
 */
 package main
 
