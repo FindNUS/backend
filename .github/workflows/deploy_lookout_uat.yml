@@ -1,0 +1,40 @@
+name: Deploy Lookout uService to Heroku UAT
+
+on:
+  push:
+    branches:
+      - 'uat'
+    paths:
+      - "internal/lookout/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      #Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Dockerfile
+        run: bash build/setup_backend.sh
+      - name: Build & Deploy Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          docker_heroku_process_type: web
+          docker_build_args: |
+            PRODUCTION
+            FIREBASE_KEY
+            FIREBASE_KEY_ID
+            MONGO_URI
+            RABBITMQ_URI
+            BONSAI_ES_URI
+        env:
+          PRODUCTION: false
+          FIREBASE_KEY: ${{ secrets.FIREBASE_PROD_PRIVATE_KEY }}
+          FIREBASE_KEY_ID: ${{ secrets.FIREBASE_PROD_PRIVATE_KEY_ID }}
+          MONGO_URI: ${{ secrets.MONGO_URI_PROD }} 
+          RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_PROD }}
+          BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}
