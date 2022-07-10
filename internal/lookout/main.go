@@ -10,7 +10,6 @@ import "github.com/streadway/amqp"
 	3. ElasticSearch the items - Only accept item scores that match well
 	4. If good candidates are found, emails the user for potential matches
 	5. For every email ping, we decrement the item's ping number on Mongo
-
 */
 
 func HandleRequest(d amqp.Delivery) {
