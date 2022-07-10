@@ -35,6 +35,6 @@ func TestNlpGetQuery(t *testing.T) {
 		// NlpGetQuery(item)
 		qry := NlpGetQuery(item)
 		ElasticLookoutSearch(qry, item.Category)
-		log.Println("----- END TEST ITEM -----")
+		// log.Println("----- END TEST ITEM -----")
 	}
 }
