@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Dockerfile
-        run: bash build/setup_backend.sh
+        run: bash build/setup_lookout.sh
       - name: Build & Deploy Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
