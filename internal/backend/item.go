@@ -82,7 +82,17 @@ func HandleUpdateItem(c *gin.Context) {
 			break
 		}
 	}
-	body, _ := ioutil.ReadAll(c.Request.Body)
+	rawBody, _ := ioutil.ReadAll(c.Request.Body)
+
+	// Validate the item body
+	body, err := ParseUpdateItemBody(rawBody)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
 	msg := PrepareMessage(params, body, OPERATION_PATCH_ITEM)
 	PublishMessage(ItemChannel, msg)
 	c.JSON(200, gin.H{
