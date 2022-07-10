@@ -131,15 +131,6 @@ func ParseUpdateItemBody(bytes []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	var ok bool
-	requiredFields := []string{"Name", "Location"}
-	for _, field := range requiredFields {
-		if _, ok = generalItem[field]; !ok {
-			return nil, errors.New("Missing Name &/or Location")
-		}
-	}
-	// Check for Lookout field
-
 	bytes, _ = json.Marshal(generalItem)
 	return bytes, nil
 }
