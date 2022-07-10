@@ -17,6 +17,18 @@ import (
 var EsClient *elastic.Client
 var IndexName string
 
+func debugTestQuery(query elastic.Query) {
+	src, err := query.Source()
+	if err != nil {
+		panic(err)
+	}
+	data, err := json.MarshalIndent(src, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(data))
+}
+
 func SetupElasticClient() {
 	bonsaiURI := os.Getenv("BONSAI_ES_URI")
 	var err error
@@ -39,13 +51,6 @@ func SetupElasticClient() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	// Ping to test
-	info, code, err := EsClient.Ping("https://findnus-prod-8254101466.eu-west-1.bonsaisearch.net:443").Do(context.Background())
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	fmt.Println(info)
-	fmt.Println(code)
 	// Init index name
 	IndexName = "found_items_uat"
 	if prodstr, ok := os.LookupEnv("PRODUCTION"); ok {
@@ -55,7 +60,6 @@ func SetupElasticClient() {
 	}
 	log.Println("IndexName for EsClient is:", IndexName)
 	fmt.Println("ElasticSearch setup done")
-
 }
 
 // Startup the ElasticSearch index if needed.
@@ -118,77 +122,21 @@ func ElasticInitIndex() {
 	log.Println("found_items index exists and has been initialised!")
 }
 
-// Handler for Adding Item
-func ElasticAddItem(item ElasticItem) {
-	// Check for item existence first as a safety catch to avoid redundant (the bad kind) copies
-	if ElasticGetItem(item.Id) != (ElasticItem{}) {
-		// Item already exists! Delete it and re-add in.
-		// Deletion is done due to paywalled API and wonky driver implementation...
-		// ...as explained in the Update subroutines
-		log.Println("Deleting")
-		ElasticDeleteItem(item.Id)
-	}
-	res, err := EsClient.Index().Index(IndexName).BodyJson(item).Do(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Add item response:", res)
-	// PrettyPrintStruct(res)
-}
-
-// Update an existing item on elasticsearch
-func ElasticUpdateItem(item ElasticItem) {
-	// The most direct way to update is via the UpdateByQuery API:
-	// res, err := EsClient.UpdateByQuery().Query(qry).Index(IndexName).Do(ctx)
-	// HOWEVER - this function is paywalled by our ElasticSearch provider. :(
-
-	// Other ways of updating require hacky, non-trivial implementations.
-	// For sake of simplicity, naiively delete and re-add the item.
-	// This is logically equivalent to what is written in ElasticAddItem().
-	// Nevertheless, this handler will stay as good(?) SWE practice.
-	// We may change provider or find a better way to implement update.
-	// Having a seperate handler for update keeps things decoupled and easier to debug.
-	ElasticDeleteItem(item.Id)
-	EsClient.Refresh().Do(context.Background())
-	ElasticAddItem(item)
-}
-
-func ElasticDeleteItem(id string) int64 {
-	ctx := context.Background()
-	qry := elastic.NewTermQuery("Id", id)
-	res, err := EsClient.DeleteByQuery().Query(qry).Index(IndexName).Do(ctx)
-	if err != nil {
-		// Handle error
-		log.Println("Error deleting item in ElasticDeleteItem(),", err.Error())
-	}
-	return res.Deleted
-}
-
-// Get item by id (not search)
-func ElasticGetItem(id string) ElasticItem {
-	qry := elastic.NewTermQuery("Id", id)
-	EsClient.Refresh().Do(context.Background())
-	res, err := EsClient.Search().Index(IndexName).Query(qry).Pretty(true).Do(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-	var esItem ElasticItem
-	for _, item := range res.Each(reflect.TypeOf(esItem)) {
-		PrettyPrintStruct(item.(ElasticItem))
-		esItem = item.(ElasticItem)
-	}
-	return esItem
-}
-
-func ElasticSearchGeneral(qry string) []ElasticItem {
+func ElasticLookoutSearch(qry string, cat string) []ElasticItem {
+	query := elastic.NewBoolQuery()
 	mmq := elastic.NewMultiMatchQuery(
 		qry,
-		"Name", "Location", "Item_details", "Category", "Id",
+		"Name", "Location", "Item_details",
 	)
-	// Search query tuning
 	mmq.Type("most_fields")
-	mmq.Operator("or")
 	mmq.Fuzziness("2")
+	mmq.MinimumShouldMatch("5") // 5 clauses
+	// mmq.Analyzer("standard")
+	mmq.FieldWithBoost("Name", 2)
+	mmq.FieldWithBoost("Item_details", 2)
+	query.Must(mmq)
+	query.Filter(elastic.NewTermQuery("Category", []string{"Etc", cat}))
+
 	// Execute the search
 	ctx := context.TODO()
 	EsClient.Refresh().Do(context.Background())

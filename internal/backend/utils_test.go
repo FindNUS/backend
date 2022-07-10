@@ -27,6 +27,7 @@ func loadTestItems(filename string) []map[string]interface{} {
 
 // Redundant test for Body Parsing Function
 func TestParseItemBody(t *testing.T) {
+	// FOUND ITEMS
 	testdata := loadTestItems("valid_found_items.json")
 	for _, item := range testdata {
 		bytes, _ := json.Marshal(item)
@@ -41,6 +42,26 @@ func TestParseItemBody(t *testing.T) {
 		bytes, _ := json.Marshal(item)
 		if _, err := ParseItemBody(bytes); err == nil {
 			t.Log("Found item wrongly flagged as valid: ", item)
+			t.Log(err.Error())
+			t.Fail()
+		}
+	}
+	// LOST ITEMS
+	testdata = loadTestItems("valid_lost_items.json")
+	for _, item := range testdata {
+		PrettyPrintStruct(item)
+		bytes, _ := json.Marshal(item)
+		if _, err := ParseItemBody(bytes); err != nil {
+			t.Log("Lost item wrongly flagged as invalid: ", item)
+			t.Log("Error: ", err.Error())
+			t.Fail()
+		}
+	}
+	testdata = loadTestItems("invalid_lost_items.json")
+	for _, item := range testdata {
+		bytes, _ := json.Marshal(item)
+		if _, err := ParseItemBody(bytes); err == nil {
+			t.Log("Lost item wrongly flagged as valid: ", item)
 			t.Log(err.Error())
 			t.Fail()
 		}
