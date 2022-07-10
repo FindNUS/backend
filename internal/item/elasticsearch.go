@@ -214,3 +214,48 @@ func ElasticParseBody(item Item, id primitive.ObjectID) ElasticItem {
 	esItem.Id = id.Hex()
 	return esItem
 }
+
+/* LOOKOUT MICROSERVICE */
+func debugTestQuery(query elastic.Query) {
+	src, err := query.Source()
+	if err != nil {
+		panic(err)
+	}
+	data, err := json.MarshalIndent(src, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(data))
+}
+
+func ElasticLookoutSearch(qry string, cat string) []ElasticItem {
+	query := elastic.NewBoolQuery()
+	mmq := elastic.NewMultiMatchQuery(
+		qry,
+		"Name", "Location", "Item_details",
+	)
+	mmq.Type("most_fields")
+	mmq.Fuzziness("2")
+	mmq.MinimumShouldMatch("5") // 5 clauses
+	// mmq.Analyzer("standard")
+	mmq.FieldWithBoost("Name", 2)
+	mmq.FieldWithBoost("Item_details", 2)
+	query.Must(mmq)
+	query.Filter(elastic.NewTermQuery("Category", []string{"Etc", cat}))
+
+	// Execute the search
+	ctx := context.TODO()
+	EsClient.Refresh().Do(context.Background())
+	res, err := EsClient.Search().Index(IndexName).Query(mmq).Do(ctx)
+	if err != nil {
+		panic(err.Error())
+	}
+	esItemList := []ElasticItem{}
+	esItem := ElasticItem{}
+	for _, item := range res.Each(reflect.TypeOf(esItem)) {
+		log.Println("Search found: ", item)
+		esItem = item.(ElasticItem)
+		esItemList = append(esItemList, esItem)
+	}
+	return esItemList
+}

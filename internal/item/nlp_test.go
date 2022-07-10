@@ -2,27 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"log"
-	"os"
 	"testing"
 )
-
-func loadTestItems(filename string) []map[string]interface{} {
-	var f *os.File
-	var err error
-	f, err = os.Open("./test/" + filename)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	data, err := ioutil.ReadAll(f)
-	var res []map[string]interface{}
-	err = json.Unmarshal(data, &res)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	return res
-}
 
 // Test with UAT data that the general function works as expected
 func TestNlpGetQuery(t *testing.T) {
