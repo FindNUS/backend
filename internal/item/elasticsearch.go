@@ -183,7 +183,7 @@ func ElasticGetItem(id string) ElasticItem {
 func ElasticSearchGeneral(qry string) []ElasticItem {
 	mmq := elastic.NewMultiMatchQuery(
 		qry,
-		"Name", "Location", "Item_details", "Category",
+		"Name", "Location", "Item_details", "Category", "Id",
 	)
 	// Search query tuning
 	mmq.Type("most_fields")
