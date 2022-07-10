@@ -125,6 +125,11 @@ func PublishMessage(channel *amqp.Channel, jsonMsg ItemMsgJSON) {
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
+	if channel == nil {
+		// Debug channel -- function is called in a testing routine
+		return
+	}
+
 	// Publish to a queue with a unique ID
 	channel.Publish(
 		"",         // exchange

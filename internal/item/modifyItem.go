@@ -42,11 +42,16 @@ func DoAddItem(msg ItemMsgJSON) (ItemCollections, primitive.ObjectID) {
 // Updates an Item and returns its mongoDB id and an error, if any
 // Does not return the string when User_id exists (avoid false deletion in FOUND ES)
 func DoUpdateItem(msg ItemMsgJSON) (string, error) {
-	var item PatchItem
-	body := ParseNewItemBody(msg.Body)
-	json.Unmarshal(body, &item)
-	var id string
 	var err error
+	var item PatchItem
+	body := ParseUpdateItemBody(msg.Body)
+
+	err = json.Unmarshal(body, &item)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	var id string
 	// Safety check, should not trigger
 	if _, ok := msg.Params["Id"]; !ok {
 		return "", errors.New("Update item failed, item does not exist")
@@ -61,12 +66,17 @@ func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 		id = "" // Prevent ElasticSearch operation
 	}
 	// Check which collection the request belongs to
+	numModify := int64(0)
 	if item.User_id == "" {
 		// Item belongs to FOUND collection
-		MongoPatchItem(COLL_FOUND, item)
+		numModify = MongoPatchItem(COLL_FOUND, item)
 	} else {
 		// User_id presence implies the msg belongs to LOST collection
-		MongoPatchItem(COLL_LOST, item)
+		numModify = MongoPatchItem(COLL_LOST, item)
+	}
+	if numModify != 1 {
+		log.Println("WARNING: Potential error in DoUpdateItem. Expeted 1 modified item, got", numModify)
+		log.Println("Affected update id:", id)
 	}
 	return id, nil
 }
@@ -87,14 +97,14 @@ func DoDeleteItem(msg ItemMsgJSON) (string, error) {
 	if err != nil {
 		return "", errors.New("Error while deleting: " + err.Error())
 	}
-	// User_id check to determine collection
+	// User_id check to determine collection and execute Imgur deletion if necessary
 	if _, ok := msg.Params["User_id"]; ok {
 		item.User_id = msg.Params["User_id"][0]
 		id = "" // Prevent ElasticSearch operation
+	} else {
+		// Delete image of item, if needed
+		ImgurDeleteImageFromId(id)
 	}
-
-	// Delete image of item, if needed
-	ImgurDeleteImageFromId(id)
 
 	// Based which collection the deleted item belongs to
 	if item.User_id == "" {

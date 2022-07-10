@@ -11,14 +11,6 @@ import (
 // Determines if the POST request belongs to the LOST or FOUND collection
 func HandleNewItem(c *gin.Context) {
 	params := GetParams(c)
-	if _, ok := params["User_id"]; ok {
-		HandleNewLostItem(c, params)
-	} else {
-		HandleNewFoundItem(c, params)
-	}
-}
-
-func HandleNewFoundItem(c *gin.Context, params map[string][]string) {
 	// No params check needed
 	rawBody, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -28,32 +20,8 @@ func HandleNewFoundItem(c *gin.Context, params map[string][]string) {
 		})
 		return
 	}
-	body, err := ParseFoundItemBody(rawBody)
+	body, err := ParseItemBody(rawBody)
 	if body == nil {
-		c.JSON(400, gin.H{
-			"message": "Form body has issues: " + err.Error(),
-		})
-		return
-	}
-	msg := PrepareMessage(params, body, OPERATION_NEW_ITEM)
-	PublishMessage(ItemChannel, msg)
-	c.JSON(200, gin.H{
-		"message": "OK",
-	})
-}
-
-func HandleNewLostItem(c *gin.Context, params map[string][]string) {
-	// No params check needed
-	rawBody, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		log.Println(err.Error())
-		c.JSON(400, gin.H{
-			"message": "Could not read body: " + err.Error(),
-		})
-		return
-	}
-	body, err := ParseLostItemBody(rawBody)
-	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "Form body has issues: " + err.Error(),
 		})

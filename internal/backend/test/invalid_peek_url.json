@@ -1,0 +1,28 @@
+[
+{
+    "offset": ["100[];sdfa"]
+},
+{
+    "offset": ["-2"]
+},
+{
+    "limit": ["ad#9`!`as"]
+},
+{
+    "limit": ["-53"]
+},
+{
+    "offset": ["-20"],
+    "limit": ["1001"]
+},
+{
+    "offset": ["204080"],
+    "limit": ["-9871"]
+},
+{
+    "offset": ["-79"],
+    "limit": ["-86"],
+    "foobar": ["baz"],
+    "category": ["Electronics"]
+}
+]
