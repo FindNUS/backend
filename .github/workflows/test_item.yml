@@ -30,6 +30,8 @@ jobs:
       - name: Run Tests
         working-directory: ./internal/item
         env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+          FIREBASE_KEY_ID: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY_ID }}
           MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
           BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}

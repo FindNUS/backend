@@ -88,3 +88,11 @@ func TestMongoGetManyItems(t *testing.T) {
 	log.Println("GetManyItems User_id filter PASS")
 
 }
+
+func TestMongoGetAllLookoutRequests(t *testing.T) {
+	SetupMongo()
+	items := MongoGetAllLookoutRequests(COLL_DEBUG)
+	for _, item := range items {
+		PrettyPrintStruct(item)
+	}
+}

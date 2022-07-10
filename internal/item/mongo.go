@@ -205,3 +205,47 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 	}
 	return items
 }
+
+// Lookup Lost collection and get all items that have set Lookout=true
+// Pass COLL_LOST for live usage, COLL_DEBUG for debug usage
+func MongoGetAllLookoutRequests(coll_name ItemCollections) []Item {
+	coll := mongoDb.Collection(string(coll_name))
+	// Parse pagination variables
+	// Parse category filters
+	// { $or : [ { "Category": {"$eq", "foo"}, {...} } ]
+	filter := bson.M{}
+	filter["Lookout"] = true
+
+	log.Println("Searching MongoDB with filter:", filter)
+	opts := options.Find()
+	// Specify what fields to return. Id is implicitly returned
+	opts.SetProjection(
+		bson.D{
+			{"Name", 1},
+			{"Date", 1},
+			{"Location", 1},
+			{"Category", 1},
+			{"User_id", 1},
+			{"Item_details", 1},
+		},
+	)
+	opts.SetSort(bson.D{{"Date", -1}})
+
+	// TODO: Consider parsing all other filters, if they exist
+	res, err := coll.Find(context.TODO(), filter, opts)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	items := []Item{}
+	for res.Next(context.TODO()) {
+		var generalItem map[string]interface{}
+		var item Item
+		res.Decode(&generalItem)
+		if generalItem == nil {
+			continue
+		}
+		item = ParseGetItemBody(generalItem)
+		items = append(items, item)
+	}
+	return items
+}
