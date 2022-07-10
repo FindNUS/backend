@@ -15,8 +15,6 @@ var ItemChannel *amqp.Channel
 var ItemQueue amqp.Queue
 var GetItemQueue amqp.Queue
 
-// Thread-safe jobId implementation
-
 // Setup RabbitMQ service. Remember to defer connection close.
 func SetupMessageBrokerConnection() {
 	uri := os.Getenv("RABBITMQ_URI")
