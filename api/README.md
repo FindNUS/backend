@@ -1347,6 +1347,72 @@ For example, category=Cards&category=Etc will include results from both Cards an
 </table>
 
 
+##### &#9655; startdate
+
+String representation of the start date to filter by.
+Date should be in ISO format: YYYY-MM-DDThh:mm:ssZ, eg: 2012:12:25T17:33:59Z
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>startdate </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td><p>String representation of the start date to filter by.
+      Date should be in ISO format: YYYY-MM-DDThh:mm:ssZ, eg: 2012:12:25T17:33:59Z</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
+##### &#9655; enddate
+
+String representation of the end date to filter by. 
+Date should be in ISO format: YYYY-MM-DDThh:mm:ssZ, eg: 2012:12:25T17:33:59Z
+
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>In</th>
+      <th>Description</th>
+      <th>Accepted values</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td>enddate </td>
+        <td>
+          string
+        </td>
+        <td>query</td>
+        <td><p>String representation of the end date to filter by.
+      Date should be in ISO format: YYYY-MM-DDThh:mm:ssZ, eg: 2012:12:25T17:33:59Z</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
+  </tbody>
+</table>
+
+
 
 
 
