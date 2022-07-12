@@ -170,7 +170,23 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 		filter["User_id"] = tmp[0]
 	}
 
-	log.Println("Searching MongoDB with filter:", filter)
+	// Parse Date filters, if they exist
+	startDateArr, startExist := args["startdate"]
+	endDateArr, endExist := args["enddate"]
+	if startExist || endExist {
+		tmp := bson.M{}
+		if startExist {
+			startTime := primitive.NewDateTimeFromTime(ParseDateString(startDateArr[0]))
+			tmp["$gte"] = startTime
+		}
+		if endExist {
+			endTime := primitive.NewDateTimeFromTime(ParseDateString(endDateArr[0]))
+			tmp["$lte"] = endTime
+		}
+		filter["Date"] = tmp
+	}
+
+	// log.Println("Searching MongoDB with filter:", filter)
 	opts := options.Find()
 	// Specify what fields to return. Id is implicitly returned
 	opts.SetProjection(
@@ -187,7 +203,6 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 	opts.SetSkip(offset)
 	opts.SetLimit(limit)
 
-	// TODO: Consider parsing all other filters, if they exist
 	res, err := coll.Find(context.TODO(), filter, opts)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -216,7 +231,6 @@ func MongoGetAllLookoutRequests(coll_name ItemCollections) []Item {
 	filter := bson.M{}
 	filter["Lookout"] = true
 
-	log.Println("Searching MongoDB with filter:", filter)
 	opts := options.Find()
 	// Specify what fields to return. Id is implicitly returned
 	opts.SetProjection(

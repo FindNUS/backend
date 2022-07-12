@@ -142,7 +142,7 @@ func GetParams(c *gin.Context) map[string][]string {
 	return params
 }
 
-// Checks if offset & limit are proper
+// Checks if offset, limit, start/end dates are properly formatted
 func ValidatePeekParams(params map[string][]string) error {
 	if paramArr, ok := params["offset"]; ok {
 		tmp := paramArr[0]
@@ -150,8 +150,8 @@ func ValidatePeekParams(params map[string][]string) error {
 		if err != nil {
 			return err
 		}
-		if num <= 0 {
-			return errors.New("offset cannot be <= 0!")
+		if num < 0 {
+			return errors.New("offset cannot be < 0!")
 		}
 	}
 	if paramArr, ok := params["limit"]; ok {
@@ -162,6 +162,31 @@ func ValidatePeekParams(params map[string][]string) error {
 		}
 		if num <= 0 {
 			return errors.New("limit cannot be <= 0!")
+		}
+	}
+
+	layout := "2006-01-02T15:04:05Z"
+	startDate := time.Time{}
+	if paramArr, ok := params["startdate"]; ok {
+		// startdate exists
+		var err error
+		startDate, err = time.Parse(layout, paramArr[0])
+		if err != nil {
+			log.Println(err.Error())
+			return errors.New("Invalid date format. Ensure it follows the format 2006-01-02T15:04:05Z")
+		}
+		// startdate exists and is valid, continue
+	}
+	if paramArr, ok := params["enddate"]; ok {
+		// enddate exists
+		endDate, err := time.Parse(layout, paramArr[0])
+		if err != nil {
+			log.Println(err.Error())
+			return errors.New("Invalid date format. Ensure it follows the format 2006-01-02T15:04:05Z")
+		}
+		// Check that the date range is logical (end > start)
+		if startDate != (time.Time{}) && startDate.After(endDate) {
+			return errors.New("Invalid date range. End date is before start date!")
 		}
 	}
 	return nil
