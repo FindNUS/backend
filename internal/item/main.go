@@ -79,9 +79,6 @@ func HandleRequest(d amqp.Delivery) {
 		}
 		res := ElasticSearchGeneral(qry)
 		PublishResponse(res, d)
-	case OPERATION_LOOKOUT_CRON:
-		PeriodicCheck()
-		break
 	case OPERATION_LOOKOUT_EXPLICIT:
 		items := LookoutDirect(msg)
 		PublishResponse(items, d)
@@ -103,6 +100,7 @@ func main() {
 	go ConsumeMessages()
 	go ConsumeGetMessages()
 	go ConsumeLookoutMessages()
+	go PeriodicCheck()
 	forever := make(chan bool)
 	<-forever
 }
