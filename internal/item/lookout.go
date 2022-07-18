@@ -9,6 +9,7 @@ import (
 func PeriodicCheck() {
 	for true {
 		lookoutRequests := MongoGetAllLookoutRequests(COLL_LOST)
+		log.Println("Lookout requests:", lookoutRequests)
 		for _, request := range lookoutRequests {
 			query := NlpGetQuery(request)
 			elasticItems := ElasticLookoutSearch(query, request.Category)
@@ -17,10 +18,12 @@ func PeriodicCheck() {
 				// skip invalid email
 				continue
 			}
-			if !MailSendMessage(elasticItems, request, userEmail) {
-				log.Println("Error sending email.")
-			}
+			PrettyPrintStruct(elasticItems)
+			// if !MailSendMessage(elasticItems, request, userEmail) {
+			// 	log.Println("Error sending email.")
+			// }
 		}
+		log.Println("Periodic Lookout Sleeping...")
 		time.Sleep(time.Hour * 24) // daily reset, or whenever the container gets woken up
 	}
 }

@@ -83,6 +83,10 @@ func InitFirebase() firebase.App {
 // Lookup a Lostee's email based on the User_id
 func FirebaseGetEmailFromUser(user_id string) string {
 	authClient, _ := firebaseApp.Auth(context.Background())
-	userRecord, _ := authClient.GetUser(context.TODO(), user_id)
+	userRecord, err := authClient.GetUser(context.TODO(), user_id)
+	if err != nil {
+		log.Println("Error getting firebase email:", err.Error())
+		return ""
+	}
 	return userRecord.Email
 }
