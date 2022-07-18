@@ -1,16 +1,27 @@
 package main
 
-// WIP: Called by a cron microservice to look through everything
+import (
+	"log"
+	"time"
+)
+
+// Called periodically
 func PeriodicCheck() {
-	lookoutRequests := MongoGetAllLookoutRequests(COLL_LOST)
-	for _, request := range lookoutRequests {
-		query := NlpGetQuery(request)
-		elasticItems := ElasticLookoutSearch(query, request.Category)
-		if MailSendMessage(elasticItems) {
-			// Email OK
-		} else {
-			// Email !OK
+	for true {
+		lookoutRequests := MongoGetAllLookoutRequests(COLL_LOST)
+		for _, request := range lookoutRequests {
+			query := NlpGetQuery(request)
+			elasticItems := ElasticLookoutSearch(query, request.Category)
+			userEmail := FirebaseGetEmailFromUser(request.User_id)
+			if userEmail == "" {
+				// skip invalid email
+				continue
+			}
+			if !MailSendMessage(elasticItems, request, userEmail) {
+				log.Println("Error sending email.")
+			}
 		}
+		time.Sleep(time.Hour * 24) // daily reset, or whenever the container gets woken up
 	}
 }
 
