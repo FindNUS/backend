@@ -25,7 +25,6 @@ func GetMailSecret() string {
 			mailSecret = scanner.Text()
 		}
 	}
-	log.Println(mailSecret)
 	return mailSecret
 }
 
@@ -69,7 +68,7 @@ func MailSendMessage(esItems []ElasticItem, lostItem Item, toEmail string) bool 
 
 	message := messageIntro + messageBody
 	mail.SetBody("text/html", message)
-	dialer := gomail.NewPlainDialer("smtp.office365.com", 587, "findnus@outlook.com", GetMailSecret())
+	dialer := gomail.NewDialer("smtp.office365.com", 587, "findnus@outlook.com", GetMailSecret())
 	err := dialer.DialAndSend(mail)
 	if err != nil {
 		log.Println(err.Error())
