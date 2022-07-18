@@ -36,9 +36,9 @@ jobs:
         env:
           PRODUCTION: true
           MONGO_URI: ${{ secrets.MONGO_URI_PROD }}
-          FIREBASE_KEY: ${{ secrets.FIREBASE_PROD_PRIVATE_KEY }}
-          FIREBASE_KEY_ID: ${{ secrets.FIREBASE_PROD_PRIVATE_KEY_ID }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_PROD }}
           BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}
           IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
+          FIREBASE_KEY: ${{ secrets.FIREBASE_PROD_PRIVATE_KEY }}
+          FIREBASE_KEY_ID: ${{ secrets.FIREBASE_PROD_PRIVATE_KEY_ID }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}

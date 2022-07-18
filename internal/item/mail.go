@@ -14,6 +14,7 @@ func GetMailSecret() string {
 	mailSecret := os.Getenv("EMAIL_PASSWORD")
 	if mailSecret == "" {
 		// Read from secrets file
+		log.Println("Mail secret not found. Attempting to find secret locally.")
 		f, err := os.Open("../../secrets/email.txt")
 		if err != nil {
 			log.Fatal(err)
@@ -24,6 +25,7 @@ func GetMailSecret() string {
 			mailSecret = scanner.Text()
 		}
 	}
+	log.Println(mailSecret)
 	return mailSecret
 }
 
