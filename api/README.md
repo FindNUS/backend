@@ -331,6 +331,16 @@ _No headers specified_
       </td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -349,7 +359,8 @@ _No headers specified_
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD",
   "User_id": "string",
-  "Lookout": false
+  "Lookout": false,
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 ##### ▶ 404 - Get request is valid, item not found
@@ -535,6 +546,16 @@ Firebase ID token of user
       </td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -552,7 +573,8 @@ Firebase ID token of user
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_base64": "string",
-  "Lookout": false
+  "Lookout": false,
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 
@@ -804,6 +826,16 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
       </td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -822,7 +854,8 @@ FindNUS User Id (for lost item lookout requests). Include this to remove from Lo
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_base64": "string",
-  "Lookout": false
+  "Lookout": false,
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 
@@ -1030,6 +1063,16 @@ _No headers specified_
       </td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1048,7 +1091,8 @@ _No headers specified_
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD",
   "User_id": "string",
-  "Lookout": false
+  "Lookout": false,
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 ##### ▶ 404 - Item not found
@@ -1495,6 +1539,16 @@ _No headers specified_
         <td>Item's accompanying image link</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Response.Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1509,7 +1563,8 @@ _No headers specified_
     "Date": "2019-08-24T14:15:22Z",
     "Location": "E4A DSA Lab",
     "Category": "Cards",
-    "Image_url": "https://imgur.com/gallery/RaHyECD"
+    "Image_url": "https://imgur.com/gallery/RaHyECD",
+    "Pluscode": "7QXC+CR Singapore"
   }
 ]
 ```
@@ -1649,6 +1704,16 @@ _No headers specified_
         <td>Item's accompanying image link</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Response.Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1663,7 +1728,8 @@ _No headers specified_
     "Date": "2019-08-24T14:15:22Z",
     "Location": "E4A DSA Lab",
     "Category": "Cards",
-    "Image_url": "https://imgur.com/gallery/RaHyECD"
+    "Image_url": "https://imgur.com/gallery/RaHyECD",
+    "Pluscode": "7QXC+CR Singapore"
   }
 ]
 ```
@@ -1826,6 +1892,16 @@ _No headers specified_
         <td>Item's accompanying image link</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Response.Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1840,7 +1916,8 @@ _No headers specified_
     "Date": "2019-08-24T14:15:22Z",
     "Location": "E4A DSA Lab",
     "Category": "Cards",
-    "Image_url": "https://imgur.com/gallery/RaHyECD"
+    "Image_url": "https://imgur.com/gallery/RaHyECD",
+    "Pluscode": "7QXC+CR Singapore"
   }
 ]
 ```
@@ -1963,6 +2040,16 @@ _No headers specified_
       </td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -1980,7 +2067,8 @@ _No headers specified_
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_url": "https://imgur.com/gallery/RaHyECD",
   "User_id": "string",
-  "Lookout": false
+  "Lookout": false,
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 <a id="" />
@@ -2045,6 +2133,16 @@ _No headers specified_
         <td>Item's accompanying image link</td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -2057,7 +2155,8 @@ _No headers specified_
   "Date": "2019-08-24T14:15:22Z",
   "Location": "E4A DSA Lab",
   "Category": "Cards",
-  "Image_url": "https://imgur.com/gallery/RaHyECD"
+  "Image_url": "https://imgur.com/gallery/RaHyECD",
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 <a id="" />
@@ -2156,6 +2255,16 @@ _No headers specified_
       </td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -2172,7 +2281,8 @@ _No headers specified_
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_base64": "string",
-  "Lookout": false
+  "Lookout": false,
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 <a id="" />
@@ -2311,6 +2421,16 @@ _No headers specified_
       </td>
         <td><em>Any</em></td>
       </tr>
+      <tr>
+        <td>Pluscode</td>
+        <td>
+          string
+        </td>
+        <td><p>Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+      Optional parameter if the lost item is tagged to a particular LAT/LONG</p>
+      </td>
+        <td><em>Any</em></td>
+      </tr>
   </tbody>
 </table>
 
@@ -2328,7 +2448,8 @@ _No headers specified_
   "Contact_details": "FindNUS",
   "Item_details": "Blue, with a sticker and broken handle",
   "Image_base64": "string",
-  "Lookout": false
+  "Lookout": false,
+  "Pluscode": "7QXC+CR Singapore"
 }
 ```
 <a id="" />

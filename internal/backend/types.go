@@ -26,6 +26,7 @@ type Item struct {
 	Image_url       string
 	User_id         string `bson:"User_id,omitempty"`
 	Lookout         bool   `bson:"Lookout,omitempty"`
+	Pluscode        string
 }
 
 // NOTE: New Item will require some preprocessing, namely the storage of imgr
@@ -40,7 +41,8 @@ type NewItem struct {
 	Image_url       string    `bson:"Image_url,omitempty"`
 	Image_base64    byte      `bson:"Image_base64,omitempty"`
 	User_id         string    `bson:"User_id,omitempty"`
-	Lookout         bool      `bson:"Lookout, omitempty" json:"Lookout,omitempty"`
+	Lookout         bool      `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Pluscode        string    `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
 }
 
 type PatchItem struct {
@@ -56,6 +58,7 @@ type PatchItem struct {
 	Image_base64    string             `bson:"-" json:"Image_base64,omitempty"`
 	User_id         string             `bson:"User_id,omitempty" json:"User_id,omitempty"`
 	Lookout         bool               `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Pluscode        string             `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
 }
 
 type DeletedItem struct {
@@ -76,6 +79,7 @@ type ElasticItem struct {
 	Item_details string    `json:"Item_details"`
 	Image_url    string    `json:"Image_url"`
 	Date         time.Time `json:"Date"`
+	Pluscode     string    `json:"Pluscode,omitempty"`
 }
 
 // JSON Message Wrapper

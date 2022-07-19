@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"testing"
 )
 
@@ -152,4 +153,51 @@ func TestMongoGetAllLookoutRequests(t *testing.T) {
 	for _, item := range items {
 		PrettyPrintStruct(item)
 	}
+}
+
+// Additional check for offset correctness
+func TestMongoGetManyItemsPagination(t *testing.T) {
+	SetupMongo()
+	// Paginate one by one
+	args := make(map[string][]string)
+	args["limit"] = []string{"1"}
+	args["offset"] = []string{"0"}
+	// Memoize the item
+	prevItem := Item{}
+	for i := 0; i < 10; i++ {
+		args["offset"] = []string{strconv.FormatInt(int64(i), 10)}
+		// log.Println(args["offset"])
+		items := MongoGetManyItems(COLL_FOUND, args)
+		if len(items) != 0 {
+			if prevItem == items[0] {
+				t.Fail()
+				t.Log("Pagination with limit 1 caught same item!\nPrevious item:", prevItem, "\nCurrent item:", items[0])
+			}
+		} else {
+			// No more items left in the list
+			break
+		}
+		prevItem = items[0]
+	}
+	// Test with larger limit
+	log.Println("Peek pagination Limit = 1 PASS")
+	args["limit"] = []string{"5"}
+	prevItems := []Item{}
+	for i := 0; i < 16; i += 5 {
+		args["offset"] = []string{strconv.FormatInt(int64(i), 10)}
+		// log.Println(args["offset"])
+		items := MongoGetManyItems(COLL_FOUND, args)
+		// Simple Linear search
+		for _, prevItem := range prevItems {
+			for _, currItem := range items {
+				if prevItem == currItem {
+					t.Fail()
+					t.Log("Pagination with limit 5 caught same item!\nPrevious item:", prevItem, "\nCurrent item:", items[0])
+				}
+			}
+		}
+		prevItems = items
+	}
+	log.Println("Peek pagination Limit = 5 PASS")
+
 }

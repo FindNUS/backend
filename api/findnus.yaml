@@ -378,6 +378,12 @@ components:
             Flag determining whether the Lost item has subscribed to the Lookout service.
             This flag IS REQUIRED.
           example: false
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG
+          example: 7QXC+CR Singapore
     MiniItem:
       type: object
       description: |
@@ -415,7 +421,13 @@ components:
           type: string
           format: string
           description: Item's accompanying image link
-          example: https://imgur.com/gallery/RaHyECD     
+          example: https://imgur.com/gallery/RaHyECD   
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG  
+          example: 7QXC+CR Singapore
     NewItem:
       type: object
       description: |
@@ -469,6 +481,12 @@ components:
             Flag determining whether the Lost item has subscribed to the Lookout service.
             This flag should only exist for Lost items.
           example: false
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG
+          example: 7QXC+CR Singapore
     DeleteItem:
       type: object
       description: |
@@ -536,6 +554,12 @@ components:
             Flag determining whether the Lost item has subscribed to the Lookout service.
             This flag should only exist for Lost items.
           example: false
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG
+          example: 7QXC+CR Singapore
     Category:
       type: string
       enum:

@@ -3,6 +3,7 @@ name: Unit-test Item microservice
 on:
   pull_request:
     branches:
+      - 'dev'
       - 'uat'
       - 'main'
     paths:
@@ -36,4 +37,5 @@ jobs:
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
           BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}
           IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: go test .

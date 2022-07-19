@@ -92,6 +92,9 @@ func ElasticInitIndex() {
 				},
 				"Image_url": {
 					"type":"text"
+				},
+				"Pluscode": {
+					"type":"text"
 				}
 			}
 		}
