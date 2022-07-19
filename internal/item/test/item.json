@@ -25,5 +25,14 @@
         "Location": "Central Library",
         "Category": "Electronics",
         "Item_details": "i found a logitech mouse at CLB level 2 in one of the cubicles."
+    },
+    {
+        "Name": "Razer Mouse",
+        "User_id": "19fa21",
+        "Date": "2022-04-16T20:02:30Z",
+        "Location": "ECE faculty",
+        "Category": "Electronics",
+        "Item_details": "I found a Razer mouse at ECE.",
+        "Plus_code": "7QXC+CR singapore"
     }
 ]
