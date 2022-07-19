@@ -3,6 +3,7 @@ name: Unit-test backend microservice
 on:
   pull_request:
     branches:
+      - 'dev'
       - 'uat'
       - 'main'
     paths:
