@@ -65,6 +65,11 @@ func TestAddUpdateDelete(t *testing.T) {
 		t.Fail()
 		t.Log("Update location only failed!")
 	}
+	// Additional verification for particular parameters
+	if !checkUpdateParamsEqual("Pluscode", item[0]["Pluscode"].(string), verifyItem) {
+		t.Fail()
+		t.Log("Pluscode missing!")
+	}
 
 	// UPDATE MAPPABLE ITEMS TEST
 	log.Println("Testing PATCH for MAPPABLE parameters")
