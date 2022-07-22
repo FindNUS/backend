@@ -74,7 +74,7 @@ func TestAddUpdateDelete(t *testing.T) {
 	updateItemMixed := PatchItem{
 		Id:      id,
 		User_id: userid,
-		Lookout: true,
+		Lookout: 1,
 	}
 	bytes, err = json.Marshal(updateItemMixed)
 	if err != nil {
@@ -86,7 +86,7 @@ func TestAddUpdateDelete(t *testing.T) {
 	}
 	// Check that item was correctly updated
 	verifyItem = MongoGetItem(COLL_LOST, id.Hex(), userid)
-	if !verifyItem.Lookout {
+	if verifyItem.Lookout {
 		t.Fail()
 		t.Log("Update lookout only failed!")
 	}
