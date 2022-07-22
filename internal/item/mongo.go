@@ -88,6 +88,7 @@ func MongoAddItem(collName ItemCollections, item NewItem) interface{} {
 func MongoPatchItem(collname ItemCollections, item PatchItem) int64 {
 	coll := mongoDb.Collection(string(collname))
 	update := bson.M{"$set": item}
+	PrettyPrintStruct(item)
 	res, err := coll.UpdateByID(context.TODO(), item.Id, update)
 	if err != nil {
 		log.Fatalf(err.Error())

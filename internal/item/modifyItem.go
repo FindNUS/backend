@@ -57,6 +57,9 @@ func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 		return "", errors.New("Update item failed, item does not exist")
 	}
 	id = msg.Params["Id"][0]
+	if id == "" {
+		return "", errors.New("ERROR WHILE PATCHING: NO ID FOUND")
+	}
 	item.Id, err = primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return "", errors.New("ERROR WHILE PATCHING: " + err.Error())
@@ -75,8 +78,8 @@ func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 		numModify = MongoPatchItem(COLL_LOST, item)
 	}
 	if numModify != 1 {
-		log.Println("WARNING: Potential error in DoUpdateItem. Expeted 1 modified item, got", numModify)
-		log.Println("Affected update id:", id)
+		log.Println("WARNING: Potential error in DoUpdateItem. Expected 1 modified item, got", numModify)
+		log.Println("Affected update id:", item.Id)
 	}
 	return id, nil
 }

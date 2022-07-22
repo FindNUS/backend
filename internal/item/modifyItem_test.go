@@ -70,7 +70,26 @@ func TestAddUpdateDelete(t *testing.T) {
 		t.Fail()
 		t.Log("Pluscode missing!")
 	}
-
+	log.Println("Testing PATCH for LOOKOUT parameter")
+	updateItemMixed := PatchItem{
+		Id:      id,
+		User_id: userid,
+		Lookout: true,
+	}
+	bytes, err = json.Marshal(updateItemMixed)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	msg = buildItemMsgJson(dummyparams, bytes)
+	if _, err := DoUpdateItem(msg); err != nil {
+		t.Fatal("Patch item failed:", err.Error())
+	}
+	// Check that item was correctly updated
+	verifyItem = MongoGetItem(COLL_LOST, id.Hex(), userid)
+	if !verifyItem.Lookout {
+		t.Fail()
+		t.Log("Update lookout only failed!")
+	}
 	// UPDATE MAPPABLE ITEMS TEST
 	log.Println("Testing PATCH for MAPPABLE parameters")
 	updateItem = map[string]string{
