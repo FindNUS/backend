@@ -50,10 +50,10 @@ func GetGoogleCredJson(isProd bool) map[string]string {
 	}
 }
 
-var firebaseApp firebase.App
+var firebaseApp *firebase.App
 
 // Creates an Admin SDK instance for the backend to do Firebase Auth Operations.
-func InitFirebase() firebase.App {
+func InitFirebase() {
 	var app *firebase.App
 	var err error
 	config := &firebase.Config{}
@@ -77,7 +77,7 @@ func InitFirebase() firebase.App {
 	if err != nil {
 		log.Fatalf("Error init-ing firebase, %v\n", err)
 	}
-	return *app
+	firebaseApp = app
 }
 
 // Lookup a Lostee's email based on the User_id
