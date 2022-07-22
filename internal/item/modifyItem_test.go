@@ -74,7 +74,7 @@ func TestAddUpdateDelete(t *testing.T) {
 	updateItemMixed := PatchItem{
 		Id:      id,
 		User_id: userid,
-		Lookout: 1,
+		Lookout: int(LOOKOUT_DISABLED),
 	}
 	bytes, err = json.Marshal(updateItemMixed)
 	if err != nil {
@@ -86,9 +86,9 @@ func TestAddUpdateDelete(t *testing.T) {
 	}
 	// Check that item was correctly updated
 	verifyItem = MongoGetItem(COLL_LOST, id.Hex(), userid)
-	if verifyItem.Lookout {
-		t.Fail()
+	if verifyItem.Lookout != GetLookoutState(int32(LOOKOUT_DISABLED)) {
 		t.Log("Update lookout only failed!")
+		t.Fatal()
 	}
 	// UPDATE MAPPABLE ITEMS TEST
 	log.Println("Testing PATCH for MAPPABLE parameters")
