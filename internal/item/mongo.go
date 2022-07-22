@@ -90,6 +90,7 @@ func MongoPatchItem(collname ItemCollections, item PatchItem) int64 {
 	update := bson.M{"$set": item}
 	PrettyPrintStruct(item)
 	res, err := coll.UpdateByID(context.TODO(), item.Id, update)
+	// res, err := coll.UpdateOne(context.TODO(), bson.M{"_id": item.Id}, update)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -230,7 +231,7 @@ func MongoGetAllLookoutRequests(coll_name ItemCollections) []Item {
 	// Parse category filters
 	// { $or : [ { "Category": {"$eq", "foo"}, {...} } ]
 	filter := bson.M{}
-	filter["Lookout"] = true
+	filter["Lookout"] = LOOKOUT_ENABLED
 
 	opts := options.Find()
 	// Specify what fields to return. Id is implicitly returned

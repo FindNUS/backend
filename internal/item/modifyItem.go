@@ -45,12 +45,12 @@ func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 	var err error
 	var item PatchItem
 	body := ParseUpdateItemBody(msg.Body)
-
 	err = json.Unmarshal(body, &item)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
+	PrettyPrintStruct(item)
 	var id string
 	// Safety check, should not trigger
 	if _, ok := msg.Params["Id"]; !ok {
@@ -60,10 +60,10 @@ func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 	if id == "" {
 		return "", errors.New("ERROR WHILE PATCHING: NO ID FOUND")
 	}
-	item.Id, err = primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return "", errors.New("ERROR WHILE PATCHING: " + err.Error())
-	}
+	// item.Id, err = primitive.ObjectIDFromHex(id)
+	// if err != nil {
+	// 	return "", errors.New("ERROR WHILE PATCHING: " + err.Error())
+	// }
 	if _, ok := msg.Params["User_id"]; ok {
 		item.User_id = msg.Params["User_id"][0]
 		id = "" // Prevent ElasticSearch operation

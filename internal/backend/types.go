@@ -41,7 +41,7 @@ type NewItem struct {
 	Image_url       string    `bson:"Image_url,omitempty"`
 	Image_base64    byte      `bson:"Image_base64,omitempty"`
 	User_id         string    `bson:"User_id,omitempty"`
-	Lookout         bool      `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Lookout         int       `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
 	Pluscode        string    `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
 }
 
@@ -57,7 +57,7 @@ type PatchItem struct {
 	Image_url       string             `bson:"Image_url,omitempty" json:"Image_url,omitempty"`
 	Image_base64    string             `bson:"-" json:"Image_base64,omitempty"`
 	User_id         string             `bson:"User_id,omitempty" json:"User_id,omitempty"`
-	Lookout         bool               `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Lookout         int                `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
 	Pluscode        string             `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
 }
 
@@ -186,6 +186,16 @@ func GetContactString(cat int32) string {
 		return "Unknown"
 	}
 }
+
+// Lookout state mapping
+type LookoutState int
+
+const (
+	LOOKOUT_DISABLED LookoutState = 1 // avoid 0 to prevent falsey bugs in MongoDB
+	LOOKOUT_ENABLED               = 2
+	LOOKOUT_DEBUG                 = 3
+)
+
 func ParseDateString(datestring string) time.Time {
 	layout := "2006-01-02T15:04:05Z"
 	if res, err := time.Parse(layout, datestring); err == nil {
