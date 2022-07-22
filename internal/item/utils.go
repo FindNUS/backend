@@ -69,8 +69,8 @@ func ParseGetItemBody(tmp map[string]interface{}) Item {
 		tmp["Contact_method"] = GetContactString(val.(int32))
 	}
 	// Transform Lookout
-	if val, ok := tmp["Lookout"].(int); ok {
-		tmp["Lookout"] = GetLookoutState(val)
+	if val, ok := tmp["Lookout"]; ok {
+		tmp["Lookout"] = GetLookoutState(val.(int32))
 	}
 	tmp["Id"] = tmp["_id"]
 	b, err := json.Marshal(tmp)

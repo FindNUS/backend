@@ -197,7 +197,7 @@ const (
 )
 
 // Maps the int state to a bool value
-func GetLookoutState(state int) bool {
+func GetLookoutState(state int32) bool {
 	if state == LOOKOUT_ENABLED {
 		return true
 	} else {
