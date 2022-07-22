@@ -91,6 +91,7 @@ func HandleRequest(d amqp.Delivery) {
 
 // Item microservice entrypoint
 func main() {
+	InitFirebase()
 	SetupImgur()
 	SetupElasticClient()
 	ElasticInitIndex()
