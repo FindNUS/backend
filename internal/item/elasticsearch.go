@@ -237,7 +237,7 @@ func ElasticLookoutSearch(qry string, cat string) []ElasticItem {
 		qry,
 		"Name", "Location", "Item_details", "Category",
 	)
-	mmq.Type("cross_fields")
+	mmq.Type("combined_fields")
 	// mmq.Fuzziness("2")
 	// Min match 2 clauses, 1 for category, 2 for others
 	mmq.MinimumShouldMatch("3")
