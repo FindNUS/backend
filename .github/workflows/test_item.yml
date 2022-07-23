@@ -1,8 +1,9 @@
-name: Unit-test item microservice
+name: Unit-test Item microservice
 
 on:
   pull_request:
     branches:
+      - 'dev'
       - 'uat'
       - 'main'
     paths:
@@ -23,15 +24,18 @@ jobs:
         with: 
           go-version: 1.18
 
-      - name: Build backend uService
+      - name: Build Item uService
         working-directory: ./internal/item
         run: go build .
 
       - name: Run Tests
         working-directory: ./internal/item
         env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+          FIREBASE_KEY_ID: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY_ID }}
           MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
           BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}
           IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: go test .

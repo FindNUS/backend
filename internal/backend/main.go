@@ -54,6 +54,9 @@ func main() {
 	// Elastic search for items
 	router.GET("/search", HandleElasticSearch)
 
+	// Lookout microservice endpoints
+	router.GET("/lookout", HandleLookoutGet)
+
 	// Database setup (for debugging)
 	setupMongo("Items")
 
@@ -63,5 +66,6 @@ func main() {
 
 	// Consume RPC return calls for GET messages
 	go ConsumeGetItemMessage()
+	go ConsumeLookoutResponseMessages()
 	router.Run(":" + port)
 }

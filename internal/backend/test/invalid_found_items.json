@@ -36,5 +36,13 @@
         "Location": "Kent Ridge MRT",
         "Category": "Foobar",
         "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    },
+    {
+        "Name": "Invalid Lookout Existence",
+        "Date": "2022-01-31T01:42:30Z",
+        "Location": "Kent Ridge MRT",
+        "Category": "Etc",
+        "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png",
+        "Lookout" : true
     }
 ]

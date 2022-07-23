@@ -30,10 +30,16 @@ jobs:
             RABBITMQ_URI
             BONSAI_ES_URI
             IMGUR_CLIENT_ID
+            FIREBASE_KEY
+            FIREBASE_KEY_ID
+            EMAIL_PASSWORD
         env:
           PRODUCTION: false
           MONGO_URI: ${{ secrets.MONGO_URI_DEV }}
           RABBITMQ_URI: ${{ secrets.RABBITMQ_URI_UAT }}
           BONSAI_ES_URI: ${{ secrets.BONSAI_ES_URI }}
           IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
+          FIREBASE_KEY: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY }}
+          FIREBASE_KEY_ID: ${{ secrets.FIREBASE_DEV_PRIVATE_KEY_ID }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,6 +28,7 @@ func ParseNewItemBody(bytes []byte) []byte {
 	// Other special field handlers
 	BodyHandleContactMethod(&generalItem)
 	BodyHandleImage_Base64(&generalItem)
+	BodyHandleLookout(&generalItem)
 	bytes, err := json.Marshal(generalItem)
 	if err != nil {
 		log.Println("ParseNewItem failed, returning nil due to:", err.Error())
@@ -45,6 +47,7 @@ func ParseUpdateItemBody(bytes []byte) []byte {
 	// Other special field handlers
 	BodyHandleContactMethod(&generalItem)
 	BodyHandleImage_Base64(&generalItem)
+	BodyHandleLookout(&generalItem)
 	bytes, err := json.Marshal(generalItem)
 	if err != nil {
 		log.Println("ParseUpdateItemBody failed, returning nil due to:", err.Error())
@@ -64,6 +67,10 @@ func ParseGetItemBody(tmp map[string]interface{}) Item {
 	// Transform contact method
 	if val, ok := tmp["Contact_method"]; ok {
 		tmp["Contact_method"] = GetContactString(val.(int32))
+	}
+	// Transform Lookout
+	if val, ok := tmp["Lookout"]; ok {
+		tmp["Lookout"] = GetLookoutState(val.(int32))
 	}
 	tmp["Id"] = tmp["_id"]
 	b, err := json.Marshal(tmp)
@@ -145,4 +152,26 @@ func BodyHandleImage_Base64(body *map[string]interface{}) {
 		log.Println("WARNING: Possible error storing imgurRef for", link)
 	}
 	log.Println("Final body:", *body)
+}
+
+// Checks for the existence of Lookout
+// If it exists, map it to its appropriate value
+func BodyHandleLookout(body *map[string]interface{}) error {
+	value, hasLookout := (*body)["Lookout"]
+	if hasLookout {
+		// Check if value is valid
+		if enabled, ok := value.(bool); ok {
+			log.Println("Request has user_id and lookout -- no issue")
+			// Set the value to MongoDB friendly value
+			if enabled {
+				(*body)["Lookout"] = LOOKOUT_ENABLED
+			} else {
+				(*body)["Lookout"] = LOOKOUT_DISABLED
+			}
+			return nil
+		} else {
+			return errors.New("Lookout value in message payload is not in boolean form.")
+		}
+	}
+	return nil
 }

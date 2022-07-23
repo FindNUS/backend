@@ -1,5 +1,14 @@
 [
     {
+        "Name": "Razer Mouse",
+        "User_id": "19fa21",
+        "Date": "2022-04-16T20:02:30Z",
+        "Location": "ECE faculty",
+        "Category": "Electronics",
+        "Item_details": "I found a Razer mouse at ECE.",
+        "Plus_code": "7QXC+CR singapore"
+    },
+    {
         "Name": "Water bottle",
         "User_id": "19fa21",
         "Date": "2022-05-26T08:51:48.782Z",
@@ -57,6 +66,24 @@
         "Location": "Kent Ridge MRT",
         "Category": "Electronics",
         "Image_url": "https://i.insider.com/61d5c65a5a119b00184b1e1a?width=700"
+    },
+    {
+        "Name": "CS1231 Notes",
+        "User_id": "19fa21",
+        "Date": "2022-03-06T18:25:07Z",
+        "Location": "Mac Commons",
+        "Category": "Notes",
+        "Image_url": "https://staging.igotnoteslah.com/wp-content/uploads/2020/12/1-67.jpg",
+        "Lookout": false
+    },
+    {
+        "Name": "CS1231 Notes",
+        "User_id": "19fa21",
+        "Date": "2022-03-06T18:25:07Z",
+        "Location": "Mac Commons",
+        "Category": "Notes",
+        "Image_url": "https://staging.igotnoteslah.com/wp-content/uploads/2020/12/1-67.jpg",
+        "Lookout": true
     },
     {
         "Name": "Tux",

@@ -16,7 +16,7 @@ func PrettyPrintStruct(any interface{}) {
 
 // Special handlers for Category mapping
 // Pass-by pointer to reduce stack memory load
-func BodyHandleCategory(body *map[string]interface{}) bool {
+func BodyValidateCategory(body *map[string]interface{}) bool {
 	tmp, ok := (*body)["Category"].(string)
 	if !ok {
 		return false
@@ -25,15 +25,12 @@ func BodyHandleCategory(body *map[string]interface{}) bool {
 	if cat := GetCategoryType(tmp); cat < 0 {
 		return false
 	}
-	// else {
-	// 	(*body)["Category"] = cat
-	// }
 	return true
 }
 
 // Date validity handler
 // Pass-by pointer to reduce stack memory load
-func BodyHandleDate(body *map[string]interface{}) bool {
+func BodyValidateDate(body *map[string]interface{}) bool {
 	tmp, ok := (*body)["Date"].(string)
 	if !ok {
 		return false
@@ -43,22 +40,55 @@ func BodyHandleDate(body *map[string]interface{}) bool {
 	return (err == nil)
 }
 
-// Checks message body for valid New Found Item structure
+// Validate Lookout field in the body
+// Lookout field should only exist on items that have User_id
+// If enforceDefault is true, missing Lookout values for Lost items will be defaulted to false
+// Returns an error if there is an issue with field
+func BodyValidateLookout(body *map[string]interface{}, enforceDefault bool) error {
+	_, hasUserId := (*body)["User_id"].(string)
+	if hasUserId {
+		// If Lookout does not exist, create the default false value
+		value, hasLookout := (*body)["Lookout"]
+		if hasLookout {
+			// Check if value is valid
+			if _, ok := value.(bool); ok {
+				log.Println("Request has user_id and lookout -- no issue")
+				return nil
+			} else {
+				return errors.New("Lookout value in request payload is not in boolean form.")
+			}
+		}
+		// Lookout expected but not found.
+		if enforceDefault {
+			// This is likely a new item. Default lookout to false
+			log.Println("No Lookout field detected for item with User_id. Adding default Lookout=false.")
+			(*body)["Lookout"] = false
+			return nil
+		}
+		// Ignore the request. This is likely a patch item
+		return nil
+	}
+	// No User_id. Lookout should not exist
+	_, hasLookout := (*body)["Lookout"].(bool)
+	if hasLookout {
+		// Found item has a lookout parameter. Reject
+		log.Println("Non-Lost item has a Lookout field. This should not exist!")
+		return errors.New("Non-Lost item has a Lookout field. This should not exist!")
+	}
+	return nil
+}
+
+// Checks a New Item's message body for valid New Found Item structure
 func ParseItemBody(bytes []byte) ([]byte, error) {
 	var generalItem map[string]interface{}
-	// var item NewItem
 	json.Unmarshal(bytes, &generalItem)
-
-	log.Println(generalItem)
-
 	// Handle special parameters
-	if !BodyHandleDate(&generalItem) {
+	if !BodyValidateDate(&generalItem) {
 		return nil, errors.New("Date is invalid")
 	}
-	if !BodyHandleCategory(&generalItem) {
+	if !BodyValidateCategory(&generalItem) {
 		return nil, errors.New("Category is invalid")
 	}
-	// BodyHandleContactMethod(&generalItem)
 	// Check for general required fields existence
 	var ok bool
 	requiredFields := []string{"Name", "Location"}
@@ -67,6 +97,40 @@ func ParseItemBody(bytes []byte) ([]byte, error) {
 			return nil, errors.New("Missing Name &/or Location")
 		}
 	}
+
+	// Check for Lookout field
+	if err := BodyValidateLookout(&generalItem, true); err != nil {
+		return nil, err
+	}
+
+	bytes, _ = json.Marshal(generalItem)
+	return bytes, nil
+}
+
+func ParseUpdateItemBody(bytes []byte) ([]byte, error) {
+	var generalItem map[string]interface{}
+	// var item NewItem
+	json.Unmarshal(bytes, &generalItem)
+
+	// log.Println(generalItem)
+
+	// Handle special parameters
+	if _, ok := generalItem["Date"]; ok {
+		if !BodyValidateDate(&generalItem) {
+			return nil, errors.New("Date is invalid")
+		}
+	}
+	if _, ok := generalItem["Category"]; ok {
+		if !BodyValidateCategory(&generalItem) {
+			return nil, errors.New("Category is invalid")
+		}
+	}
+
+	// Check for general required fielsds existence
+	if err := BodyValidateLookout(&generalItem, false); err != nil {
+		return nil, err
+	}
+
 	bytes, _ = json.Marshal(generalItem)
 	return bytes, nil
 }
@@ -78,7 +142,7 @@ func GetParams(c *gin.Context) map[string][]string {
 	return params
 }
 
-// Checks if offset & limit are proper
+// Checks if offset, limit, start/end dates are properly formatted
 func ValidatePeekParams(params map[string][]string) error {
 	if paramArr, ok := params["offset"]; ok {
 		tmp := paramArr[0]
@@ -86,8 +150,8 @@ func ValidatePeekParams(params map[string][]string) error {
 		if err != nil {
 			return err
 		}
-		if num <= 0 {
-			return errors.New("offset cannot be <= 0!")
+		if num < 0 {
+			return errors.New("offset cannot be < 0!")
 		}
 	}
 	if paramArr, ok := params["limit"]; ok {
@@ -98,6 +162,31 @@ func ValidatePeekParams(params map[string][]string) error {
 		}
 		if num <= 0 {
 			return errors.New("limit cannot be <= 0!")
+		}
+	}
+
+	layout := "2006-01-02T15:04:05Z"
+	startDate := time.Time{}
+	if paramArr, ok := params["startdate"]; ok {
+		// startdate exists
+		var err error
+		startDate, err = time.Parse(layout, paramArr[0])
+		if err != nil {
+			log.Println(err.Error())
+			return errors.New("Invalid date format. Ensure it follows the format 2006-01-02T15:04:05Z")
+		}
+		// startdate exists and is valid, continue
+	}
+	if paramArr, ok := params["enddate"]; ok {
+		// enddate exists
+		endDate, err := time.Parse(layout, paramArr[0])
+		if err != nil {
+			log.Println(err.Error())
+			return errors.New("Invalid date format. Ensure it follows the format 2006-01-02T15:04:05Z")
+		}
+		// Check that the date range is logical (end > start)
+		if startDate != (time.Time{}) && startDate.After(endDate) {
+			return errors.New("Invalid date range. End date is before start date!")
 		}
 	}
 	return nil

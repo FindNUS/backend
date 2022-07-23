@@ -5,6 +5,8 @@
     "Location": "UTown Bus Stop",
     "Category": "Electronics",
     "Contact_details": "@FindNUS",
-    "Contact_method": "Line"
+    "Contact_method": "Line",
+    "Lookout": 2,
+    "Pluscode": "7QXC+CR singapore"
 }
 ]

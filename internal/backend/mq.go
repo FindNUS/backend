@@ -16,10 +16,13 @@ import (
 
 // Queue Name declarations
 const (
-	QUEUE_ITEM     string = "q_item"     // Creation, Update, Deletion
-	QUEUE_SEARCH   string = "q_search"   // Elastisearch
-	QUEUE_GET_REQ  string = "q_get_req"  // Request queue for Get one, get many
-	QUEUE_GET_RESP string = "q_get_resp" // Response queue
+	QUEUE_ITEM         string = "q_item"         // Creation, Update, Deletion
+	QUEUE_SEARCH       string = "q_search"       // Elastisearch
+	QUEUE_GET_REQ      string = "q_get_req"      // Request queue for Get one, get many
+	QUEUE_GET_RESP     string = "q_get_resp"     // Response queue
+	QUEUE_LOOKOUT_REQ  string = "q_lookout_req"  // To Lookout Microservice: Requests queue
+	QUEUE_LOOKOUT_RESP string = "q_lookout_resp" // From Lookout Microservice: Response queue
+	QUEUE_LOOKOUT_CRON string = "q_lookout_cron" // One-way To Lookout Microservice for Cron usage
 )
 
 // Global variables to allow MQ access
@@ -30,6 +33,7 @@ var ItemQueueConfig amqp.Queue
 var GetItemQueueConfig amqp.Queue
 
 // Common map to concurrently read RPC return calls
+// This map handles returns from the Item, Lookout microservice returns
 var GetItemReturns sync.Map
 
 // JobID Unique Job ID. Overflows OK!
@@ -78,9 +82,7 @@ func SetupMessageBrokerConnection() {
 
 // Setup Queue reference
 /* --- FINDNUS QUEUES ---
-* Three queues are setup as seperate pipelines to handle
-*
-*
+* Three queues are setup as seperate pipelines to handle various requests
  */
 func SetupChannelQueues() {
 	var err error
@@ -114,11 +116,30 @@ func SetupChannelQueues() {
 		false,         // no-wait
 		nil,           // arguments
 	)
+	// Lookout microservice RPC declaration
+	ItemChannel.QueueDeclare(
+		QUEUE_LOOKOUT_RESP, // name TODO salt this queue and make exclusive true to enable true scalability
+		false,              // durable
+		false,              // delete when unused
+		true,               // exclusive
+		false,              // no-wait
+		nil,                // arguments
+	)
+	ItemChannel.QueueDeclare(
+		QUEUE_LOOKOUT_REQ, // name
+		false,             // durable
+		false,             // delete when unused
+		false,             // exclusive
+		false,             // no-wait
+		nil,               // arguments
+	)
+
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
 }
 
+// Publish CRUD message to the item microservice
 func PublishMessage(channel *amqp.Channel, jsonMsg ItemMsgJSON) {
 	var err error
 	bytes, err := json.Marshal(jsonMsg)
@@ -166,6 +187,30 @@ func PublishGetItemMessage(channel *amqp.Channel, jsonMsg ItemMsgJSON, jobId uin
 	}
 }
 
+// Publish message to Lookout microservice...
+// ... to get an appropriate response
+func PublishGetLookoutMessage(channel *amqp.Channel, jsonMsg ItemMsgJSON, jobId uint64) {
+	var err error
+	bytes, err := json.Marshal(jsonMsg)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	err = channel.Publish(
+		"",                // exchange
+		QUEUE_LOOKOUT_REQ, // routing key
+		false,             // mandatory
+		false,             // immediate
+		amqp.Publishing{
+			ContentType:   "application/json",
+			Body:          []byte(bytes),
+			CorrelationId: strconv.FormatInt(int64(jobId), 10),
+			ReplyTo:       QUEUE_LOOKOUT_RESP,
+		})
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+}
+
 // Always running subroutine to listen for RPC returns
 func ConsumeGetItemMessage() {
 	msgs, err := ItemChannel.Consume(
@@ -189,12 +234,35 @@ func ConsumeGetItemMessage() {
 	log.Println("Shutting down channel")
 }
 
+// Always running subroutine to listen for Lookout Microservice RPC returns
+func ConsumeLookoutResponseMessages() {
+	msgs, err := ItemChannel.Consume(
+		QUEUE_LOOKOUT_RESP, // queue
+		"",                 // consumer
+		true,               // auto-ack
+		true,               // exclusive; get resp should be salted
+		false,              // no-local
+		false,              // no-wait
+		nil,                // args
+	)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	// Populate RPC responses to a common sync map
+	for msg := range msgs {
+		id, _ := strconv.ParseUint(msg.CorrelationId, 10, 64)
+		GetItemReturns.Store(id, msg.Body)
+	}
+	// Should not reach here
+	log.Println("Shutting down channel")
+}
+
 // Poll response with a timeout of 10s
 func PollResponse(jobId uint64) []byte {
 	ok := true
 	var res []byte
 	var interf interface{}
-	// TODO add a timeout
+	// Force a Timeout if the request takes to long
 	timeout := time.Second * 10
 	end := time.Now().Add(timeout)
 	for time.Now().Before(end) {

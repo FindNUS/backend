@@ -24,7 +24,9 @@ type Item struct {
 	Contact_details string
 	Item_details    string
 	Image_url       string
-	User_id         string `bson:"User_id, omitempty"`
+	User_id         string `bson:"User_id,omitempty"`
+	Lookout         bool   `bson:"Lookout,omitempty"`
+	Pluscode        string
 }
 
 // NOTE: New Item will require some preprocessing, namely the storage of imgr
@@ -39,6 +41,8 @@ type NewItem struct {
 	Image_url       string    `bson:"Image_url,omitempty"`
 	Image_base64    byte      `bson:"Image_base64,omitempty"`
 	User_id         string    `bson:"User_id,omitempty"`
+	Lookout         int       `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Pluscode        string    `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
 }
 
 type PatchItem struct {
@@ -53,6 +57,8 @@ type PatchItem struct {
 	Image_url       string             `bson:"Image_url,omitempty" json:"Image_url,omitempty"`
 	Image_base64    string             `bson:"-" json:"Image_base64,omitempty"`
 	User_id         string             `bson:"User_id,omitempty" json:"User_id,omitempty"`
+	Lookout         int                `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Pluscode        string             `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
 }
 
 type DeletedItem struct {
@@ -73,6 +79,7 @@ type ElasticItem struct {
 	Item_details string    `json:"Item_details"`
 	Image_url    string    `json:"Image_url"`
 	Date         time.Time `json:"Date"`
+	Pluscode     string    `json:"Pluscode,omitempty"`
 }
 
 // JSON Message Wrapper
@@ -88,20 +95,14 @@ const (
 	OPERATION_NEW_ITEM int = 1 // /item/new*
 	// OPERATION_NEW_LOST_ITEM  int = 1
 	// OPERATION_NEW_FOUND_ITEM int = 2
-	OPERATION_GET_ITEM      int = 3 // /item
-	OPERATION_GET_ITEM_LIST int = 4 // /item/peek
-	OPERATION_PATCH_ITEM    int = 5 // /item/update
-	OPERATION_DEL_ITEM      int = 6 // /item/delete
-	OPERATION_SEARCH        int = 7 // /search
+	OPERATION_GET_ITEM         int = 3 // /item
+	OPERATION_GET_ITEM_LIST    int = 4 // /item/peek
+	OPERATION_PATCH_ITEM       int = 5 // /item/update
+	OPERATION_DEL_ITEM         int = 6 // /item/delete
+	OPERATION_SEARCH           int = 7 // /search
+	OPERATION_LOOKOUT_EXPLICIT int = 8 // /lookout
+	OPERATION_LOOKOUT_CRON     int = 9 // cron scheduler microservice
 )
-
-func ParseDateString(datestring string) time.Time {
-	layout := "2006-01-02T15:04:05Z"
-	if res, err := time.Parse(layout, datestring); err == nil {
-		return res
-	}
-	return time.Now()
-}
 
 // CATEGORY MAPPING str -> int
 func GetCategoryType(cat string) int {
@@ -184,4 +185,30 @@ func GetContactString(cat int32) string {
 	default:
 		return "Unknown"
 	}
+}
+
+// Lookout state mapping
+type LookoutState int
+
+const (
+	LOOKOUT_DISABLED LookoutState = 1 // avoid 0 to prevent falsey bugs in MongoDB
+	LOOKOUT_ENABLED               = 2
+	LOOKOUT_DEBUG                 = 3
+)
+
+// Maps the int state to a bool value
+func GetLookoutState(state int32) bool {
+	if state == LOOKOUT_ENABLED {
+		return true
+	} else {
+		return false
+	}
+}
+
+func ParseDateString(datestring string) time.Time {
+	layout := "2006-01-02T15:04:05Z"
+	if res, err := time.Parse(layout, datestring); err == nil {
+		return res
+	}
+	return time.Now()
 }

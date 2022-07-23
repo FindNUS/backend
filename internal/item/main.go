@@ -79,7 +79,10 @@ func HandleRequest(d amqp.Delivery) {
 		}
 		res := ElasticSearchGeneral(qry)
 		PublishResponse(res, d)
-
+	case OPERATION_LOOKOUT_EXPLICIT:
+		items := LookoutDirect(msg)
+		PublishResponse(items, d)
+		break
 	default:
 		// Should not reach here -- do nothing
 		break
@@ -88,6 +91,7 @@ func HandleRequest(d amqp.Delivery) {
 
 // Item microservice entrypoint
 func main() {
+	InitFirebase()
 	SetupImgur()
 	SetupElasticClient()
 	ElasticInitIndex()
@@ -96,6 +100,8 @@ func main() {
 	SetupChannel()
 	go ConsumeMessages()
 	go ConsumeGetMessages()
+	go ConsumeLookoutMessages()
+	go PeriodicCheck()
 	forever := make(chan bool)
 	<-forever
 }

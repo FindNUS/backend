@@ -15,8 +15,6 @@ var ItemChannel *amqp.Channel
 var ItemQueue amqp.Queue
 var GetItemQueue amqp.Queue
 
-// Thread-safe jobId implementation
-
 // Setup RabbitMQ service. Remember to defer connection close.
 func SetupMessageBrokerConnection() {
 	uri := os.Getenv("RABBITMQ_URI")
@@ -72,6 +70,35 @@ func ConsumeMessages() {
 		HandleRequest(d)
 	}
 	log.Println("Consume Item messages shutting down")
+}
+
+// Subroutine to handle lookout messages
+func ConsumeLookoutMessages() {
+	// Consume Item (POST PATCH DELETE) messages
+	msgs, err := ItemChannel.Consume(
+		"q_lookout_req", // queue
+		"",              // consumer
+		true,            // auto-ack
+		false,           // exclusive
+		false,           // no-local
+		false,           // no-wait
+		nil,             // args
+	)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	ItemChannel.Qos(
+		1,     // prefetch count
+		0,     // prefetch size
+		false, // global
+	)
+
+	for d := range msgs {
+		// log.Printf("Received a GET message: %s", d.Body)
+		HandleRequest(d)
+	}
+	log.Println("Consume Lookout Messages shutting down")
 }
 
 // Subroutine to handle GET messages

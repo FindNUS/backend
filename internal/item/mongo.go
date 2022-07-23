@@ -88,7 +88,9 @@ func MongoAddItem(collName ItemCollections, item NewItem) interface{} {
 func MongoPatchItem(collname ItemCollections, item PatchItem) int64 {
 	coll := mongoDb.Collection(string(collname))
 	update := bson.M{"$set": item}
+	PrettyPrintStruct(item)
 	res, err := coll.UpdateByID(context.TODO(), item.Id, update)
+	// res, err := coll.UpdateOne(context.TODO(), bson.M{"_id": item.Id}, update)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -170,7 +172,23 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 		filter["User_id"] = tmp[0]
 	}
 
-	log.Println("Searching MongoDB with filter:", filter)
+	// Parse Date filters, if they exist
+	startDateArr, startExist := args["startdate"]
+	endDateArr, endExist := args["enddate"]
+	if startExist || endExist {
+		tmp := bson.M{}
+		if startExist {
+			startTime := primitive.NewDateTimeFromTime(ParseDateString(startDateArr[0]))
+			tmp["$gte"] = startTime
+		}
+		if endExist {
+			endTime := primitive.NewDateTimeFromTime(ParseDateString(endDateArr[0]))
+			tmp["$lte"] = endTime
+		}
+		filter["Date"] = tmp
+	}
+
+	// log.Println("Searching MongoDB with filter:", filter)
 	opts := options.Find()
 	// Specify what fields to return. Id is implicitly returned
 	opts.SetProjection(
@@ -183,9 +201,51 @@ func MongoGetManyItems(collname ItemCollections, args map[string][]string) []Ite
 			{"Image_url", 1},
 		},
 	)
-	opts.SetSort(bson.D{{"Date", -1}})
+	opts.SetSort(bson.D{{"Date", -1}, {"_id", 1}})
 	opts.SetSkip(offset)
 	opts.SetLimit(limit)
+
+	res, err := coll.Find(context.TODO(), filter, opts)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	items := []Item{}
+	for res.Next(context.TODO()) {
+		var generalItem map[string]interface{}
+		var item Item
+		res.Decode(&generalItem)
+		if generalItem == nil {
+			continue
+		}
+		item = ParseGetItemBody(generalItem)
+		items = append(items, item)
+	}
+	return items
+}
+
+// Lookup Lost collection and get all items that have set Lookout=true
+// Pass COLL_LOST for live usage, COLL_DEBUG for debug usage
+func MongoGetAllLookoutRequests(coll_name ItemCollections) []Item {
+	coll := mongoDb.Collection(string(coll_name))
+	// Parse pagination variables
+	// Parse category filters
+	// { $or : [ { "Category": {"$eq", "foo"}, {...} } ]
+	filter := bson.M{}
+	filter["Lookout"] = LOOKOUT_ENABLED
+
+	opts := options.Find()
+	// Specify what fields to return. Id is implicitly returned
+	opts.SetProjection(
+		bson.D{
+			{"Name", 1},
+			{"Date", 1},
+			{"Location", 1},
+			{"Category", 1},
+			{"User_id", 1},
+			{"Item_details", 1},
+		},
+	)
+	opts.SetSort(bson.D{{"Date", -1}})
 
 	// TODO: Consider parsing all other filters, if they exist
 	res, err := coll.Find(context.TODO(), filter, opts)

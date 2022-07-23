@@ -1,7 +1,10 @@
 openapi: "3.0.0"
 info:
-  title: FindNUS_api
-  description: API documentation for FindNUS backend services. Handles the retrieval, processing and management of Lost Items found in NUS.
+  title: FindNUS Backend API
+  description: |
+    API documentation for FindNUS backend services.
+    Handles the retrieval, processing and management of Lost Items found in NUS.
+    Comes with additional spicy features like NLP and elasticsearch.
   version: "0.2-250622"
 servers:
   - url: https://findnus.herokuapp.com
@@ -231,6 +234,22 @@ paths:
             Chain multiple category values to filter by the
             For example, category=Cards&category=Etc will include results from both Cards and Etc. 
           example: category=Etc
+        - in: query
+          name: startdate
+          schema:
+            type: string
+          description: |
+            String representation of the start date to filter by.
+            Date should be in ISO format: YYYY-MM-DDThh:mm:ssZ, eg: 2012:12:25T17:33:59Z
+          example: startdate=2012:12:25T17:33:59Z
+        - in: query
+          name: enddate
+          schema:
+            type: string
+          description: |
+            String representation of the end date to filter by. 
+            Date should be in ISO format: YYYY-MM-DDThh:mm:ssZ, eg: 2012:12:25T17:33:59Z
+          example: enddate=2012:12:25T17:33:59Z
       responses:
         '200':
           description: Returns an array of lost items that may be filtered
@@ -267,7 +286,37 @@ paths:
                   $ref: '#/components/schemas/MiniItem'
         "500":
           description: Internal server error. Likely to be a message queue fault.
-
+# These set of paths define the 'smart search' service provided by the lookout microservice
+  /lookout:
+    get:
+      description: |
+        Get a list of found items that FindNUS decides are a good possible match to the lost item queried. 
+      parameters:
+        - in: query
+          name: Id
+          schema:
+            type: integer
+          description: Id of the lost item
+          example: 82173aiadj
+        - in: query
+          name: User_id
+          schema:
+            type: integer
+          description: User_id of the lost item's owner
+          example: 82173aiadj
+      responses:
+        '200':
+          description: Returns an array of found items that best match the lost item.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MiniItem'
+        "400":
+          description: Bad request. Missing one or both of User_id and id.
+        "500":
+          description: Internal server error. Likely to be a message queue fault.
                     
 components:
   schemas:
@@ -323,6 +372,18 @@ components:
           type: string
           format: string
           description: UserID associated to this item. Only applicable for Lookout Items.
+        Lookout:
+          type: boolean
+          description: |
+            Flag determining whether the Lost item has subscribed to the Lookout service.
+            This flag IS REQUIRED.
+          example: false
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG
+          example: 7QXC+CR Singapore
     MiniItem:
       type: object
       description: |
@@ -360,7 +421,13 @@ components:
           type: string
           format: string
           description: Item's accompanying image link
-          example: https://imgur.com/gallery/RaHyECD     
+          example: https://imgur.com/gallery/RaHyECD   
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG  
+          example: 7QXC+CR Singapore
     NewItem:
       type: object
       description: |
@@ -408,6 +475,18 @@ components:
           type: string
           description: Accompanying image of new Lost/Found item, if applicable
           format: byte
+        Lookout:
+          type: boolean
+          description: |
+            Flag determining whether the Lost item has subscribed to the Lookout service.
+            This flag should only exist for Lost items.
+          example: false
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG
+          example: 7QXC+CR Singapore
     DeleteItem:
       type: object
       description: |
@@ -469,6 +548,18 @@ components:
           type: string
           description: Updated image of Lost/Found item, if applicable
           format: byte
+        Lookout:
+          type: boolean
+          description: |
+            Flag determining whether the Lost item has subscribed to the Lookout service.
+            This flag should only exist for Lost items.
+          example: false
+        Pluscode:
+          type: string
+          description: |
+            Pluscode is a string representing the geolocation of a place based on its latitude and longitude.
+            Optional parameter if the lost item is tagged to a particular LAT/LONG
+          example: 7QXC+CR Singapore
     Category:
       type: string
       enum:
@@ -481,7 +572,7 @@ components:
     ContactMethod:
       type: string
       enum:
-        - nus_security
+        - nus_security 
         - telegram
         - whatsapp
         - wechat

@@ -1,0 +1,38 @@
+[
+    {
+        "Name": "Octopus Plushie",
+        "User_id": "foo",
+        "Date": "2022-05-26T08:51:48.782Z",
+        "Location": "CAPT Lounge",
+        "Category": "Etc",
+        "Item_details": "My octopus is blue on its smiling side. When inverted it is angry and yellow in colour"
+    },
+    {
+        "Name": "Nalgene Water bottle",
+        "User_id": "19fa21",
+        "Date": "2022-05-26T08:51:48.782Z",
+        "Location": "Digital Systems Lab",
+        "Category": "Bottles",
+        "Image_url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Multi-use_water_bottle.JPG",
+        "Item_details": "I lost my nalgene bottle during peak hour at the lab. The bottle has a sticker on it and it's handle is broken",
+        "Contact_details": "@FindNUS",
+        "Contact_method": "Line"
+    },
+    {
+        "Name": "Wireless Mouse",
+        "User_id": "19fa21",
+        "Date": "2022-04-16T20:02:30Z",
+        "Location": "Central Library",
+        "Category": "Electronics",
+        "Item_details": "i found a logitech mouse at CLB level 2 in one of the cubicles."
+    },
+    {
+        "Name": "Razer Mouse",
+        "User_id": "19fa21",
+        "Date": "2022-04-16T20:02:30Z",
+        "Location": "ECE faculty",
+        "Category": "Electronics",
+        "Item_details": "I found a Razer mouse at ECE.",
+        "Plus_code": "7QXC+CR singapore"
+    }
+]

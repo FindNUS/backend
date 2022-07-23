@@ -42,5 +42,23 @@
         "Category": "Electronics",
         "User_id": "19fa21",
         "Image_url": "https://imgs.xkcd.com/comics/is_it_worth_the_time_2x.png"
+    },
+    {
+        "Name": "CS1231 Notes",
+        "User_id": "19fa21",
+        "Date": "2022-03-06T18:25:07Z",
+        "Location": "Mac Commons",
+        "Category": "Notes",
+        "Image_url": "https://staging.igotnoteslah.com/wp-content/uploads/2020/12/1-67.jpg",
+        "Lookout": "true"
+    },
+    {
+        "Name": "CS1231 Notes",
+        "User_id": "19fa21",
+        "Date": "2022-03-06T18:25:07Z",
+        "Location": "Mac Commons",
+        "Category": "Notes",
+        "Image_url": "https://staging.igotnoteslah.com/wp-content/uploads/2020/12/1-67.jpg",
+        "Lookout": "foobar"
     }
 ]

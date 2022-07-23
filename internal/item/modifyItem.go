@@ -45,22 +45,25 @@ func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 	var err error
 	var item PatchItem
 	body := ParseUpdateItemBody(msg.Body)
-
 	err = json.Unmarshal(body, &item)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
+	PrettyPrintStruct(item)
 	var id string
 	// Safety check, should not trigger
 	if _, ok := msg.Params["Id"]; !ok {
 		return "", errors.New("Update item failed, item does not exist")
 	}
 	id = msg.Params["Id"][0]
-	item.Id, err = primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return "", errors.New("ERROR WHILE PATCHING: " + err.Error())
+	if id == "" {
+		return "", errors.New("ERROR WHILE PATCHING: NO ID FOUND")
 	}
+	// item.Id, err = primitive.ObjectIDFromHex(id)
+	// if err != nil {
+	// 	return "", errors.New("ERROR WHILE PATCHING: " + err.Error())
+	// }
 	if _, ok := msg.Params["User_id"]; ok {
 		item.User_id = msg.Params["User_id"][0]
 		id = "" // Prevent ElasticSearch operation
@@ -75,8 +78,8 @@ func DoUpdateItem(msg ItemMsgJSON) (string, error) {
 		numModify = MongoPatchItem(COLL_LOST, item)
 	}
 	if numModify != 1 {
-		log.Println("WARNING: Potential error in DoUpdateItem. Expeted 1 modified item, got", numModify)
-		log.Println("Affected update id:", id)
+		log.Println("WARNING: Potential error in DoUpdateItem. Expected 1 modified item, got", numModify)
+		log.Println("Affected update id:", item.Id)
 	}
 	return id, nil
 }

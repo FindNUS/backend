@@ -16,15 +16,17 @@ import (
 // Type definitions for the marshalling of data
 type Item struct {
 	Id              primitive.ObjectID `bson:"_id"`
-	Name            string             `bson:"Name"`
-	Date            time.Time          `bson:"Date"`
-	Location        string             `bson:"Location"`
-	Category        string             `bson:"Category"`
-	Contact_method  string             `bson:"Contact_method,omitempty" json:"Contact_method,omitempty"`
-	Contact_details string             `bson:"Contact_details,omitempty" json:"Contact_details,omitempty"`
-	Item_details    string             `bson:"Item_details,omitempty" json:"Item_details,omitempty"`
-	Image_url       string             `bson:"Image_url,omitempty" json:"Image_url,omitempty"`
-	User_id         string             `bson:"User_id, omitempty" json:"User_id,omitempty"`
+	Name            string
+	Date            time.Time
+	Location        string
+	Category        string
+	Contact_method  string
+	Contact_details string
+	Item_details    string
+	Image_url       string
+	User_id         string `bson:"User_id,omitempty"`
+	Lookout         bool   `bson:"Lookout,omitempty"`
+	Pluscode        string
 }
 
 // NOTE: New Item will require some preprocessing, namely the storage of imgr
@@ -37,8 +39,47 @@ type NewItem struct {
 	Contact_details string    `bson:"Contact_details,omitempty"`
 	Item_details    string    `bson:"Item_details,omitempty"`
 	Image_url       string    `bson:"Image_url,omitempty"`
-	Image_base64    byte      `bson:"-"` // Ignore this field
+	Image_base64    byte      `bson:"Image_base64,omitempty"`
 	User_id         string    `bson:"User_id,omitempty"`
+	Lookout         int       `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Pluscode        string    `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
+}
+
+type PatchItem struct {
+	Id              primitive.ObjectID `bson:"_id" json:"Id"`
+	Name            string             `bson:"Name,omitempty" json:"Name,omitempty"`
+	Date            time.Time          `bson:"Date,omitempty" json:"Date,omitempty"`
+	Location        string             `bson:"Location,omitempty" json:"Location,omitempty"`
+	Category        int                `bson:"Category,omitempty" json:"Category,omitempty"`
+	Contact_method  int                `bson:"Contact_method,omitempty" json:"Contact_method,omitempty"`
+	Contact_details string             `bson:"Contact_details,omitempty" json:"Contact_details,omitempty"`
+	Item_details    string             `bson:"Item_details,omitempty" json:"Item_details,omitempty"`
+	Image_url       string             `bson:"Image_url,omitempty" json:"Image_url,omitempty"`
+	Image_base64    string             `bson:"-" json:"Image_base64,omitempty"`
+	User_id         string             `bson:"User_id,omitempty" json:"User_id,omitempty"`
+	Lookout         int                `bson:"Lookout,omitempty" json:"Lookout,omitempty"`
+	Pluscode        string             `bson:"Pluscode,omitempty" json:"Pluscode,omitempty"`
+}
+
+type DeletedItem struct {
+	Id      primitive.ObjectID `bson:"_id"`
+	User_id string             `bson:"User_id,omitempty"`
+}
+
+type SingleItem struct {
+	Id      primitive.ObjectID `bson:"_id"`
+	User_id string             `bson:"User_id,omitempty"`
+}
+
+type ElasticItem struct {
+	Id           string    `json:"Id"`
+	Name         string    `json:"Name"`
+	Location     string    `json:"Location"`
+	Category     string    `json:"Category"`
+	Item_details string    `json:"Item_details"`
+	Image_url    string    `json:"Image_url"`
+	Date         time.Time `json:"Date"`
+	Pluscode     string    `json:"Pluscode,omitempty"`
 }
 
 // JSON Message Wrapper
@@ -54,19 +95,19 @@ const (
 	OPERATION_NEW_ITEM int = 1 // /item/new*
 	// OPERATION_NEW_LOST_ITEM  int = 1
 	// OPERATION_NEW_FOUND_ITEM int = 2
-	OPERATION_GET_ITEM      int = 3 // /item
-	OPERATION_GET_ITEM_LIST int = 4 // /item/peek
-	OPERATION_PATCH_ITEM    int = 5 // /item/update
-	OPERATION_DEL_ITEM      int = 6 // /item/delete
-	OPERATION_SEARCH        int = 7 // /search
+	OPERATION_GET_ITEM         int = 3 // /item
+	OPERATION_GET_ITEM_LIST    int = 4 // /item/peek
+	OPERATION_PATCH_ITEM       int = 5 // /item/update
+	OPERATION_DEL_ITEM         int = 6 // /item/delete
+	OPERATION_SEARCH           int = 7 // /search
+	OPERATION_LOOKOUT_EXPLICIT int = 8 // /lookout
+	OPERATION_LOOKOUT_CRON     int = 9 // cron scheduler microservice
 )
 
 // CATEGORY MAPPING str -> int
 func GetCategoryType(cat string) int {
 	cat = strings.ToLower(cat)
 	switch cat {
-	case "etc":
-		return 0
 	case "cards":
 		return 1
 	case "notes":
@@ -75,17 +116,19 @@ func GetCategoryType(cat string) int {
 		return 3
 	case "bottles":
 		return 4
+	case "etc":
+		return 5
 	default:
 		return -1
 	}
 }
 
 // Category mapping int -> str
-func GetCategoryString(cat float64) string {
+func GetCategoryString(cat int32) string {
 	// WARNING: Floating point errors probable
 	switch cat {
 	case 0:
-		return "Etc"
+		return "Etc" //legacy issue
 	case 1:
 		return "Cards"
 	case 2:
@@ -94,6 +137,8 @@ func GetCategoryString(cat float64) string {
 		return "Electronics"
 	case 4:
 		return "Bottles"
+	case 5:
+		return "Etc"
 	default:
 		return "Unknown"
 	}
@@ -103,8 +148,6 @@ func GetCategoryString(cat float64) string {
 func GetContactMethod(method string) int {
 	method = strings.ToLower(method)
 	switch method {
-	case "nus_security":
-		return 0
 	case "telegram":
 		return 1
 	case "whatsapp":
@@ -115,16 +158,18 @@ func GetContactMethod(method string) int {
 		return 4
 	case "phone_number":
 		return 5
+	case "nus_security":
+		return 6
 	default:
 		return -1
 	}
 }
 
-func GetContactString(cat float64) string {
+func GetContactString(cat int32) string {
 	// WARNING: Floating point errors probable
 	switch cat {
 	case 0:
-		return "Nus_security"
+		return "Nus_security" //legacy issue
 	case 1:
 		return "Telegram"
 	case 2:
@@ -135,10 +180,21 @@ func GetContactString(cat float64) string {
 		return "Line"
 	case 5:
 		return "Phone_number"
+	case 6:
+		return "Nus_security"
 	default:
 		return "Unknown"
 	}
 }
+
+// Lookout state mapping
+type LookoutState int
+
+const (
+	LOOKOUT_DISABLED LookoutState = 1 // avoid 0 to prevent falsey bugs in MongoDB
+	LOOKOUT_ENABLED               = 2
+	LOOKOUT_DEBUG                 = 3
+)
 
 func ParseDateString(datestring string) time.Time {
 	layout := "2006-01-02T15:04:05Z"

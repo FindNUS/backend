@@ -92,6 +92,9 @@ func ElasticInitIndex() {
 				},
 				"Image_url": {
 					"type":"text"
+				},
+				"Pluscode": {
+					"type":"text"
 				}
 			}
 		}
@@ -183,7 +186,7 @@ func ElasticGetItem(id string) ElasticItem {
 func ElasticSearchGeneral(qry string) []ElasticItem {
 	mmq := elastic.NewMultiMatchQuery(
 		qry,
-		"Name", "Location", "Item_details", "Category",
+		"Name", "Location", "Item_details", "Category", "Id",
 	)
 	// Search query tuning
 	mmq.Type("most_fields")
@@ -213,4 +216,50 @@ func ElasticParseBody(item Item, id primitive.ObjectID) ElasticItem {
 	json.Unmarshal(raw, &esItem)
 	esItem.Id = id.Hex()
 	return esItem
+}
+
+/* LOOKOUT MICROSERVICE */
+func debugTestQuery(query elastic.Query) {
+	src, err := query.Source()
+	if err != nil {
+		panic(err)
+	}
+	data, err := json.MarshalIndent(src, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(data))
+}
+
+func ElasticLookoutSearch(qry string, cat string) []ElasticItem {
+	// query := elastic.NewBoolQuery()
+	mmq := elastic.NewMultiMatchQuery(
+		qry,
+		"Name", "Location", "Item_details", "Category",
+	)
+	mmq.Type("combined_fields")
+	// mmq.Fuzziness("2")
+	// Min match 2 clauses, 1 for category, 2 for others
+	mmq.MinimumShouldMatch("3")
+	// mmq.Analyzer("standard")
+	mmq.FieldWithBoost("Name", 3)
+	mmq.FieldWithBoost("Item_details", 2)
+	// query.Must(mmq)
+	// query.Filter(elastic.NewTermQuery("Category", []string{"Etc", cat}))
+
+	// Execute the search
+	ctx := context.TODO()
+	EsClient.Refresh().Do(context.Background())
+	res, err := EsClient.Search().Index(IndexName).Query(mmq).Do(ctx)
+	if err != nil {
+		panic(err.Error())
+	}
+	esItemList := []ElasticItem{}
+	esItem := ElasticItem{}
+	for _, item := range res.Each(reflect.TypeOf(esItem)) {
+		log.Println("Search found: ", item)
+		esItem = item.(ElasticItem)
+		esItemList = append(esItemList, esItem)
+	}
+	return esItemList
 }
