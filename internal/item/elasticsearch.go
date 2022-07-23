@@ -232,19 +232,20 @@ func debugTestQuery(query elastic.Query) {
 }
 
 func ElasticLookoutSearch(qry string, cat string) []ElasticItem {
-	query := elastic.NewBoolQuery()
+	// query := elastic.NewBoolQuery()
 	mmq := elastic.NewMultiMatchQuery(
 		qry,
-		"Name", "Location", "Item_details",
+		"Name", "Location", "Item_details", "Category",
 	)
-	mmq.Type("most_fields")
-	mmq.Fuzziness("2")
-	mmq.MinimumShouldMatch("5") // 5 clauses
+	mmq.Type("cross_fields")
+	// mmq.Fuzziness("2")
+	// Min match 2 clauses, 1 for category, 2 for others
+	mmq.MinimumShouldMatch("3")
 	// mmq.Analyzer("standard")
-	mmq.FieldWithBoost("Name", 2)
+	mmq.FieldWithBoost("Name", 3)
 	mmq.FieldWithBoost("Item_details", 2)
-	query.Must(mmq)
-	query.Filter(elastic.NewTermQuery("Category", []string{"Etc", cat}))
+	// query.Must(mmq)
+	// query.Filter(elastic.NewTermQuery("Category", []string{"Etc", cat}))
 
 	// Execute the search
 	ctx := context.TODO()
