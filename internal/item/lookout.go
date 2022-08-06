@@ -19,9 +19,9 @@ func PeriodicCheck() {
 				continue
 			}
 			PrettyPrintStruct(elasticItems)
-			// if !MailSendMessage(elasticItems, request, userEmail) {
-			// 	log.Println("Error sending email.")
-			// }
+			if !MailSendMessage(elasticItems, request, userEmail) {
+				log.Println("Error sending email.")
+			}
 		}
 		log.Println("Periodic Lookout Sleeping...")
 		time.Sleep(time.Hour * 24) // daily reset, or whenever the container gets woken up
