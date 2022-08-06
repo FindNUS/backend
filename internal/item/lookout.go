@@ -18,7 +18,9 @@ func PeriodicCheck() {
 				// skip invalid email
 				continue
 			}
-			PrettyPrintStruct(elasticItems)
+			if len(elasticItems) <= 0 {
+				continue
+			}
 			if !MailSendMessage(elasticItems, request, userEmail) {
 				log.Println("Error sending email.")
 			}

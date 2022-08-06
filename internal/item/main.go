@@ -79,6 +79,7 @@ func HandleRequest(d amqp.Delivery) {
 		}
 		res := ElasticSearchGeneral(qry)
 		PublishResponse(res, d)
+		break
 	case OPERATION_LOOKOUT_EXPLICIT:
 		items := LookoutDirect(msg)
 		PublishResponse(items, d)
