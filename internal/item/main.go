@@ -103,6 +103,6 @@ func main() {
 	go ConsumeGetMessages()
 	go ConsumeLookoutMessages()
 	go PeriodicCheck()
-	forever := make(chan bool)
+	forever := make(chan bool) // blocking
 	<-forever
 }
