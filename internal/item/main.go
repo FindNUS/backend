@@ -2,7 +2,11 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"os"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -103,6 +107,27 @@ func main() {
 	go ConsumeGetMessages()
 	go ConsumeLookoutMessages()
 	go PeriodicCheck()
+
+	// RENDER MIGRATION:
+	// For this to work properly on render (use web service, background containers cost $$)
+	// Need to add a HTTP router to bind to render's port so that it does not kill the container
+	// This endpoint will be woken up as and when needed
+	router := gin.Default()
+	port := os.Getenv("PORT")
+	if port == "" {
+		// App is running locally
+		port = "8080"
+	}
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"https://findnus-prod-backend.onrender.com/", "https://findnus-backend-uat.onrender.com"}
+	router.Use(cors.New(config))
+	// ping || keep alive handler
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "OK",
+		})
+	})
+	router.Run(":" + port)
 	forever := make(chan bool) // blocking
 	<-forever
 }

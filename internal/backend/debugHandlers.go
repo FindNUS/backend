@@ -1,6 +1,9 @@
 package main
 
 import (
+	"net/http"
+	"os"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,4 +20,17 @@ func debugCheckAuth(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Your id is OK!",
 	})
+}
+
+// Ensure that the item microservice is alive and well
+func keepItemAlive() error {
+	prodVar, _ := os.LookupEnv("PRODUCTION")
+	var err error
+	if prodVar == "true" {
+		_, err = http.Get("https://findnus-prod-item.onrender.com/ping")
+	} else {
+		// prodVar == false
+		_, err = http.Get("https://findnus-uat-item.onrender.com/ping")
+	}
+	return err
 }
