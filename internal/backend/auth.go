@@ -1,6 +1,3 @@
-/*
-	This file describles logic to take care of firebase authentication
-*/
 package main
 
 import (
