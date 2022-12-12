@@ -16,10 +16,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup Dockerfile
         run: bash build/setup_item.sh
-      - name: Build & Deploy Heroku
+      - name: Build & Deploy
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
-          service-id: ${{ secrets.RENDER_UAT_BACKEND_ID }}
+          service-id: ${{ secrets.RENDER_UAT_ITEM_ID }}
           api-key: ${{ secrets.RENDER_API_KEY }}
         # uses: akhileshns/heroku-deploy@v3.12.12
         # with:
