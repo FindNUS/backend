@@ -21,9 +21,13 @@ func ValidateLookoutParams(params map[string][]string) error {
 
 // Handler to parse on-demand lookout requests
 func HandleLookoutGet(c *gin.Context) {
+	err := keepItemAlive()
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+	}
 	// Parse the query params
 	params := GetParams(c)
-	err := ValidateLookoutParams(params)
+	err = ValidateLookoutParams(params)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),

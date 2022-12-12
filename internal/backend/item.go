@@ -10,6 +10,10 @@ import (
 // Handles POST item requests.
 // Determines if the POST request belongs to the LOST or FOUND collection
 func HandleNewItem(c *gin.Context) {
+	err := keepItemAlive()
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+	}
 	params := GetParams(c)
 	// No params check needed
 	rawBody, err := ioutil.ReadAll(c.Request.Body)
@@ -35,6 +39,10 @@ func HandleNewItem(c *gin.Context) {
 }
 
 func HandleDeleteItem(c *gin.Context) {
+	err := keepItemAlive()
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+	}
 	// Process & validate parameters
 	params := GetParams(c)
 	keys := []string{
@@ -64,6 +72,10 @@ func HandleDeleteItem(c *gin.Context) {
 }
 
 func HandleUpdateItem(c *gin.Context) {
+	err := keepItemAlive()
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+	}
 	params := GetParams(c)
 	keys := []string{
 		"Id",

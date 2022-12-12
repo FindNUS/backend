@@ -4,6 +4,11 @@ import "github.com/gin-gonic/gin"
 
 // Handler for /search endpoint
 func HandleElasticSearch(c *gin.Context) {
+	err := keepItemAlive()
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+	}
+
 	params := GetParams(c)
 	if _, ok := params["query"]; !ok {
 		c.JSON(400, gin.H{

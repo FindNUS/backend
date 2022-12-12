@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/gin-contrib/cors"
@@ -67,5 +68,8 @@ func main() {
 	// Consume RPC return calls for GET messages
 	go ConsumeGetItemMessage()
 	go ConsumeLookoutResponseMessages()
+	if err := keepItemAlive(); err != nil {
+		log.Fatal(err.Error())
+	}
 	router.Run(":" + port)
 }

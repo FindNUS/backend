@@ -9,6 +9,10 @@ import (
 
 /* ---- ITEM RETRIEVAL ---- */
 func HandleGetOneItem(c *gin.Context) {
+	err := keepItemAlive()
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+	}
 	params := GetParams(c)
 	// Ensure that required parameters exist
 	if _, ok := params["Id"]; !ok {
@@ -41,6 +45,10 @@ func HandleGetOneItem(c *gin.Context) {
 
 // Gin handler for /peek to get the latest Found/Lost items, sorted by time, filtered by category
 func HandleGetManyItems(c *gin.Context) {
+	err := keepItemAlive()
+	if err != nil {
+		c.JSON(500, gin.H{"message": err.Error()})
+	}
 	// Get parameters and check for validity
 	params := GetParams(c)
 	if err := ValidatePeekParams(params); err != nil {
